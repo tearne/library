@@ -1,0 +1,98 @@
+<!doctype html>
+<meta charset="utf-8">
+
+<style>
+  .valid { background-color : #ddffdd; }
+  .invalid{ background-color : #ffdddd; }
+  #chart {
+    margin-top: 1em;
+    width: 100%;
+    height: 160px;
+  }
+</style>
+
+<div>
+<input
+  id="data-input"
+  type="text"
+  name="fname"
+  value="10,20,30"
+  required
+  oninput="updateData(this);"
+  onkeyup="if(event.keyCode == 13) doPlot();"
+/>
+<button type="button" onclick="doPlot();">Plot (or &#x23CE;)</button>
+</div>
+
+<svg id='chart'></svg>
+
+<h4> Questions to get you thinking: </h4>
+<ol>
+<li>What happens when you remove .merge(box)?</li>
+<li>What is .box.exit().remove() doing? What happens if you remove it?</li>
+<li>In the x  and height attribute, what are d and i?</li>
+</ol>
+<h4>Some simple exercises:</h4>
+<p>For the following exercises, only make changes in the doPlot() function</p>
+<ol>
+<li>Change the attributes within the JS so that the bars go up</li>
+<li>Increase the spacing between the bars</li>
+<li>Add a <a href="https://bost.ocks.org/mike/transition"> transition <a/> to the bar chart when you press update</li>
+<li>Change the colour of the bars depending on value (i.e. make blue if >50)</li>
+<li>Using a <a href ="http://jonathansoma.com/tutorials/d3/clicking-and-hovering/">mouseover</a>, change the colour of the bars when the mouse hovers over (and add a value)</li>
+</ol>
+<h4>If you're feeling brave...</h4>
+<p>Create a new button on the page, which when you press it changes the scale to a square root scale (code will also be outside of doPlot()) </p>
+
+
+
+
+<script src="https://underscorejs.org/underscore-min.js"></script>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+
+<script>
+  let inputBox = document.getElementById("data-input");
+  let lastKnownValidData;
+  let canvas = d3.select("svg");
+
+  updateData(inputBox); doPlot();
+
+  function updateData(element){
+    let data = element.value.split(',').map(s => s.trim());
+
+    function isNotNumeric(n) {
+      return isNaN(parseFloat(n)) || !isFinite(n);
+    }
+
+    if( _.some(data, isNotNumeric) )
+      inputBox.className = "invalid";
+    else {
+      inputBox.className = "valid";
+      lastKnownValidData = data.map(parseFloat);
+      console.log("Got valid data: "+data);
+    }
+  }
+
+  function doPlot(){
+    console.log("do plot with data: "+lastKnownValidData);
+
+    let box = canvas
+      .selectAll('rect')
+      .data(lastKnownValidData);
+
+    box
+      .enter()
+      .append('rect')
+      .merge(box)
+      .attr('y',0)
+      .attr('x', function(d,i){return i * 35;})
+      .attr('width', 30)
+      .attr('height', function(d, i){return d;})
+      .attr('fill', 'red');
+
+    box
+      .exit()
+      .remove();
+  }
+
+</script>

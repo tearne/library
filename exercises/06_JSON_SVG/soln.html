@@ -1,0 +1,49 @@
+<!doctype html>
+<meta charset="utf-8">
+
+<div>
+  <ul>
+    <li>Add some rectangles to the data.</li>
+    <li>Edit the code to also draw the new rectangles.</li>
+    <li>Refactor everything to keep things compact.</li>
+  </ul>
+</div>
+
+<svg width="400" height="400"></svg>
+
+<script src="https://d3js.org/d3.v5.js"></script>
+<script src="https://d3js.org/d3-selection-multi.v1.js"></script>
+
+
+<script>
+  const data = [
+    {type: "circle", cx: 130, cy: 110, r: 40, fill: "red"},
+    {type: "circle", cx: 80,  cy: 60,  r: 50, fill: "green"},
+    {type: "circle", cx: 60,  cy: 130, r: 60, fill: "blue"},
+    {type: "rectangle", x: 200, y: 110, width: 40, height: 60, fill: "red"},
+    {type: "rectangle", x: 230, y: 60, width: 50, height: 40, fill: "green"},
+    {type: "rectangle", x: 250, y: 130, width: 60, height: 20, fill: "blue"},
+  ];
+
+  let svg = d3.select("svg");
+
+  function draw(d) {
+    function makeShape() {
+      switch(d.type){
+        case "circle":
+          return svg
+            .append("circle")
+            .attrs({cx: d.cx, cy: d.cy, r: d.r})
+        case "rectangle":
+          return svg
+            .append("rect")
+            .attrs({x: d.x, y: d.y, width: d.width, height: d.height})
+      }
+    }
+
+    makeShape().style("fill", d.fill);
+  }
+
+  data.forEach(draw);
+
+</script>

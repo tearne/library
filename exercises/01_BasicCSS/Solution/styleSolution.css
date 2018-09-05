@@ -1,0 +1,45 @@
+body {
+  background-color: lightSteelBlue;
+}
+
+/*Elements can be selected using element name*/
+h1{
+  color: dodgerblue;
+  font-size: 50px;
+}
+
+h2{
+  text-align: center;
+}
+
+p{
+  font-size: 15px
+}
+
+.yellow {
+  color: gold
+}
+/*Us  '#' to select id */
+
+/*Use '.' to select class */
+.red {
+    color: crimson;
+  }
+
+  div {
+    font-size: 15px;
+  }
+
+#blue {
+  color: dodgerblue
+}
+
+.box {
+  color: steelblue;
+  background-color: pink;
+  width: 300px;
+  padding: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  border: 5px solid deepPink;
+}

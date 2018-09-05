@@ -1,0 +1,220 @@
+<!doctype html>
+<meta charset="utf-8">
+
+<style>
+.column {
+  width: 400px;
+}
+.chart {
+  height: 150px;
+  width: 100%;
+  background-color: lightgrey;
+}
+.label {
+  text-anchor: middle;
+  font-family: sans-serif;
+  font-size: 10px;
+}
+
+svg {
+  width: 100%;
+}
+
+</style>
+
+<div class="column">
+  <p>Here's some data:</p>
+  <p id="data"></p>
+
+  <p>Fix the plot below by multiplying by a scale factor to the bar height, so they all fit on the chart.</p>
+  <div class="chart" id="c1"></div>
+  </br>
+
+  <p>Create a new plot using a <a href="https://github.com/d3/d3-scale#log-scales">log scale</a> in place of the scale factor.</p>
+  <div class="chart" id="c2"></div>
+  </br>
+
+  <p>Create a new plot using a <a href="https://github.com/d3/d3-scale#continuous-scales">linear colour scale</a> to fill the bars.  Try to get a nice balance between distinct vs similar-ish colours.</p>
+  <div class="chart" id="c3"></div>
+  </br>
+
+  <p>A <a href="https://github.com/d3/d3-scale#band-scales">band scale</a> has been provided.  Use it to control the bar x-position and width, so they are no longer hard coded as 'i*35' and '30'.</p>
+  <div class="chart" id="c4"></div>
+  </br>
+
+  <p>Implement x and y <a href="https://github.com/d3/d3-axis#api-reference">axes</a> using the scales you have already created.  <a href="https://bl.ocks.org/mbostock/3019563">This</a> may also be helpful for the margins. Caution, if you google for answers you may come across tutorials based on older versions of D3.</p>
+  <div class="chart" id="c5"></div>
+  </br>
+
+  <p>Finally, add some text labels to the bars to give the exact values.  <a href="https://github.com/d3/d3-format#d3-format">d3.format(...)</a> may be useful and a bit of example code has been provided to help copy the SVG of the previous plot, to avoid writing all the D3 code again.</p>
+  <div class="chart" id="c6"></div>
+</div>
+<script src="https://d3js.org/d3.v5.js"></script>
+
+<script>
+  var myData = [
+    {day:"Mon", value:20},
+    {day:"Tue", value:40000},
+    {day:"Wed", value:700},
+    {day:"Thr", value:30000},
+    {day:"Fri", value:6000000},
+    {day:"Sat", value:100},
+    {day:"Sun", value:2000000}
+  ];
+  document.getElementById("data").textContent = JSON.stringify(myData);
+
+  let chartHeight = d3.select(".chart").node().getBoundingClientRect().height;
+  let chartWidth = d3.select(".chart").node().getBoundingClientRect().width;
+
+  //
+  // Linear scale factor
+  //
+  let values = myData.map(obj => obj.value)
+  let max = d3.max(values)
+  let heightSF = chartHeight / max
+
+  d3.select("#c1")
+    .append("svg")
+    .selectAll("rect")
+    .data(myData)
+    .enter()
+    .append("rect")
+    .attr("y",d => chartHeight - d.value * heightSF )
+    .attr("x", (d,i) => i * 35)
+    .attr("width", 30)
+    .attr("height", d => d.value  * heightSF)
+    .attr("fill", 'red');
+
+
+
+  //
+  // TODO Log scale
+  //
+  let y = d3.scaleLog()
+      .domain([1, d3.max(values)])
+      .range([chartHeight, 0]);
+
+  d3.select("#c2")
+    .append("svg")
+    .selectAll("rect")
+    .data(myData)
+    .enter()
+    .append("rect")
+    .attr("y",d => y(d.value))
+    .attr("x", (d,i) => i * 35)
+    .attr("width", 30)
+    .attr("height", d => chartHeight - y(d.value))
+    .attr("fill", 'red');
+
+
+
+  //
+  // TODO Bar colours scale
+  //
+  let colour = value => d3
+    .scaleLinear()
+    .domain(y.range())
+    .range(["blue", "red"])(y(value));
+
+  d3.select("#c3")
+    .append("svg")
+    .selectAll("rect")
+    .data(myData)
+    .enter()
+    .append("rect")
+    .attr("y",d => y(d.value))
+    .attr("x", (d,i) => i * 35)
+    .attr("width", 30)
+    .attr("height", d => chartHeight - y(d.value))
+    .attr("fill", d => colour(d.value));
+
+
+
+  //
+  // TODO Bandwidth / x-axis scale
+  //
+  let band = d3.scaleBand()
+    .domain(myData.map(obj => obj.day))
+    .rangeRound([0, chartWidth])
+    .padding(0.1)
+
+  d3.select("#c4")
+    .append("svg")
+    .selectAll("rect")
+    .data(myData)
+    .enter()
+    .append("rect")
+    .attr("y",d => y(d.value))
+    .attr("x", d => band(d.day))
+    .attr("width", band.bandwidth())
+    .attr("height", d => chartHeight - y(d.value))
+    .attr("fill", d => colour(d.value));
+
+
+
+  //
+  // TODO Axes
+  //
+  let margin = {top: 15, right: 5, bottom: 20, left: 35};
+  let width = chartWidth - margin.left - margin.right,
+      height = chartHeight - margin.top - margin.bottom;
+
+  let svg = d3
+    .select("#c5")
+    .append("svg")
+    .attr("width", chartWidth)
+    .attr("height", chartHeight)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+  band.rangeRound([0, width]);
+  y.range([height, 0]);
+
+  let xAxis = d3.axisBottom()
+    .tickSizeOuter(0);
+  xAxis.scale(band);
+
+  let yAxis = d3.axisLeft()
+    .ticks(6, d3.format("~s"))
+    .tickSizeOuter(0);
+  yAxis.scale(y);
+
+  svg
+    .selectAll("rect")
+    .data(myData)
+    .enter()
+    .append("rect")
+    .attr("y", d => y(d.value))
+    .attr("x", d => band(d.day))
+    .attr("width", band.bandwidth())
+    .attr("height", d => height - y(d.value))
+    .attr("fill", d => colour(d.value));
+
+  svg.append("g")
+    .attr("transform", "translate(0,"+height+")")
+    .call(xAxis);
+
+  svg.append("g")
+    .call(yAxis);
+
+
+
+  //
+  // TODO Text labels
+  //
+  // Something like this may be helpful to copy the previous chart
+  d3.select("#c6").node().append(
+    d3.select("#c5 svg").node().cloneNode(true)
+  );
+
+  d3.select("#c6 svg g")
+    .selectAll(".label")
+    .data(myData)
+    .enter()
+    .append("text")
+    .attr("class", "label")
+    .attr("y", d => y(d.value) - 2)
+    .attr("x", d => band(d.day) + band.bandwidth() / 2)
+    .text(d => d3.format("~s")(d.value));
+
+</script>

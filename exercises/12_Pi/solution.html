@@ -1,0 +1,182 @@
+<!doctype html>
+<meta charset="utf-8">
+
+<title>Bad Pi</title>
+
+<style>
+  .border {
+    border-style: solid;
+    border-width: 1px;
+    margin: 2px 0px 2px 0px;
+    height: 1em;
+  }
+  .fill {
+    background-color: green;
+    height:1em;
+    width:0%;
+  }
+  #button {
+    margin-top: 2em;
+  }
+  #chart {
+    width: 100%;
+    height: 200px;
+  }
+  svg {
+    background-color: #EEEEEE;
+  }
+</style>
+
+<div id="main">
+  <h1>Bad Pi Approximation</h1>
+
+  <p>
+    Javascript isn't great for numerical algorithms, partly beacuse of poor multi-threading support.  But what the hell... we can pretend the data is streaming in from somewhere else.  First, open the developer console and then press 'Start' below to see the approximation evolve.
+  </p>
+
+  Exercise:
+  <ol>
+    <li>Instead of writing values to the console write the pi approximation to a read-only <a href="https://www.w3schools.com/html/html_forms.asp">text box</a> and create a <a href="https://www.w3schools.com/bootstrap/bootstrap_progressbars.asp">progress bar</a>.</li>
+    <li>Create a 'live' visualisation showing how the approximation changes over time.</li>
+  </ol>
+
+  <b>Hint:</b> You shouldn't need to change anything in the 'go()' function as it already calls 'refreshStats' with an array containing the last 500 approximation values and a progress percentage.
+
+  </br>
+
+  <label for="result">Approximation:</label>
+  <input id="resultTextBox" type="text" value="" readonly>
+  <button id="button" onclick="go()">Start</button>
+
+  <div class="border">
+    <div id="progress" class="fill"></div>
+  </div>
+
+  <div id="chart"></div>
+</div>
+
+<script src="https://d3js.org/d3.v5.js"></script>
+<script src="https://d3js.org/d3-selection-multi.v1.js"></script>
+
+<script>
+  let samplesRequired = 1000000;
+  let sampleChunkSize = 100;
+  let maxSeriesLength = 500;
+
+  let lastKnownData = [];
+
+  let button        = document.getElementById("button"),
+      resultTextBox = document.getElementById("resultTextBox"),
+      progressBar   = document.getElementById("progress"),
+      chartDiv      = document.getElementById("chart");
+
+  let svg = d3
+    .select("#chart")
+    .append("svg")
+    .attr("height", chartDiv.clientHeight);
+
+  let margin = {top: 0, right: 50, bottom: 0, left: 0};
+
+  let plotGroup = svg
+      .append("g")
+      .attr("class", "main-group")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  let yScale = (() => {
+    let plotHeight = svg.attr("height") - margin.top - margin.bottom;
+    return d3.scaleLinear().domain([Math.PI - 0.01, Math.PI + 0.01]).rangeRound([plotHeight, 0]);
+  })();
+  let yAxis =  d3.axisRight().scale(yScale);
+
+  let yAxisGroup = plotGroup.append("g").attr("id", "yAxisGroup");
+  yAxisGroup.call(yAxis);
+  yAxisGroup.append("circle").attrs({cx: 0, cy: yScale(Math.PI), r: 3, fill:"red"});
+
+  let xScale = d3.scaleLinear().domain([0, maxSeriesLength]); // range set later depending on window size
+
+  setupWidth();
+
+  function go(){
+    let isRunning = () => button.innerHTML == "Stop";
+
+    if(!isRunning())
+      button.innerHTML = "Stop";
+    else {
+      button.innerHTML = "Start";
+      return;
+    }
+
+    let doTrial = () => Math.pow(Math.random(),2) + Math.pow(Math.random(),2) < 1;
+
+    function doRuns(hits, trials, seriesData){
+      for(let i = 0; i < sampleChunkSize; i++)
+        if(doTrial()) hits++;
+
+      let newTrials = trials + sampleChunkSize;
+      let newEstimate = 4 * hits / newTrials;
+
+      seriesData.push(newEstimate);
+      seriesData = seriesData.slice(-maxSeriesLength);
+
+      let percentProgress = 100 * newTrials / samplesRequired;
+      refreshStats(seriesData, percentProgress);
+
+      if(newTrials >= samplesRequired) button.innerHTML = "Start";
+      else if(isRunning()) setTimeout(doRuns.bind(null, hits, newTrials, seriesData), 0);
+    }
+
+    doRuns(0, 0, []);
+  }
+
+
+  function setupWidth(){
+    let divWidth = chartDiv.clientWidth,
+        plotWidth = chartDiv.clientWidth - margin.left - margin.right;
+
+    svg.attr("width", divWidth);
+    xScale.rangeRound([0, plotWidth]);
+    yAxisGroup.attr("transform", "translate("+plotWidth+",0)")
+
+    refreshStats();
+  }
+
+
+  function refreshStats(seriesData, percentProgress){
+    if(!seriesData) seriesData = lastKnownData;
+    else {
+      resultTextBox.value = seriesData[seriesData.length - 1];
+      lastKnownData = seriesData;
+    }
+
+    progressBar.style.width = percentProgress +"%"
+
+    let line = d3.line()
+      .x(function(d,i) { return xScale(i); })
+      .y(function(d,i) { return yScale(d); });
+
+    let path = plotGroup
+      .selectAll(".trajectory")
+      .data([seriesData]);
+
+    path
+      .enter()
+      .append("path")
+      .attr("class", "trajectory")
+      .merge(path)
+      .attr("fill", "none")
+      .attr("stroke", "steelblue")
+      .attr("stroke-linejoin", "round")
+      .attr("stroke-width", 2)
+      .attr("d", line);
+  }
+
+  (() => {
+    let redrawTimeout = false;
+
+    window.addEventListener("resize", () => {
+      clearTimeout(redrawTimeout);
+      redrawTimeout = setTimeout(setupWidth, 500);
+    });
+  })();
+
+</script>

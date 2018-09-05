@@ -1,0 +1,39 @@
+<!doctype html>
+<meta charset="utf-8">
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<div style="width: 500px; background-color:lightblue; padding: 10px">
+  <p>This is a chart of my productivity.</p>
+
+  <svg height=100 width=500>
+    <rect fill="red" x="0" y="90" height="10" width="40"></rect>
+    <rect fill="red" x="50" y="80" height="20" width="40"></rect>
+    <rect fill="red" x="100" y="70" height="30" width="40"></rect>
+    <rect fill="red" x="150" y="60" height="40" width="40"></rect>
+    <rect fill="red" x="200" y="50" height="50" width="40"></rect>
+    <rect fill="red" x="250" y="40" height="60" width="40"></rect>
+    <rect fill="red" x="300" y="30" height="70" width="40"></rect>
+    <rect fill="red" x="350" y="20" height="80" width="40"></rect>
+    <rect fill="red" x="400" y="10" height="90" width="40"></rect>
+    <rect fill="red" x="450" y="0" height="100" width="40"></rect>
+  </svg>
+
+  <p>Replicate it below using a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for">for-loop</a>.</p>
+
+  <svg id="replicate" height=100 width=500></svg>
+</div>
+
+<script>
+  let svgElement = d3.select("#replicate")
+
+  for(let i = 0; i < 10; i++){
+    let barHeight = 10 * (i + 1);
+
+    svgElement.append("rect")
+      .attr("x",i * 50)
+      .attr("y",100 - barHeight)
+      .attr("width",40)
+      .attr("height",barHeight)
+      .style("fill", "red");
+  }
+</script>

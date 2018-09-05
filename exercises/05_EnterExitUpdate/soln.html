@@ -1,0 +1,152 @@
+<!doctype html>
+<meta charset="utf-8">
+
+<style>
+  .valid { background-color : #ddffdd; }
+  .invalid{ background-color : #ffdddd; }
+  #chart {
+    margin-top: 1em;
+    width: 100%;
+    height: 160px;
+  }
+  .stroke{
+    stroke-width: 2;
+  }
+  .label{
+    text-anchor: middle;
+    opacity: 0;
+  }
+</style>
+
+<div>
+<input
+  id="data-input"
+  type="text"
+  name="fname"
+  value="1,4,9,16,25,36,49,64,81,100,121,144"
+  required
+  oninput="updateData(this);"
+  onkeyup="if(event.keyCode == 13) doPlot();"
+/>
+<button type="button" onclick="doPlot();">Plot (or &#x23CE;)</button>
+<br/>
+
+<input
+  id="useSqrtScale"
+  type="checkbox"
+  onchange="doPlot();"
+/>
+<label for="useSqrtScale">Use squart root scale</label>
+
+</div>
+
+<svg id='chart'></svg>
+
+<h4> Questions to get you thinking: </h4>
+<ol>
+<li>What happens when you remove .merge(box)?</li>
+<li>What is .box.exit().remove() doing? What happens if you remove it?</li>
+<li>In the x  and height attribute, what are d and i?</li>
+</ol>
+<h4>Some simple exercises:</h4>
+<p>For the following exercises, only make changes to the doPlot() function and CSS.</p>
+<ol>
+<li>Change the attributes within the JS so that the bars go up</li>
+<li>Increase the spacing between the bars</li>
+<li>Add a <a href="https://bost.ocks.org/mike/transition"> transition <a/> to the bar chart when you press update</li>
+<li>Change the colour of the bars depending on value (i.e. make blue if >50)</li>
+<li>Using a <a href ="http://jonathansoma.com/tutorials/d3/clicking-and-hovering/">mouseover</a>, change the colour of the bars when the mouse hovers over (and add a number)</li>
+</ol>
+<h4>If you're feeling brave...</h4>
+<p>Create a new button on the page, which when you press it changes the scale to a square root scale (code will also be outside of doPlot()) </p>
+
+<script src="https://underscorejs.org/underscore-min.js"></script>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+
+<script>
+  let inputBox = document.getElementById("data-input");
+  let lastKnownValidData;
+  let canvas = d3.select("svg");
+
+  updateData(inputBox); doPlot();
+
+  function updateData(element){
+    let data = element.value.split(',').map(s => s.trim());
+
+    function isNotNumeric(n) {
+      return isNaN(parseFloat(n)) || !isFinite(n);
+    }
+
+    if( _.some(data, isNotNumeric) )
+      inputBox.className = "invalid";
+    else {
+      inputBox.className = "valid";
+      lastKnownValidData = data.map(parseFloat);
+    }
+  }
+
+  function doPlot(){
+    let box = canvas
+      .selectAll('rect')
+      .data(lastKnownValidData);
+
+    let height = parseInt(canvas.style("height"));
+
+    function myColour(d) {
+      let p = (height - d) / height;
+      return "rgb("+(p*255)+","+50+","+((1-p)*255)+")";
+    };
+
+    function scale(d) {
+      if(d3.select("#useSqrtScale").property("checked")) return Math.sqrt(d);
+      else return d
+    };
+
+    // update
+    box
+      .transition().duration(1500)
+      .attr('y', d => height - scale(d))
+      .attr('height', d => scale(d))
+      .attr('fill', myColour);
+
+    // enter
+    box
+      .enter()
+      .append('rect')
+      .attr('width', 30)
+      .attr('x', (d,i) => 2 + i * 38)
+      .attr('y', d => height - scale(d))
+      .attr('height', d => scale(d))
+      .attr('fill', myColour)
+      .attr('class', 'stroke')
+      .on('mouseover', function(d,i){
+        d3.select(this).attr("stroke","black");
+        d3.select('#l'+i).style('opacity', 1);
+      })
+      .on('mouseout', function(d,i){
+        d3.select(this).attr("stroke","none");
+        d3.select('#l'+i).style('opacity', 0);
+      });
+
+    // exit
+    box
+      .exit()
+      .remove();
+
+    // labels
+    let text = canvas
+      .selectAll("text");
+
+    text
+      .data(lastKnownValidData)
+      .enter()
+      .append("text")
+      .merge(text)
+      .attr('class', "label")
+      .attr('id',(d,i) => 'l'+i )
+      .attr('x', (d, i) => i*38 + 16)
+      .attr('y', (d, i) => height - scale(d) - 3)
+      .text(d => d);
+  }
+
+</script>

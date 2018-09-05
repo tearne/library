@@ -1,0 +1,83 @@
+<!doctype html>
+<meta charset="utf-8">
+
+<title>Lines</title>
+
+<style>
+  #column {
+    width: 400px;
+  }
+  .chart {
+    height: 400px;
+    width: 100%;
+    background-color: lightgrey;
+  }
+</style>
+
+<div id="column">
+  <p>Plot a graph of Bitcoin prices using data loaded from <a href="https://www.coindesk.com/api/">coindesk</a>.  The data has already been loaded and processed (see console output) and just needs to be plotted.  Note it takes a moment for the remote data to load, but then the browser should cache it.</p>
+  <div class="chart" id="c1"></div>
+</div>
+
+<script src="https://d3js.org/d3.v5.js"></script>
+<script src="https://d3js.org/d3-selection-multi.v1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+<script>
+
+  let margin = {top: 10, right: 5, bottom: 20, left: 50};
+
+  let chartWidth = d3.select("#column").node().clientWidth,
+      chartHeight = parseInt(d3.select(".chart").style("height"));
+
+  let width = chartWidth - margin.left - margin.right,
+     height = chartHeight - margin.top - margin.bottom;
+
+  let dateParser = d3.timeParse("%Y-%m-%d");
+
+  function isLastDayOfMonth(date){
+    let a = new Date(
+      date.getUTCFullYear(),
+      date.getMonth() + 1,
+      0
+    ).toDateString();
+
+    let b = new Date(
+      date.getUTCFullYear(),
+      date.getMonth(),
+      date.getDate()
+    ).toDateString();
+
+    return a == b;
+  }
+
+  let svg = getSVG("#c1");
+
+  d3
+    .json("https://api.coindesk.com/v1/bpi/historical/close.json?currency=GBP&start=2012-07-17&end=2018-08-01")
+    .then(dat => {
+      let points = _.chain(dat.bpi)
+        .map((v,k) => ({date: dateParser(k), value: v}))
+        .filter(d => isLastDayOfMonth(d.date))
+        .value();
+
+      console.log(points);
+      //
+      // TODO Plot stuff
+      //
+    })
+
+
+  function getSVG(tag){
+    let div = d3.select(tag);
+
+    let g = div
+      .append("svg")
+      .attrs({"width": div.node().clientWidth, "height": div.node().clientHeight})
+      .append("g")
+      .attr("transform", "translate("+margin.left+","+margin.top+")");
+
+    return g;
+  }
+
+</script>

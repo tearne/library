@@ -1,0 +1,212 @@
+<!doctype html>
+<meta charset="utf-8">
+
+<title>Lines</title>
+
+<style>
+  #column {
+    width: 400px;
+  }
+  .chart {
+    height: 100px;
+    width: 100%;
+    background-color: lightgrey;
+  }
+  .blue {
+    stroke: steelblue;
+  }
+  .path-line {
+    fill: none;
+    stroke-width: 2px;
+  }
+  .segment-line {
+    stroke-linecap: round;
+    stroke-width: 2px;
+  }
+</style>
+
+<div id="column">
+  <p>Line charts are a bit different to bar or scatter plots because you can draw all the data with just one 'path' element.  Alternatively, you could use many short line segments.</p><p>We'll use some helper functions called 'getPanel(...)' and 'drawAxes(...)' to avoid repetitive code distracting from line drawing.</p><p>Let's start with a single path.</p>
+  <div class="chart" id="c1"></div>
+  </br>
+  <p>Now the same chart built from lots of line segments.</p>
+  <div class="chart" id="c2"></div>
+  <p>Not very profound...  but look at the differences in the code.  For example, '.data' versus '.datum', and the way the 'lineSegments' data was built.  For the following exercises you'll need to choose which approach is best.</p>
+  <p><b>Exercise:</b>  Draw the same graph again, but vary line attributes such as thickness and colour based on y-value.</p>
+  <div class="chart" id="c3"></div>
+  </br>
+  <p><b>Exercise:</b> The data set 'linesData' contains y values for several lines.  The x values are in a separate array called 'xRange'.  Plot all the lines using a different colour for each.  The answer to <a href="https://stackoverflow.com/questions/8689498/drawing-multiple-lines-in-d3-js">this question</a> may be helpful.</p>
+  <div class="chart" id="c4"></div>
+  </br>
+</div>
+
+<script src="https://d3js.org/d3.v5.js"></script>
+<script src="https://d3js.org/d3-selection-multi.v1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+<script>
+
+  let myData = _.range(100).map(i => (
+    {x: i, y: Math.sin(i/6)}
+  ))
+
+  let xExtent = [0, d3.max(myData, d => d.x)];
+  let yExtent = [-1,1];
+
+  let margin = {top: 10, right: 5, bottom: 10, left: 30};
+
+  let chartWidth = d3.select("#column").node().clientWidth;
+  let chartHeight = parseInt(d3.select(".chart").style("height"));
+
+  let width = chartWidth - margin.left - margin.right,
+     height = chartHeight - margin.top - margin.bottom;
+
+  let xScale = d3.scaleLinear().domain(xExtent).range([0, width]);
+  let yScale = d3.scaleLinear().domain(yExtent).range([height, 0]);
+
+
+
+  //
+  // Path
+  //
+  let svg = getSVG("#c1");
+
+  let lineFunc = d3
+    .line()
+    .x(d => xScale(d.x))
+    .y(d => yScale(d.y));
+
+  svg
+    .append("path")
+    .datum(myData)
+    .attr("d", lineFunc)
+    .attr("class", "path-line blue");
+
+  drawAxes(svg);
+
+
+
+  //
+  // Line segments
+  //
+  svg = getSVG("#c2");
+
+  let last = myData.length - 1;
+  let lineSegments = _.zip(myData.slice(0, last), myData.slice(-last))
+    .map(d => ({
+        pointA: d[0],
+        pointB: d[1]
+      })
+    );
+
+  svg
+    .selectAll("line")
+    .data(lineSegments)
+    .enter()
+    .append("line")
+    .attrs(d => ({
+      x1: xScale(d.pointA.x),
+      y1: yScale(d.pointA.y),
+      x2: xScale(d.pointB.x),
+      y2: yScale(d.pointB.y)
+    }))
+    .attr("class", "segment-line blue");
+
+  drawAxes(svg);
+
+
+
+  //
+  // Varying width and colour
+  //
+  svg = getSVG("#c3");
+
+  let colourScale = d3.scaleLinear().domain([-1, 1]).range(["blue", "red"]);
+
+  svg
+    .selectAll("line")
+    .data(lineSegments)
+    .enter()
+    .append("line")
+    .attrs(d => ({
+      x1: xScale(d.pointA.x),
+      y1: yScale(d.pointA.y),
+      x2: xScale(d.pointB.x),
+      y2: yScale(d.pointB.y)
+    }))
+    .attr("stroke", d => colourScale(d.pointA.y))
+    .attr("stroke-width", d => (6 - 5 * Math.abs(d.pointA.y))+"pt")
+    .attr("stroke-linecap", "round")
+
+  drawAxes(svg);
+
+
+
+  //
+  // Multiple lines
+  //
+  svg = getSVG("#c4");
+
+  let xRange = _.range(100);
+  let linesData = [
+    xRange.map(x => Math.sin(x / 10)),
+    xRange.map(x => 0.9 * Math.sin(x / 11)),
+    xRange.map(x => 0.8 * Math.sin(x / 12)),
+    xRange.map(x => 0.7 * Math.sin(x / 13)),
+    xRange.map(x => 0.6 * Math.sin(x / 14)),
+    xRange.map(x => 0.5 * Math.sin(x / 15))
+  ];
+
+  x = d3.axisBottom(xScale);
+  y = d3.axisLeft(yScale);
+
+  colourScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+  svg
+    .selectAll("path")
+    .data(linesData)
+    .enter()
+    .append("path")
+    .attr("d",
+      d3.line()
+        .x((d,i) => xScale(xRange[i]))
+        .y(yScale)
+    )
+    .attr("stroke", (d,i) => colourScale(i))
+    .attr("class", "path-line");
+
+  drawAxes(svg);
+
+
+
+
+
+
+
+  function getSVG(tag){
+    let div = d3.select(tag);
+
+    let g = div
+      .append("svg")
+      .attrs({"width": div.node().clientWidth, "height": div.node().clientHeight})
+      .append("g")
+      .attr("transform", "translate("+margin.left+","+margin.top+")");
+
+    return g;
+  }
+
+  function drawAxes(svg){
+    let x = d3.axisBottom(xScale).tickFormat(t => t == 0 ? "" : t);
+    let y = d3.axisLeft(yScale).ticks(6);
+
+    svg
+      .append("g")
+      .attr("transform", "translate(0,"+yScale(0)+")")
+      .call(x);
+
+    svg
+      .append("g")
+      .call(y);
+  }
+
+</script>

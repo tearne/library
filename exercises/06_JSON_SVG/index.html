@@ -1,0 +1,38 @@
+<!doctype html>
+<meta charset="utf-8">
+
+<div>
+  <ul>
+    <li>Add some rectangles to the data.</li>
+    <li>Edit the code to also draw the new rectangles.</li>
+    <li>Refactor everything to keep things compact.</li>
+  </ul>
+</div>
+
+<svg width="400" height="400"></svg>
+
+<script src="https://d3js.org/d3.v5.js"></script>
+
+<script>
+  const data = [
+    {cx: 130, cy: 110, r: 40, fill: "red"},
+    {cx: 80,  cy: 60,  r: 50, fill: "green"},
+    {cx: 60,  cy: 130, r: 60, fill: "blue"}
+  ];
+
+  let svg = d3.select("svg");
+
+  function drawCircle(d) {
+    svg
+      .append("circle")
+      .attr("cx", d.cx)
+      .attr("cy", d.cy)
+      .attr("r", d.r)
+      .style("fill", d.fill);
+  }
+
+  drawCircle(data[0]);
+  drawCircle(data[1]);
+  drawCircle(data[2]);
+
+</script>

@@ -1,0 +1,30 @@
+<!doctype html>
+<meta charset="utf-8">
+
+<p>Hello</p>
+
+<div class='funk'>
+  <p>Another paragraph</p>
+</div>
+
+<input id="clickMe" type="button" value="clickme" onclick="myFunction();" />
+
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<script>
+  var paragraphs = [
+    "Aye",
+    "Bee",
+    "Sea"
+  ];
+
+  var i = 0;
+
+  function myFunction(){
+    // alert("Hello, world!")
+    //console.log("Button clicked")
+    d3.select(".funk p").text(paragraphs[i]);
+    i++;
+    if(i == paragraphs.length) i = 0;
+  }
+</script>
