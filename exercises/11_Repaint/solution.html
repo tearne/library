@@ -1,0 +1,93 @@
+<!doctype html>
+<meta charset="utf-8">
+
+<style>
+#chart {
+  width: 100%;
+  background-color: lightgrey;
+}
+
+.path-line {
+  fill: none;
+  stroke-width: 1px;
+  stroke: steelblue;
+}
+</style>
+
+<p>Here is a spiral thingey that redraws whenever the window is resized.  Draw axes on top of the plot.</p>
+
+<div id=chart></div>
+
+<script src="https://d3js.org/d3.v5.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+
+<script>
+  let myData = (() => {
+    let ticks = 2000;
+    let tickAngle = 2 * Math.PI / ticks;
+
+    return _.range(ticks).map(i => {
+      let angle = i * tickAngle;
+      let fast = 511;
+      return {
+        x: 0.7 *Math.sin(angle) + 0.4 * Math.sin(angle * fast),
+        y: 0.7 * Math.cos(angle) + 0.4 * Math.cos(angle * fast)
+      };
+    });
+  })();
+
+  let margin = {top: 10, right: 10, bottom: 10, left: 10};
+
+  let svg = d3.select("#chart").append("svg");
+
+  let plotGroup = svg
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  let path = plotGroup
+    .append("path")
+    .classed("path-line", true)
+    .datum(myData);
+  let xAxisGroup = plotGroup.append("g");
+  let yAxisGroup = plotGroup.append("g");
+
+
+  function redraw() {
+
+    let pageWidth = d3.select("#chart").node().clientWidth;
+
+    let width = pageWidth - margin.left - margin.right,
+       height = pageWidth - margin.top - margin.bottom;
+
+    svg
+      .attr("width", pageWidth)
+      .attr("height", pageWidth)
+
+    let xScale = d3.scaleLinear().domain([-1,1]).range([0,width]),
+        yScale = d3.scaleLinear().domain([-1,1]).range([height, 0]);
+
+    let line = d3.line()
+      .x(d => xScale(d.x))
+      .y(d => yScale(d.y))
+      .curve(d3.curveBasisClosed);
+
+    path.attr("d", line);
+
+    let x = d3.axisBottom(xScale).tickFormat(t => t == 0 ? "" : t);
+    let y = d3.axisLeft(yScale).tickFormat(t => t == 0 ? "" : t);
+
+    xAxisGroup.attr("transform", `translate(0, ${yScale(0)})`).call(x);
+    yAxisGroup.attr("transform", `translate(${xScale(0)}, 0)`).call(y);
+  }
+
+  redraw();
+
+  (() => {
+    let redrawTimeout = false;
+    window.addEventListener("resize", () => {
+      clearTimeout(redrawTimeout);
+      redrawTimeout = setTimeout(redraw, 200);
+    });
+  })();
+</script>

@@ -1,0 +1,56 @@
+<!doctype html>
+<meta charset="utf-8">
+
+<style>
+
+body {
+  padding: 0;
+  margin: 0;
+}
+#chart {
+  width: 100%;
+}
+svg {
+  display: block;
+  margin: 0 auto;
+  background-color: #aaa;
+}
+rect {
+  fill: #777;
+}
+
+</style>
+
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://d3js.org/d3-selection-multi.v1.js"></script>
+
+<div id="chart"></div>
+
+<script>
+
+  let aspectLimits = [0.7, 1.5]
+
+  let svg = d3.select("#chart").append("svg"),
+     rect = svg.append("rect");
+
+  function go(){
+    let windowWidth = window.innerWidth - 10;
+    let windowHeight = window.innerHeight - 10;
+
+    let width = Math.min(aspectLimits[1] * windowHeight, windowWidth);
+    let height = Math.min(windowWidth / aspectLimits[0], windowHeight);
+
+    svg.attrs({width: width, height: height});
+
+    rect.attrs({
+      x: (width / 4),
+      y: (height / 4),
+      width: (width / 2),
+      height: (height / 2)})
+  }
+
+  go();
+
+  window.addEventListener("resize", go);
+
+</script>

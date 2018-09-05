@@ -1,0 +1,44 @@
+<!doctype html>
+<meta charset="utf-8">
+
+<script src="https://d3js.org/d3.v5.js"></script>
+<script src="https://d3js.org/d3-selection-multi.v1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+<script>
+
+  // let dateParser = d3.timeParse("%Y-%m-%d");
+
+  //To discuss:
+  // 1) API
+  // 2) Asynchronous loading
+  // 3) How to debug/access the data coming in?
+  // 4) How to format the data using underscore.js
+
+  d3
+    .json("https://api.coindesk.com/v1/bpi/historical/close.json?currency=GBP&start=2012-07-17&end=2018-08-01")
+    .then(d => {
+      console.log("Data is loaded", d)
+      // let points = _.chain(d.bpi)
+      //   .map((v,k) => ({date: dateParser(k), value: v}))
+      //   .filter(d => isLastDayOfMonth(d.date))
+      //   .value();
+    })
+
+    // function isLastDayOfMonth(date){
+    //   let a = new Date(
+    //     date.getUTCFullYear(),
+    //     date.getMonth() + 1,
+    //     0
+    //   ).toDateString();
+    //
+    //   let b = new Date(
+    //     date.getUTCFullYear(),
+    //     date.getMonth(),
+    //     date.getDate()
+    //   ).toDateString();
+    //
+    //   return a == b;
+    // }
+
+</script>

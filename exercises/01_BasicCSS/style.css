@@ -1,0 +1,25 @@
+body {
+  background-color: lightSteelBlue;
+}
+
+/*Elements can be selected using element name*/
+h1{
+  color: dodgerblue
+}
+
+/*Us  '#' to select id */
+
+/*Use '.' to select class */
+  .red {
+    color: crimson
+  }
+
+#blue {
+  color: dodgerblue
+}
+
+.box {
+  color: steelblue;
+  background-color: pink;
+  width: 300px;
+}

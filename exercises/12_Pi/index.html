@@ -1,0 +1,81 @@
+<!doctype html>
+<meta charset="utf-8">
+
+<title>Bad Pi</title>
+
+<style>
+  #button {
+    margin-top: 2em;
+  }
+</style>
+
+<div id="main">
+  <h1>Bad Pi Approximation</h1>
+
+  <p>
+    Javascript isn't great for numerical algorithms, partly beacuse of poor multi-threading support.  But what the hell... we can pretend the data is streaming in from somewhere else.  First, open the developer console and then press 'Start' below to see the approximation evolve.
+  </p>
+
+  Exercise:
+  <ol>
+    <li>Instead of writing values to the console write the pi approximation to a read-only <a href="https://www.w3schools.com/html/html_forms.asp">text box</a> and create a <a href="https://www.w3schools.com/bootstrap/bootstrap_progressbars.asp">progress bar</a>.</li>
+    <li>Create a 'live' visualisation showing how the approximation changes over time.</li>
+  </ol>
+
+  <b>Hint:</b> You shouldn't need to change anything in the 'go()' function as it already calls 'refreshStats' with an array containing the last 500 approximation values and a progress percentage.
+
+  </br>
+
+  <button id="button" onclick="go()">Start</button>
+
+  <div id="chart"></div>
+</div>
+
+<script src="https://d3js.org/d3.v5.js"></script>
+<script src="https://d3js.org/d3-selection-multi.v1.js"></script>
+
+<script>
+  let samplesRequired = 1000000;
+  let sampleChunkSize = 100;
+  let maxSeriesLength = 500;
+
+  let button = document.getElementById("button");
+
+  function go(){
+    let isRunning = () => button.innerHTML == "Stop";
+
+    if(!isRunning())
+      button.innerHTML = "Stop";
+    else {
+      button.innerHTML = "Start";
+      return;
+    }
+
+    let doTrial = () => Math.pow(Math.random(),2) + Math.pow(Math.random(),2) < 1;
+
+    function doRuns(hits, trials, seriesData){
+      for(let i = 0; i < sampleChunkSize; i++)
+        if(doTrial()) hits++;
+
+      let newTrials = trials + sampleChunkSize;
+      let newEstimate = 4 * hits / newTrials;
+
+      seriesData.push(newEstimate);
+      seriesData = seriesData.slice(-maxSeriesLength);
+
+      let percentProgress = 100 * newTrials / samplesRequired;
+      refreshStats(seriesData, percentProgress);
+
+      if(newTrials >= samplesRequired) button.innerHTML = "Start";
+      else if(isRunning()) setTimeout(doRuns.bind(null, hits, newTrials, seriesData), 0);
+    }
+
+    doRuns(0, 0, []);
+  }
+
+  function refreshStats(seriesData, percentProgress){
+    let mostRecent = seriesData[seriesData.length - 1]
+    console.log(d3.format(".1f")(percentProgress)+"% done,  pi ~= "+d3.format(".8")(mostRecent));
+  }
+
+</script>
