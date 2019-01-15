@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+    html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font: 10px sans-serif;
+    }
+
+    .axis path, .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
+    .x.axis path {
+        display: none;
+    }
+
+    .line {
+        fill: none;
+        stroke-width: 1.5px;
+    }
+
+    #plot{
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        background-color: #efefef;
+    }
+</style>
+<script type="text/javascript">
+    var jsonData = {
+        "month": ["2014-12", "2014-11", "2014-10", "2014-09", "2014-08", "2014-07", "2014-06", "2014-05", "2014-04", "2014-03", "2014-02", "2014-01", "2013-12", "2013-11", "2013-10", "2013-09", "2013-08", "2013-07", "2013-06", "2013-05", "2013-04", "2013-03", "2013-02", "2013-01", "2012-12", "2012-11", "2012-10", "2012-09", "2012-08", "2012-07", "2012-06", "2012-05", "2012-04", "2012-03", "2012-02", "2012-01", "2011-12", "2011-11", "2011-10", "2011-09", "2011-08"],
+        "expected": [30.4, 31.5, 32.2, 29.6, 25.7, 19.9, 20.4, 21.4, 24.2, 24.0, 26.6, 27.1, 30.3, 31.5, 33.2, 31.5, 28.2, 21.9, 22.4, 22.1, 25.4, 25.6, 28.4, 32.3, 36.0, 40.0, 41.8, 40.0, 35.2, 31.3, 30.0, 31.1, 31.5, 31.4, 32.0, 37.1, 41.0, 46.3, 48.6, 47.8, 47.4],
+        "threshold": [41.1, 42.4, 44.6, 40.2, 36.4, 28.0, 29.3, 31.1, 34.5, 34.4, 36.3, 38.5, 42.5, 43.4, 45.2, 43.2, 39.3, 31.7, 32.2, 32.0, 35.9, 36.1, 39.5, 44.1, 48.6, 53.0, 55.1, 53.0, 47.5, 42.9, 41.3, 42.6, 43.1, 43.5, 44.7, 49.4, 54.5, 60.7, 63.0, 63.2, 61.5],
+        "actual": [23, 19, 34, 32, 29, 20, 19, 18, 13, 16, 23, 26, 39, 51, 42, 45, 31, 20, 20, 25, 31, 22, 21, 29, 27, 32, 35, 43, 19, 18, 23, 27, 24, 31, 21, 30, 35, 54, 54, 54, 41],
+    }
+</script>
+<script src="http://d3js.org/d3.v3.js"></script>
+<!--<script src="d3.min.js"></script>-->
+<body>
+
+<svg id="plot"></svg>
+
+<script>
+    var margin = 60;
+    var width = parseInt(d3.select("#plot").style("width")) - margin * 2;
+    var height = parseInt(d3.select("#plot").style("height")) - margin * 2;
+
+    var parseYearMonth = d3.time.format("%Y-%m").parse;
+
+    var xScale = d3.time.scale().range([ 0, width ]);
+    var yScale = d3.scale.linear().range([ height, 0 ]);
+
+    var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+    var yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+    var line = d3.svg.line()
+            .x(function(d) {return xScale(d.x);})
+            .y(function(d) {return yScale(d.y);});
+
+    d3.select("#graph").append("g")
+
+    var svgPlot = d3.select("#plot")
+            .attr("width", width + 2 * margin)
+            .attr("height", height + 2 * margin)
+            .append("g")
+            .attr("transform", "translate(" + margin + "," + margin + ")");
+
+    var colour = d3.scale.category10();
+
+    jsonData.month.forEach(function (d, i) {
+        jsonData.month[i] = parseYearMonth(d)
+    });
+
+    var lines = ["actual", "threshold"];
+
+    var linesData = lines.map(function (name) {
+        return {
+            "name": name,
+            "values": jsonData["month"].map(function (month, index) {
+                console.info(month)
+                return {
+                    y: jsonData[name][index],
+                    x: month
+                };
+            })
+        };
+    });
+
+    linesData.forEach(function (d) {
+        d.values.sort(function(a,b) {return a.x - b.x});
+        console.info(d.values)
+    });
+
+    xScale.domain(d3.extent(jsonData.month));
+    yScale.domain(d3.extent(jsonData.actual.concat(jsonData.threshold)));
+
+    svgPlot.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis);
+
+    svgPlot.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("Value");
+
+    var linePlots = svgPlot.selectAll(".path")
+            .data(linesData)
+            .enter()
+            .append("g")
+
+    linePlots.append("path")
+            .attr("class", "line")
+            .attr("d", function (d) {
+                return line(d.values);
+            })
+            .attr("stroke", function (d) {
+                return colour(d.name);
+            });
+
+    linePlots.append("text")
+            .attr("class", "labels")
+            .datum(function (d) {
+                return {name: d.name, value: d.values[d.values.length - 1]};
+            })
+            //.attr("transform", function (d) {
+            //    return "translate(" + xScale(d.value.x) + "," + yScale(d.value.y) + ")";
+            //})
+            .attr("x", 3)
+            .attr("dy", ".35em")
+            .text(function (d) {
+                return d.name;
+            })
+
+    resize();
+
+    function resize() {
+        var width = parseInt(d3.select("#plot").style("width")) - margin * 2,
+                height = parseInt(d3.select("#plot").style("height")) - margin * 2;
+
+        xScale.range([0, width]);
+        yScale.range([height, 0]);
+
+        xAxis.ticks(Math.max(width/70, 2));
+        yAxis.ticks(Math.max(height/50, 2));
+
+        svgPlot.select('.x.axis')
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
+
+        svgPlot.select('.y.axis')
+                .call(yAxis);
+
+        svgPlot.selectAll('.line')
+                .attr("d", function (d) {
+                    return line(d.values);
+                })
+
+        svgPlot.selectAll('.labels')
+                .attr("transform", function (d) {
+                    return "translate(" + xScale(d.value.x) + "," + yScale(d.value.y) + ")";
+                })
+    }
+
+    d3.select(window).on('resize', resize);
+</script>
+</body>

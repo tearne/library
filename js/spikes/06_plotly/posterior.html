@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Demo</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    
+    <script>
+        var rawData;
+    
+        $(function(){
+            console.info("LOADED 7")
+            $.getJSON("posterior.json", function(d){
+                rawData = d
+                var data = [
+                    {
+                        x: d.particles.FarmEnv,
+                        type: 'histogram'
+                    }
+                    ,{
+                        x: d.particles.PrshEnv,
+                        type: 'histogram',
+                        xaxis: 'x2',
+                        yaxis: 'y2'
+                    }
+                    ,{
+                        x: d.particles.EnvDecy,
+                        type: 'histogram',
+                        xaxis: 'x3',
+                        yaxis: 'y3'
+                    },{
+                        x: d.particles["S-to-T"],
+                        type: 'histogram',
+                        xaxis: 'x4',
+                        yaxis: 'y4'
+                    },{
+                        x: d.particles["T-to-I"],
+                        type: 'histogram',
+                        xaxis: 'x5',
+                        yaxis: 'y5'
+                    },{
+                        x: d.particles.TstSens,
+                        type: 'histogram',
+                        xaxis: 'x6',
+                        yaxis: 'y6'
+                    },{
+                        x: d.particles.InfSens,
+                        type: 'histogram',
+                        xaxis: 'x7',
+                        yaxis: 'y7'
+                    }
+                ];
+                var layout = {
+                    xaxis: { domain: [0, 0.32] },
+                    yaxis: { 
+                        domain: [0.67, 1],
+                        anchor: 'x1'
+                    },
+                    xaxis2: { 
+                        domain: [0.34, 0.65],
+                        anchor: 'y2'
+                    },
+                    yaxis2: { 
+                        domain: [0.67, 1],
+                        anchor: 'x2' 
+                    },
+                    xaxis3: { 
+                        domain: [0.67, 1],
+                        anchor: 'y3'
+                    },
+                    yaxis3: { 
+                        domain: [0.67, 1],
+                        anchor: 'x3'
+                    },
+                    xaxis4: { 
+                        domain: [0.0, 0.33],
+                        anchor: 'y4'
+                    },
+                    yaxis4: { 
+                        domain: [0.34, 0.66],
+                        anchor: 'x4'
+                    },
+                    xaxis5: { 
+                        domain: [0.34, 0.66],
+                        anchor: 'y5'
+                    },
+                    yaxis5: { 
+                        domain: [0.34, 0.66]
+                        ,anchor: 'x5'
+                    },
+                    xaxis6: { 
+                        domain: [0.67, 1],
+                        anchor: 'y6'
+                    },
+                    yaxis6: { 
+                        domain: [0.34, 0.66]
+                        ,anchor: 'x6'
+                    },
+                    xaxis7: { 
+                        domain: [0, 0.33],
+                        anchor: 'y7'
+                    },
+                    yaxis7: { 
+                        domain: [0, 0.33],
+                        anchor: 'x7'
+                    }
+                }
+                Plotly.newPlot(
+                    document.getElementById('myDiv'), 
+                    data,
+                    layout
+                );
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <title>hello ploty!</title>
+    <p>Hello <a href="http://plot.ly/">Plot.ly</a>!</p>
+    <div id="myDiv" style="width:700px;height:400px;"></div>
+</body>
+
+</html>

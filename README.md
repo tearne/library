@@ -1,1 +1,1 @@
-# jsvis
+# Library of templates, exercises and spikes

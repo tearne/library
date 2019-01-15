@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<div id="main">
+    <div id="chart">
+      <svg width="500" height="500"></svg>
+    </div>
+  </div>
+</div>
+
+<style>
+div.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 6em;
+    height: 1em;
+    padding: 2px;
+    font: 12px sans-serif;
+    background: lightsteelblue;
+    border: 0px;
+    border-radius: 0.5em;
+    pointer-events: none;
+}
+</style>
+
+<script src="https://d3js.org/d3.v4.js"></script>
+<!--<script src="https://d3js.org/d3-selection.v1.min.js"></script>-->
+<!--<script src="https://d3js.org/d3-selection-multi.v1.min.js"></script>-->
+<script src="https://d3js.org/d3-scale.v1.min.js"></script>
+<!-- <script src="https://d3js.org/d3-array.v1.min.js"></script> -->
+<!-- <script src="https://d3js.org/d3-collection.v1.min.js"></script> -->
+<script src="https://d3js.org/d3-color.v1.min.js"></script>
+<!-- <script src="https://d3js.org/d3-format.v1.min.js"></script> -->
+<script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+<!-- <script src="https://d3js.org/d3-time.v1.min.js"></script> -->
+<!-- <script src="https://d3js.org/d3-time-format.v2.min.js"></script> -->
+<script>
+    var chart
+    var data
+
+    var div = d3.select("body").append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
+
+    d3.json("data/heat-map.json", function(error, d) {
+      if (error) throw error;
+
+      data = d['heat-map'].cellCounts
+      root = d3.select("#chart")
+
+      svg = root.select("svg")
+
+      let      bbox = svg.node().getBoundingClientRect(),
+          dimension = Math.min(bbox.width, bbox.height)
+
+      let biggestNumCells = 100 //TODO reading meta?
+
+      let xExtent =  d3.extent(data.map(d => d.x))
+      let yExtent =  d3.extent(data.map(d => d.y))
+
+      //TODO presently assuming positive values only?
+      let  xCellWidth = (xExtent[1] - xExtent[0]) / biggestNumCells,
+          yCellHeight = (yExtent[1] - yExtent[0]) / biggestNumCells
+
+      let x = d3
+        .scaleLinear()
+        .domain(xExtent)
+        .range([0, dimension])
+
+      let y = d3
+          .scaleLinear()
+          .domain(yExtent)
+          .range([dimension, 0])
+
+      let xCellPx = (x(xExtent[1]) - x(xExtent[0])) / biggestNumCells,
+          yCellPx = (y(yExtent[0]) - y(yExtent[1])) / biggestNumCells
+
+      let colour = d3
+        .scaleLog()
+        .domain(d3.extent(data.map(d => d.count)))
+        .range([d3.rgb("#6677FF"), d3.rgb('#FF6520')]);
+
+      svg.append('g')
+        .selectAll('.cell')
+        .data(data)
+        .enter()
+        .append('rect')
+        .attr('class', 'cell')
+        .attr('x', d => x(d.x))
+        .attr('y', d => y(d.y))
+        .attr('width', xCellPx)
+        .attr('height', yCellPx)
+        .attr('fill', d => colour(d.count))
+        .on("mouseover", function(d) {
+          div.transition()
+            .duration(200)
+            .style("opacity", .9);
+          div.html(d.count)
+            .style("left", (d3.event.pageX + 20) + "px")
+            .style("top", (d3.event.pageY) + "px");
+        })
+        .on("mouseout", function(d) {
+          div.transition()
+            .duration(500)
+            .style("opacity", 0);
+        });
+    })
+
+</script>

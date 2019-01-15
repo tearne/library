@@ -1,0 +1,5 @@
+.idea
+*.iml
+*pom.xml
+*.csv
+*.pdf

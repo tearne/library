@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Demo</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+  <script>
+    var rawData;
+
+    $(function() {
+      $.getJSON("posterior.json", function(d) {
+        var obs = d.particles.FarmEnv;
+
+        // populate an array with density values
+        var max = Math.max.apply(null, obs);
+        var min = Math.min.apply(null, obs);
+        var width = max - min;
+        var nBins = 10;
+        var nObs = obs.length;
+        var pointToBinScale = nBins / width;
+        var binToPointScale = 1 / pointToBinScale;
+
+        function pointToBin(x) {
+          var res = Math.floor((x - min) * pointToBinScale);
+          return res;
+        }
+
+        function binToPoint(n) {
+          return n / pointToBinScale + min;
+        }
+        
+        // Create array of kernel values according to bin size
+        // where support is > 1% max kernel height
+        var kernelArray = (function() {
+          function kernel(x) {
+            return Math.exp(-x / 2) / Math.sqrt(2 * Math.PI);
+          };
+          var max = kernel(0);
+          var current = max;
+          var array = [current];
+          var counter = 1;
+          while (current > max / 100) {
+            current = kernel(counter * binToPointScale);
+            array.unshift(current);
+            array.push(current);
+            counter++;
+          }
+          array.middleIdx = array.length - 1 / 2;
+          return array;
+        })();
+        console.log('kernel array: '+kernelArray);
+
+        function addOrSet(value, id, array) {
+          if (array[id]) array[id] = array[id] + value;
+          else array[id] = value;
+          return array;
+        }
+        function overlayAdd(bottom, top, topShift) {
+          //Allow for negative shift so long as top still overlaps
+ 	        if(top.length + topShift > 0 && topShift <= bottom.length){
+            for(i=Math.max(0, topShift); 
+                i < top.length && i + topShift < bottom.length; 
+                i++){
+              addOrSet(top[i], i+topShift, bottom);
+              //bottom[i+topShift] += top;
+            }
+          }
+        }
+
+        var x = Array.apply(null, Array(nBins)).map(function(_, i) {
+          return binToPoint(i);
+        });
+        //console.log('x values : ' + x);
+        
+        // Calculate the contribution to each point
+        var y = obs.reduce(
+          function(acc, next) {
+            console.log("acc = "+acc);
+            var id = pointToBin(next);
+            console.log("bin "+id+", kernel mid = "+kernelArray.middleIdx);
+            overlayAdd(acc, kernelArray, id - kernelArray.middleIdx);
+            return acc;
+            //return addOrSet(next, id, acc);
+          }, 
+          Array.apply(null, Array(nBins)).map(function(i) {
+            return 0;
+          })
+        );
+        //console.log('y values : '+y);
+
+
+
+        var data = [{
+          x: x,
+          y: y,
+          type: 'scatter'
+        }];
+        var layout = {}
+
+        Plotly.newPlot(
+          document.getElementById('myDiv'),
+          data,
+          layout
+        );
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <title>hello ploty!</title>
+  <p>Hello <a href="http://plot.ly/">Plot.ly</a>!</p>
+  <div id="myDiv" style="width:700px;height:400px;"></div>
+</body>
+
+</html>

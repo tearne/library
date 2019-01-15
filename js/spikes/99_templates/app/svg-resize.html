@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<div id="main">
+  <div id="chart-root">
+    <div id="chart-title"></div>
+    <div id="chart-draw-area" style="display:inline-block; background:red; min-width:200px; width:100%; height:600px">
+      <svg preserveAspectRatio="xMinYMin meet"></svg>
+    </div>
+  </div>
+</div>
+
+<script src="https://d3js.org/d3.v4.js"></script>
+<script>
+    d3.json("data/matrix.json", function(error, d) {
+      if (error) throw error;
+
+      let data = d.matrix
+      let root = d3.select("#chart-root")
+      root.select("#chart-title").text("SVG rescaled, not redrawn")
+
+      let svgParent = root.select("#chart-draw-area"),
+                svg = svgParent.select("svg")
+
+      let      bbox = svgParent.node().getBoundingClientRect(),
+          dimension = Math.min(bbox.width, bbox.height)
+
+      svg.attr('width', dimension)
+        .attr('height', dimension)
+        .attr("viewBox", "0 0 "+dimension+" "+dimension+" ")
+
+      let biggestNumCells = d3.max(data.map(d => Math.max(d.x, d.y)))
+      let cellSize = dimension / biggestNumCells
+
+      let colour = d3
+        .scaleLog()
+        .domain(d3.extent(data.map(d => d.value)))
+        .range([d3.rgb("#FFBAFF"), d3.rgb('#336520')]);
+
+      svg.append('g')
+        .selectAll('.cell')
+        .data(data)
+        .enter()
+        .append('rect')
+        .attr('class', 'cell')
+        .attr('x', d => cellSize * (d.x - 1))
+        .attr('y', d => cellSize * (d.y - 1))
+        .attr('width', cellSize)
+        .attr('height', cellSize)
+        .attr('fill', d => colour(d.value))
+
+      function resize(){
+        let      bbox = svgParent.node().getBoundingClientRect(),
+            dimension = Math.min(bbox.width, bbox.height)
+            xTranlate = (bbox.width - dimension) / 2
+
+        svg.attr("transform", "translate("+xTranlate+", 0 )")
+          .attr('width', dimension)
+          .attr('height', dimension)
+      }
+
+      resize()
+      window.addEventListener("resize", resize);
+    })
+</script>

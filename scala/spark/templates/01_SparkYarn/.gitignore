@@ -1,0 +1,12 @@
+dataOut
+
+.idea
+bin
+target
+project
+etc
+
+.cache
+.classpath
+.project
+.settings

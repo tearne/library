@@ -1,0 +1,16 @@
+{
+  "name": "04_jquery",
+  "version": "1.0.0",
+  "description": "Following JQuery tutorials",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "https://github.com/tearne/js_learning.git",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "http-server": "^0.9.0",
+    "jquery": "^2.2.1"
+  }
+}

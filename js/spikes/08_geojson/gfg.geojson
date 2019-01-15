@@ -1,0 +1,186 @@
+{
+"type": "FeatureCollection",
+                                                                                
+"features": [
+{ "type": "Feature", "id": 0, "properties": { "CTYID": 1, "CTY_Name": "BEDFORDSHIRE", "Shape_Leng": 246526.296394, "Shape_Area": 1235429540.6900001, "CTY_TXT": "01", "CentrdDD_X": -0.449936, "CentrdDD_Y": 52.0729, "percClad": 0.0, "areasqkm": 1235.4295406900001 }, "geometry": { "type": "Point", "coordinates": [ -0.451471857395937, 52.073774570765003 ] } }
+,
+{ "type": "Feature", "id": 1, "properties": { "CTYID": 2, "CTY_Name": "BERKSHIRE", "Shape_Leng": 296835.79344899999, "Shape_Area": 1263887520.0599999, "CTY_TXT": "02", "CentrdDD_X": -1.07083, "CentrdDD_Y": 51.4499, "percClad": 0.0, "areasqkm": 1263.88752006 }, "geometry": { "type": "Point", "coordinates": [ -1.07232825648276, 51.450487366404367 ] } }
+,
+{ "type": "Feature", "id": 2, "properties": { "CTYID": 3, "CTY_Name": "BUCKINGHAMSHIRE", "Shape_Leng": 415888.420147, "Shape_Area": 1873591638.9000001, "CTY_TXT": "03", "CentrdDD_X": -0.797582, "CentrdDD_Y": 51.8343, "percClad": 0.0, "areasqkm": 1873.5916389 }, "geometry": { "type": "Point", "coordinates": [ -0.799281832137917, 51.835767830954154 ] } }
+,
+{ "type": "Feature", "id": 3, "properties": { "CTYID": 4, "CTY_Name": "CLEVELAND", "Shape_Leng": 185675.614397, "Shape_Area": 616630225.76300001, "CTY_TXT": "04", "CentrdDD_X": -1.1797, "CentrdDD_Y": 54.5741, "percClad": 0.0, "areasqkm": 616.630225763 }, "geometry": { "type": "Point", "coordinates": [ -1.181350164876565, 54.574340511616739 ] } }
+,
+{ "type": "Feature", "id": 4, "properties": { "CTYID": 5, "CTY_Name": "CAMBRIDGESHIRE", "Shape_Leng": 428212.166542, "Shape_Area": 3397450263.5700002, "CTY_TXT": "05", "CentrdDD_X": 0.00598331, "CentrdDD_Y": 52.3668, "percClad": 0.0, "areasqkm": 3397.4502635700001 }, "geometry": { "type": "Point", "coordinates": [ 0.00409732886216, 52.368114256350481 ] } }
+,
+{ "type": "Feature", "id": 5, "properties": { "CTYID": 6, "CTY_Name": "CHESHIRE", "Shape_Leng": 348709.854477, "Shape_Area": 2378059022.4499998, "CTY_TXT": "06", "CentrdDD_X": -2.53125, "CentrdDD_Y": 53.2108, "percClad": 0.0, "areasqkm": 2378.0590224500002 }, "geometry": { "type": "Point", "coordinates": [ -2.532586553083817, 53.211462870696508 ] } }
+,
+{ "type": "Feature", "id": 6, "properties": { "CTYID": 7, "CTY_Name": "CORNWALL", "Shape_Leng": 785581.53930399998, "Shape_Area": 3613457674.6199999, "CTY_TXT": "07", "CentrdDD_X": -4.82387, "CentrdDD_Y": 50.4054, "percClad": 104.421993869, "areasqkm": 3613.45767462 }, "geometry": { "type": "Point", "coordinates": [ -4.823792468457263, 50.407202112431627 ] } }
+,
+{ "type": "Feature", "id": 7, "properties": { "CTYID": 8, "CTY_Name": "CUMBRIA", "Shape_Leng": 580134.60865099996, "Shape_Area": 7182195711.2200003, "CTY_TXT": "08", "CentrdDD_X": -2.91002, "CentrdDD_Y": 54.5768, "percClad": 0.0, "areasqkm": 7182.1957112199998 }, "geometry": { "type": "Point", "coordinates": [ -2.911296014042182, 54.579275218439577 ] } }
+,
+{ "type": "Feature", "id": 8, "properties": { "CTYID": 9, "CTY_Name": "DERBYSHIRE", "Shape_Leng": 417688.004304, "Shape_Area": 2628747242.3499999, "CTY_TXT": "09", "CentrdDD_X": -1.60975, "CentrdDD_Y": 53.1351, "percClad": 0.0, "areasqkm": 2628.7472423499999 }, "geometry": { "type": "Point", "coordinates": [ -1.611602145070993, 53.136688380320336 ] } }
+,
+{ "type": "Feature", "id": 9, "properties": { "CTYID": 10, "CTY_Name": "DEVONSHIRE", "Shape_Leng": 713707.127896, "Shape_Area": 6836103064.1999998, "CTY_TXT": "10", "CentrdDD_X": -3.80859, "CentrdDD_Y": 50.7504, "percClad": 138.35559982300001, "areasqkm": 6836.1030642 }, "geometry": { "type": "Point", "coordinates": [ -3.809939101700852, 50.752617230813385 ] } }
+,
+{ "type": "Feature", "id": 10, "properties": { "CTYID": 11, "CTY_Name": "DORSET", "Shape_Leng": 408188.04977899999, "Shape_Area": 2694774877.1999998, "CTY_TXT": "11", "CentrdDD_X": -2.30315, "CentrdDD_Y": 50.8019, "percClad": 125.034285056, "areasqkm": 2694.7748772 }, "geometry": { "type": "Point", "coordinates": [ -2.304491823642597, 50.802795520170065 ] } }
+,
+{ "type": "Feature", "id": 11, "properties": { "CTYID": 12, "CTY_Name": "DURHAM", "Shape_Leng": 333077.063226, "Shape_Area": 2430213184.3099999, "CTY_TXT": "12", "CentrdDD_X": -1.81475, "CentrdDD_Y": 54.6834, "percClad": 0.0, "areasqkm": 2430.2131843100001 }, "geometry": { "type": "Point", "coordinates": [ -1.816197742401108, 54.68399085247556 ] } }
+,
+{ "type": "Feature", "id": 12, "properties": { "CTYID": 13, "CTY_Name": "ESSEX", "Shape_Leng": 586303.48119299999, "Shape_Area": 3946658044.23, "CTY_TXT": "13", "CentrdDD_X": 0.576137, "CentrdDD_Y": 51.784, "percClad": 0.0, "areasqkm": 3946.6580442300001 }, "geometry": { "type": "Point", "coordinates": [ 0.57451138900934, 51.785249104892422 ] } }
+,
+{ "type": "Feature", "id": 13, "properties": { "CTYID": 14, "CTY_Name": "GLOUCESTERSHIRE", "Shape_Leng": 424757.53416, "Shape_Area": 2704848905.1300001, "CTY_TXT": "14", "CentrdDD_X": -2.12509, "CentrdDD_Y": 51.825, "percClad": 115.20728375100001, "areasqkm": 2704.8489051299998 }, "geometry": { "type": "Point", "coordinates": [ -2.126271494865231, 51.825871882064689 ] } }
+,
+{ "type": "Feature", "id": 14, "properties": { "CTYID": 15, "CTY_Name": "HAMPSHIRE", "Shape_Leng": 443923.678345, "Shape_Area": 3865020603.5799999, "CTY_TXT": "15", "CentrdDD_X": -1.28486, "CentrdDD_Y": 51.058, "percClad": 0.0, "areasqkm": 3865.0206035800002 }, "geometry": { "type": "Point", "coordinates": [ -1.285961374050016, 51.059392083216352 ] } }
+,
+{ "type": "Feature", "id": 15, "properties": { "CTYID": 16, "CTY_Name": "ISLE OF WIGHT", "Shape_Leng": 132976.73556, "Shape_Area": 394899445.80000001, "CTY_TXT": "16", "CentrdDD_X": -1.29478, "CentrdDD_Y": 50.6754, "percClad": 0.0, "areasqkm": 394.89944580000002 }, "geometry": { "type": "Point", "coordinates": [ -1.296227970983886, 50.675950722591907 ] } }
+,
+{ "type": "Feature", "id": 16, "properties": { "CTYID": 17, "CTY_Name": "HEREFORDSHIRE", "Shape_Leng": 538184.91947099997, "Shape_Area": 3920249107.6799998, "CTY_TXT": "17", "CentrdDD_X": -2.48768, "CentrdDD_Y": 52.1567, "percClad": 120.410958636, "areasqkm": 3920.2491076800002 }, "geometry": { "type": "Point", "coordinates": [ -2.488763767984104, 52.157661945270796 ] } }
+,
+{ "type": "Feature", "id": 17, "properties": { "CTYID": 18, "CTY_Name": "HERTFORD", "Shape_Leng": 302888.259405, "Shape_Area": 1643064813.3399999, "CTY_TXT": "18", "CentrdDD_X": -0.215377, "CentrdDD_Y": 51.8293, "percClad": 0.0, "areasqkm": 1643.06481334 }, "geometry": { "type": "Point", "coordinates": [ -0.216757584458199, 51.830068127422543 ] } }
+,
+{ "type": "Feature", "id": 18, "properties": { "CTYID": 20, "CTY_Name": "KENT", "Shape_Leng": 381298.122019, "Shape_Area": 3907912317.3299999, "CTY_TXT": "20", "CentrdDD_X": 0.725577, "CentrdDD_Y": 51.2361, "percClad": 0.0, "areasqkm": 3907.91231733 }, "geometry": { "type": "Point", "coordinates": [ 0.723779028651241, 51.237127662878031 ] } }
+,
+{ "type": "Feature", "id": 19, "properties": { "CTYID": 21, "CTY_Name": "LANCASHIRE", "Shape_Leng": 401879.912864, "Shape_Area": 3255229490.5599999, "CTY_TXT": "21", "CentrdDD_X": -2.62806, "CentrdDD_Y": 53.844, "percClad": 0.0, "areasqkm": 3255.2294905600002 }, "geometry": { "type": "Point", "coordinates": [ -2.629444314527342, 53.845143726541266 ] } }
+,
+{ "type": "Feature", "id": 20, "properties": { "CTYID": 22, "CTY_Name": "LEICESTERSHIRE", "Shape_Leng": 342633.255171, "Shape_Area": 2550865694.8000002, "CTY_TXT": "22", "CentrdDD_X": -1.04163, "CentrdDD_Y": 52.6654, "percClad": 0.0, "areasqkm": 2550.8656948 }, "geometry": { "type": "Point", "coordinates": [ -1.043078698547995, 52.666151029472829 ] } }
+,
+{ "type": "Feature", "id": 21, "properties": { "CTYID": 24, "CTY_Name": "LINCOLNSHIRE", "Shape_Leng": 585344.450134, "Shape_Area": 6106591267.8800001, "CTY_TXT": "24", "CentrdDD_X": -0.236006, "CentrdDD_Y": 53.1125, "percClad": 0.0, "areasqkm": 6106.5912678799996 }, "geometry": { "type": "Point", "coordinates": [ -0.237687642777051, 53.114691522755898 ] } }
+,
+{ "type": "Feature", "id": 22, "properties": { "CTYID": 25, "CTY_Name": "MERSEYSIDE", "Shape_Leng": 267608.42375, "Shape_Area": 824598552.40900004, "CTY_TXT": "25", "CentrdDD_X": -2.95326, "CentrdDD_Y": 53.4441, "percClad": 0.0, "areasqkm": 824.59855240900004 }, "geometry": { "type": "Point", "coordinates": [ -2.954622532624874, 53.444615808259123 ] } }
+,
+{ "type": "Feature", "id": 23, "properties": { "CTYID": 26, "CTY_Name": "GREATER LONDON - EAST", "Shape_Leng": 154925.340426, "Shape_Area": 587166319.17400002, "CTY_TXT": "26", "CentrdDD_X": -0.0051066, "CentrdDD_Y": 51.5795, "percClad": 0.0, "areasqkm": 587.16631917400002 }, "geometry": { "type": "Point", "coordinates": [ -0.006759622103401, 51.580048752223334 ] } }
+,
+{ "type": "Feature", "id": 24, "properties": { "CTYID": 27, "CTY_Name": "GREATER LONDON", "Shape_Leng": 229998.21680299999, "Shape_Area": 1007556041.77, "CTY_TXT": "27", "CentrdDD_X": -0.167763, "CentrdDD_Y": 51.4535, "percClad": 0.0, "areasqkm": 1007.55604177 }, "geometry": { "type": "Point", "coordinates": [ -0.169514280687775, 51.454205613836322 ] } }
+,
+{ "type": "Feature", "id": 25, "properties": { "CTYID": 28, "CTY_Name": "NORFOLK", "Shape_Leng": 446978.372396, "Shape_Area": 5497986048.0299997, "CTY_TXT": "28", "CentrdDD_X": 0.949098, "CentrdDD_Y": 52.6747, "percClad": 0.0, "areasqkm": 5497.9860480300003 }, "geometry": { "type": "Point", "coordinates": [ 0.947228597716081, 52.67584369672705 ] } }
+,
+{ "type": "Feature", "id": 26, "properties": { "CTYID": 29, "CTY_Name": "NORTHAMPTONSHIRE", "Shape_Leng": 380438.418046, "Shape_Area": 2366977922.27, "CTY_TXT": "29", "CentrdDD_X": -0.863153, "CentrdDD_Y": 52.3073, "percClad": 0.0, "areasqkm": 2366.9779222699999 }, "geometry": { "type": "Point", "coordinates": [ -0.864147110659412, 52.308384592553239 ] } }
+,
+{ "type": "Feature", "id": 27, "properties": { "CTYID": 30, "CTY_Name": "TYNE & WEAR", "Shape_Leng": 184635.673784, "Shape_Area": 623134557.70599997, "CTY_TXT": "30", "CentrdDD_X": -1.56139, "CentrdDD_Y": 54.9703, "percClad": 0.0, "areasqkm": 623.13455770600001 }, "geometry": { "type": "Point", "coordinates": [ -1.563001541831117, 54.970552248632785 ] } }
+,
+{ "type": "Feature", "id": 28, "properties": { "CTYID": 31, "CTY_Name": "NORTHUMBERLAND", "Shape_Leng": 547030.974426, "Shape_Area": 5006435403.3699999, "CTY_TXT": "31", "CentrdDD_X": -2.07118, "CentrdDD_Y": 55.2446, "percClad": 0.0, "areasqkm": 5006.4354033700001 }, "geometry": { "type": "Point", "coordinates": [ -2.072212029961231, 55.246856809849909 ] } }
+,
+{ "type": "Feature", "id": 29, "properties": { "CTYID": 32, "CTY_Name": "NOTTINGHAMSHIRE", "Shape_Leng": 303012.232579, "Shape_Area": 2161567720.3200002, "CTY_TXT": "32", "CentrdDD_X": -1.0107, "CentrdDD_Y": 53.1274, "percClad": 0.0, "areasqkm": 2161.5677203199998 }, "geometry": { "type": "Point", "coordinates": [ -1.012065568669077, 53.128709195647545 ] } }
+,
+{ "type": "Feature", "id": 30, "properties": { "CTYID": 33, "CTY_Name": "OXFORDSHIRE", "Shape_Leng": 413240.67060399998, "Shape_Area": 2605947663.21, "CTY_TXT": "33", "CentrdDD_X": -1.32084, "CentrdDD_Y": 51.7653, "percClad": 0.0, "areasqkm": 2605.94766321 }, "geometry": { "type": "Point", "coordinates": [ -1.322499923481962, 51.766529155733707 ] } }
+,
+{ "type": "Feature", "id": 31, "properties": { "CTYID": 34, "CTY_Name": "AVON", "Shape_Leng": 245083.334773, "Shape_Area": 1390573711.8399999, "CTY_TXT": "34", "CentrdDD_X": -2.57368, "CentrdDD_Y": 51.4476, "percClad": 76.507521587799999, "areasqkm": 1390.57371184 }, "geometry": { "type": "Point", "coordinates": [ -2.574912278829322, 51.448357614952528 ] } }
+,
+{ "type": "Feature", "id": 32, "properties": { "CTYID": 35, "CTY_Name": "SHROPSHIRE", "Shape_Leng": 496849.249872, "Shape_Area": 3487667754.5, "CTY_TXT": "35", "CentrdDD_X": -2.71233, "CentrdDD_Y": 52.643, "percClad": 147.971232198, "areasqkm": 3487.6677545 }, "geometry": { "type": "Point", "coordinates": [ -2.713714003131714, 52.644339896510274 ] } }
+,
+{ "type": "Feature", "id": 33, "properties": { "CTYID": 36, "CTY_Name": "SOMERSET", "Shape_Leng": 460945.302411, "Shape_Area": 3516233036.3299999, "CTY_TXT": "36", "CentrdDD_X": -2.94066, "CentrdDD_Y": 51.1009, "percClad": 386.84080874799997, "areasqkm": 3516.2330363299998 }, "geometry": { "type": "Point", "coordinates": [ -2.941895284285357, 51.101712360928595 ] } }
+,
+{ "type": "Feature", "id": 34, "properties": { "CTYID": 37, "CTY_Name": "STAFFORDSHIRE", "Shape_Leng": 437476.92540499999, "Shape_Area": 2716773428.3099999, "CTY_TXT": "37", "CentrdDD_X": -2.03542, "CentrdDD_Y": 52.8574, "percClad": 115.29618465, "areasqkm": 2716.7734283099999 }, "geometry": { "type": "Point", "coordinates": [ -2.036906661530297, 52.858718387920284 ] } }
+,
+{ "type": "Feature", "id": 35, "properties": { "CTYID": 38, "CTY_Name": "SUFFOLK", "Shape_Leng": 449111.611548, "Shape_Area": 3854437463.0900002, "CTY_TXT": "38", "CentrdDD_X": 1.06488, "CentrdDD_Y": 52.2185, "percClad": 0.0, "areasqkm": 3854.4374630900002 }, "geometry": { "type": "Point", "coordinates": [ 1.063257380929127, 52.219532205492641 ] } }
+,
+{ "type": "Feature", "id": 36, "properties": { "CTYID": 39, "CTY_Name": "ISLES OF SCILLY", "Shape_Leng": 176559.019711, "Shape_Area": 22849409.5317, "CTY_TXT": "39", "CentrdDD_X": -6.31636, "CentrdDD_Y": 49.9363, "percClad": 0.0, "areasqkm": 22.849409531700001 }, "geometry": { "type": "Point", "coordinates": [ -6.317320887672853, 49.936814449910329 ] } }
+,
+{ "type": "Feature", "id": 37, "properties": { "CTYID": 40, "CTY_Name": "SURREY", "Shape_Leng": 273256.91723899997, "Shape_Area": 1670048729.9000001, "CTY_TXT": "40", "CentrdDD_X": -0.419034, "CentrdDD_Y": 51.2473, "percClad": 0.0, "areasqkm": 1670.0487299 }, "geometry": { "type": "Point", "coordinates": [ -0.420581342318122, 51.248050697698368 ] } }
+,
+{ "type": "Feature", "id": 38, "properties": { "CTYID": 41, "CTY_Name": "EAST SUSSEX", "Shape_Leng": 287111.107724, "Shape_Area": 1810755130.8199999, "CTY_TXT": "41", "CentrdDD_X": 0.258689, "CentrdDD_Y": 50.9362, "percClad": 0.0, "areasqkm": 1810.75513082 }, "geometry": { "type": "Point", "coordinates": [ 0.257127529332344, 50.936967732427625 ] } }
+,
+{ "type": "Feature", "id": 39, "properties": { "CTYID": 42, "CTY_Name": "WEST SUSSEX", "Shape_Leng": 280193.10432899999, "Shape_Area": 2030241369.05, "CTY_TXT": "42", "CentrdDD_X": -0.493527, "CentrdDD_Y": 50.9547, "percClad": 0.0, "areasqkm": 2030.24136905 }, "geometry": { "type": "Point", "coordinates": [ -0.494811262491086, 50.95551920778216 ] } }
+,
+{ "type": "Feature", "id": 40, "properties": { "CTYID": 43, "CTY_Name": "WARWICKSHIRE", "Shape_Leng": 397567.15679199999, "Shape_Area": 1977534491.47, "CTY_TXT": "43", "CentrdDD_X": -1.55807, "CentrdDD_Y": 52.3002, "percClad": 0.0, "areasqkm": 1977.5344914699999 }, "geometry": { "type": "Point", "coordinates": [ -1.559459140602261, 52.301409892134217 ] } }
+,
+{ "type": "Feature", "id": 41, "properties": { "CTYID": 44, "CTY_Name": "GREATER MANCHESTER", "Shape_Leng": 249126.477292, "Shape_Area": 1278230129.4400001, "CTY_TXT": "44", "CentrdDD_X": -2.28327, "CentrdDD_Y": 53.5148, "percClad": 0.0, "areasqkm": 1278.2301294399999 }, "geometry": { "type": "Point", "coordinates": [ -2.284746626985021, 53.515263856091408 ] } }
+,
+{ "type": "Feature", "id": 42, "properties": { "CTYID": 45, "CTY_Name": "WILTSHIRE", "Shape_Leng": 389454.87666, "Shape_Area": 3476103099.8600001, "CTY_TXT": "45", "CentrdDD_X": -1.93068, "CentrdDD_Y": 51.3156, "percClad": 150.947829536, "areasqkm": 3476.1030998599999 }, "geometry": { "type": "Point", "coordinates": [ -1.932046867256562, 51.317147699128967 ] } }
+,
+{ "type": "Feature", "id": 43, "properties": { "CTYID": 46, "CTY_Name": "WEST MIDLANDS", "Shape_Leng": 256453.559119, "Shape_Area": 901630546.73399997, "CTY_TXT": "46", "CentrdDD_X": -1.87313, "CentrdDD_Y": 52.488, "percClad": 0.0, "areasqkm": 901.63054673399995 }, "geometry": { "type": "Point", "coordinates": [ -1.874760566312448, 52.488504516849616 ] } }
+,
+{ "type": "Feature", "id": 44, "properties": { "CTYID": 47, "CTY_Name": "SOUTH YORKSHIRE", "Shape_Leng": 250400.594389, "Shape_Area": 1552047401.71, "CTY_TXT": "47", "CentrdDD_X": -1.32961, "CentrdDD_Y": 53.4842, "percClad": 0.0, "areasqkm": 1552.04740171 }, "geometry": { "type": "Point", "coordinates": [ -1.330999594559615, 53.484664221534608 ] } }
+,
+{ "type": "Feature", "id": 45, "properties": { "CTYID": 48, "CTY_Name": "NORTH YORKSHIRE", "Shape_Leng": 637601.94249499997, "Shape_Area": 7570850543.4300003, "CTY_TXT": "48", "CentrdDD_X": -1.434, "CentrdDD_Y": 54.2188, "percClad": 0.0, "areasqkm": 7570.8505434299996 }, "geometry": { "type": "Point", "coordinates": [ -1.43518635455551, 54.219857629357591 ] } }
+,
+{ "type": "Feature", "id": 46, "properties": { "CTYID": 49, "CTY_Name": "WEST YORKSHIRE", "Shape_Leng": 282014.60418299999, "Shape_Area": 2029274806.1199999, "CTY_TXT": "49", "CentrdDD_X": -1.68737, "CentrdDD_Y": 53.7429, "percClad": 0.0, "areasqkm": 2029.27480612 }, "geometry": { "type": "Point", "coordinates": [ -1.688876432711848, 53.743474741242586 ] } }
+,
+{ "type": "Feature", "id": 47, "properties": { "CTYID": 50, "CTY_Name": "NORTH YORKSHIRE (SOUTHERN)", "Shape_Leng": 194940.447072, "Shape_Area": 754356389.11300004, "CTY_TXT": "50", "CentrdDD_X": -1.11499, "CentrdDD_Y": 53.8154, "percClad": 0.0, "areasqkm": 754.35638911299998 }, "geometry": { "type": "Point", "coordinates": [ -1.116530076794127, 53.815844677352459 ] } }
+,
+{ "type": "Feature", "id": 48, "properties": { "CTYID": 51, "CTY_Name": "HUMBERSIDE", "Shape_Leng": 550077.420193, "Shape_Area": 3657622778.27, "CTY_TXT": "51", "CentrdDD_X": -0.484201, "CentrdDD_Y": 53.782, "percClad": 0.0, "areasqkm": 3657.6227782699998 }, "geometry": { "type": "Point", "coordinates": [ -0.485815124485764, 53.78326949990165 ] } }
+,
+{ "type": "Feature", "id": 49, "properties": { "CTYID": 52, "CTY_Name": "POWYS", "Shape_Leng": 588382.310103, "Shape_Area": 5071784902.5799999, "CTY_TXT": "52", "CentrdDD_X": -3.41239, "CentrdDD_Y": 52.3123, "percClad": 0.0, "areasqkm": 5071.7849025799997 }, "geometry": { "type": "Point", "coordinates": [ -3.41364268121475, 52.315554548570248 ] } }
+,
+{ "type": "Feature", "id": 50, "properties": { "CTYID": 53, "CTY_Name": "GWYNEDD", "Shape_Leng": 743794.27838, "Shape_Area": 4021964214.5300002, "CTY_TXT": "53", "CentrdDD_X": -4.05614, "CentrdDD_Y": 53.0055, "percClad": 0.0, "areasqkm": 4021.9642145299999 }, "geometry": { "type": "Point", "coordinates": [ -4.057901409177124, 53.007276548581586 ] } }
+,
+{ "type": "Feature", "id": 51, "properties": { "CTYID": 55, "CTY_Name": "DYFED", "Shape_Leng": 792990.591521, "Shape_Area": 5868138322.2200003, "CTY_TXT": "55", "CentrdDD_X": -4.33509, "CentrdDD_Y": 51.9975, "percClad": 0.0, "areasqkm": 5868.1383222200002 }, "geometry": { "type": "Point", "coordinates": [ -4.335207909867959, 51.999408096403648 ] } }
+,
+{ "type": "Feature", "id": 52, "properties": { "CTYID": 56, "CTY_Name": "CLWYD", "Shape_Leng": 378798.00656299997, "Shape_Area": 2464055829.27, "CTY_TXT": "56", "CentrdDD_X": -3.29504, "CentrdDD_Y": 53.0977, "percClad": 0.0, "areasqkm": 2464.0558292699998 }, "geometry": { "type": "Point", "coordinates": [ -3.296580682490315, 53.098525662886743 ] } }
+,
+{ "type": "Feature", "id": 53, "properties": { "CTYID": 57, "CTY_Name": "SOUTH GLAMORGAN", "Shape_Leng": 133163.747787, "Shape_Area": 433169096.04500002, "CTY_TXT": "57", "CentrdDD_X": -3.31905, "CentrdDD_Y": 51.4613, "percClad": 0.0, "areasqkm": 433.169096045 }, "geometry": { "type": "Point", "coordinates": [ -3.320281856705514, 51.461766826387404 ] } }
+,
+{ "type": "Feature", "id": 54, "properties": { "CTYID": 58, "CTY_Name": "MID GLAMORGAN", "Shape_Leng": 223244.416145, "Shape_Area": 1023510066.5, "CTY_TXT": "58", "CentrdDD_X": -3.43542, "CentrdDD_Y": 51.6272, "percClad": 0.0, "areasqkm": 1023.5100665 }, "geometry": { "type": "Point", "coordinates": [ -3.436618975484553, 51.627839434843445 ] } }
+,
+{ "type": "Feature", "id": 55, "properties": { "CTYID": 59, "CTY_Name": "WEST GLAMORGAN", "Shape_Leng": 219416.157958, "Shape_Area": 846035432.92499995, "CTY_TXT": "59", "CentrdDD_X": -3.88703, "CentrdDD_Y": 51.6618, "percClad": 0.0, "areasqkm": 846.03543292500001 }, "geometry": { "type": "Point", "coordinates": [ -3.888154452769077, 51.662383326200306 ] } }
+,
+{ "type": "Feature", "id": 56, "properties": { "CTYID": 60, "CTY_Name": "GWENT", "Shape_Leng": 234560.27979299999, "Shape_Area": 1399643538.72, "CTY_TXT": "60", "CentrdDD_X": -2.94627, "CentrdDD_Y": 51.7231, "percClad": 0.0, "areasqkm": 1399.6435387199999 }, "geometry": { "type": "Point", "coordinates": [ -2.947605655981454, 51.723890397462142 ] } }
+,
+{ "type": "Feature", "id": 57, "properties": { "CTYID": 66, "CTY_Name": "ABERDEENSHIRE", "Shape_Leng": 553405.518885, "Shape_Area": 5146037540.3199997, "CTY_TXT": "66", "CentrdDD_X": -2.65752, "CentrdDD_Y": 57.2666, "percClad": 0.0, "areasqkm": 5146.0375403199996 }, "geometry": { "type": "Point", "coordinates": [ -2.657127150046283, 57.268154698373728 ] } }
+,
+{ "type": "Feature", "id": 58, "properties": { "CTYID": 67, "CTY_Name": "ANGUS", "Shape_Leng": 288795.92206399998, "Shape_Area": 2313182499.6799998, "CTY_TXT": "67", "CentrdDD_X": -2.92824, "CentrdDD_Y": 56.7119, "percClad": 0.0, "areasqkm": 2313.1824996800001 }, "geometry": { "type": "Point", "coordinates": [ -2.92982601747361, 56.712551387572951 ] } }
+,
+{ "type": "Feature", "id": 59, "properties": { "CTYID": 68, "CTY_Name": "ARGYLL", "Shape_Leng": 3106269.9359499998, "Shape_Area": 8210862860.6599998, "CTY_TXT": "68", "CentrdDD_X": -5.52419, "CentrdDD_Y": 56.2446, "percClad": 0.0, "areasqkm": 8210.8628606599996 }, "geometry": { "type": "Point", "coordinates": [ -5.524551797020793, 56.249860554327142 ] } }
+,
+{ "type": "Feature", "id": 60, "properties": { "CTYID": 69, "CTY_Name": "AYRSHIRE", "Shape_Leng": 428924.39663799998, "Shape_Area": 2953843672.7399998, "CTY_TXT": "69", "CentrdDD_X": -4.53515, "CentrdDD_Y": 55.4275, "percClad": 0.0, "areasqkm": 2953.8436727399999 }, "geometry": { "type": "Point", "coordinates": [ -4.536126923059929, 55.429187389732796 ] } }
+,
+{ "type": "Feature", "id": 61, "properties": { "CTYID": 70, "CTY_Name": "BANFFSHIRE", "Shape_Leng": 379403.134465, "Shape_Area": 1649799829.1900001, "CTY_TXT": "70", "CentrdDD_X": -3.02572, "CentrdDD_Y": 57.444, "percClad": 0.0, "areasqkm": 1649.7998291900001 }, "geometry": { "type": "Point", "coordinates": [ -3.0260516016889, 57.444957908781475 ] } }
+,
+{ "type": "Feature", "id": 62, "properties": { "CTYID": 71, "CTY_Name": "BERWICKSHIRE", "Shape_Leng": 228435.00568199999, "Shape_Area": 1193004856.1800001, "CTY_TXT": "71", "CentrdDD_X": -2.44423, "CentrdDD_Y": 55.7674, "percClad": 0.0, "areasqkm": 1193.0048561799999 }, "geometry": { "type": "Point", "coordinates": [ -2.445608748012489, 55.76761612337171 ] } }
+,
+{ "type": "Feature", "id": 63, "properties": { "CTYID": 72, "CTY_Name": "BUTE", "Shape_Leng": 212482.56446699999, "Shape_Area": 574078898.79999995, "CTY_TXT": "72", "CentrdDD_X": -5.19802, "CentrdDD_Y": 55.6325, "percClad": 0.0, "areasqkm": 574.07889880000005 }, "geometry": { "type": "Point", "coordinates": [ -5.199106799380464, 55.633144231531233 ] } }
+,
+{ "type": "Feature", "id": 64, "properties": { "CTYID": 73, "CTY_Name": "CAITHNESS", "Shape_Leng": 257208.22767, "Shape_Area": 1806192202.47, "CTY_TXT": "73", "CentrdDD_X": -3.46585, "CentrdDD_Y": 58.4284, "percClad": 0.0, "areasqkm": 1806.19220247 }, "geometry": { "type": "Point", "coordinates": [ -3.467113864387133, 58.428780209245588 ] } }
+,
+{ "type": "Feature", "id": 65, "properties": { "CTYID": 74, "CTY_Name": "CLACKMANNAN", "Shape_Leng": 68507.236398499997, "Shape_Area": 142128691.345, "CTY_TXT": "74", "CentrdDD_X": -3.75343, "CentrdDD_Y": 56.1485, "percClad": 0.0, "areasqkm": 142.12869134499999 }, "geometry": { "type": "Point", "coordinates": [ -3.754819144830994, 56.148500183609777 ] } }
+,
+{ "type": "Feature", "id": 66, "properties": { "CTYID": 75, "CTY_Name": "DUMFRIESSHIRE", "Shape_Leng": 342143.042595, "Shape_Area": 2789112694.54, "CTY_TXT": "75", "CentrdDD_X": -3.47466, "CentrdDD_Y": 55.2092, "percClad": 0.0, "areasqkm": 2789.1126945400001 }, "geometry": { "type": "Point", "coordinates": [ -3.47641198210896, 55.209717733010578 ] } }
+,
+{ "type": "Feature", "id": 67, "properties": { "CTYID": 76, "CTY_Name": "DUMBARTONSHIRE", "Shape_Leng": 273672.573362, "Shape_Area": 695341339.66900003, "CTY_TXT": "76", "CentrdDD_X": -4.56448, "CentrdDD_Y": 56.0516, "percClad": 0.0, "areasqkm": 695.34133966900004 }, "geometry": { "type": "Point", "coordinates": [ -4.566195159131977, 56.052058844070743 ] } }
+,
+{ "type": "Feature", "id": 68, "properties": { "CTYID": 77, "CTY_Name": "EAST LOTHIAN", "Shape_Leng": 158830.813348, "Shape_Area": 706959337.30200005, "CTY_TXT": "77", "CentrdDD_X": -2.69873, "CentrdDD_Y": 55.9366, "percClad": 0.0, "areasqkm": 706.95933730199999 }, "geometry": { "type": "Point", "coordinates": [ -2.700226824894187, 55.936689182740658 ] } }
+,
+{ "type": "Feature", "id": 69, "properties": { "CTYID": 78, "CTY_Name": "FIFE", "Shape_Leng": 294628.427035, "Shape_Area": 1320670038.71, "CTY_TXT": "78", "CentrdDD_X": -3.12205, "CentrdDD_Y": 56.2293, "percClad": 0.0, "areasqkm": 1320.67003871 }, "geometry": { "type": "Point", "coordinates": [ -3.123017788172945, 56.229660744516188 ] } }
+,
+{ "type": "Feature", "id": 70, "properties": { "CTYID": 79, "CTY_Name": "INVERNESS-SHIRE", "Shape_Leng": 3456221.7049199999, "Shape_Area": 11277584463.6, "CTY_TXT": "79", "CentrdDD_X": -5.22238, "CentrdDD_Y": 57.2002, "percClad": 0.0, "areasqkm": 11277.5844636 }, "geometry": { "type": "Point", "coordinates": [ -5.226845412977887, 57.202968753743669 ] } }
+,
+{ "type": "Feature", "id": 71, "properties": { "CTYID": 80, "CTY_Name": "KINCARDINESHIRE", "Shape_Leng": 170059.574858, "Shape_Area": 984071171.55700004, "CTY_TXT": "80", "CentrdDD_X": -2.42274, "CentrdDD_Y": 56.9466, "percClad": 0.0, "areasqkm": 984.07117155699996 }, "geometry": { "type": "Point", "coordinates": [ -2.424198322819356, 56.946844270441886 ] } }
+,
+{ "type": "Feature", "id": 72, "properties": { "CTYID": 81, "CTY_Name": "KINROSS", "Shape_Leng": 92202.453171700006, "Shape_Area": 230361325.91999999, "CTY_TXT": "81", "CentrdDD_X": -3.45309, "CentrdDD_Y": 56.2002, "percClad": 0.0, "areasqkm": 230.36132592000001 }, "geometry": { "type": "Point", "coordinates": [ -3.454500410076423, 56.200175511145737 ] } }
+,
+{ "type": "Feature", "id": 73, "properties": { "CTYID": 82, "CTY_Name": "KIRKCUDBRIGHT", "Shape_Leng": 336595.463079, "Shape_Area": 2352936645.6799998, "CTY_TXT": "82", "CentrdDD_X": -4.10353, "CentrdDD_Y": 55.0239, "percClad": 0.0, "areasqkm": 2352.9366456799999 }, "geometry": { "type": "Point", "coordinates": [ -4.10507378590745, 55.024532074229171 ] } }
+,
+{ "type": "Feature", "id": 74, "properties": { "CTYID": 83, "CTY_Name": "LANARKSHIRE", "Shape_Leng": 313954.67142899998, "Shape_Area": 2299510407.98, "CTY_TXT": "83", "CentrdDD_X": -3.85655, "CentrdDD_Y": 55.6665, "percClad": 0.0, "areasqkm": 2299.5104079799999 }, "geometry": { "type": "Point", "coordinates": [ -3.858306610670531, 55.667391672668302 ] } }
+,
+{ "type": "Feature", "id": 75, "properties": { "CTYID": 84, "CTY_Name": "MIDLOTHIAN & EDINBURGH", "Shape_Leng": 219414.50862499999, "Shape_Area": 960260699.64199996, "CTY_TXT": "84", "CentrdDD_X": -3.19155, "CentrdDD_Y": 55.8353, "percClad": 0.0, "areasqkm": 960.26069964199996 }, "geometry": { "type": "Point", "coordinates": [ -3.193125991352695, 55.835529388328311 ] } }
+,
+{ "type": "Feature", "id": 76, "properties": { "CTYID": 85, "CTY_Name": "MORAY", "Shape_Leng": 226542.06462, "Shape_Area": 1243222362.5999999, "CTY_TXT": "85", "CentrdDD_X": -3.43866, "CentrdDD_Y": 57.5347, "percClad": 0.0, "areasqkm": 1243.2223626 }, "geometry": { "type": "Point", "coordinates": [ -3.439898952858405, 57.53496672504631 ] } }
+,
+{ "type": "Feature", "id": 77, "properties": { "CTYID": 86, "CTY_Name": "NAIRN", "Shape_Leng": 114806.29545, "Shape_Area": 419965314.949, "CTY_TXT": "86", "CentrdDD_X": -3.84931, "CentrdDD_Y": 57.4861, "percClad": 0.0, "areasqkm": 419.965314949 }, "geometry": { "type": "Point", "coordinates": [ -3.850728606236918, 57.486130788664973 ] } }
+,
+{ "type": "Feature", "id": 78, "properties": { "CTYID": 87, "CTY_Name": "ORKNEY", "Shape_Leng": 929469.295491, "Shape_Area": 1017941715.4299999, "CTY_TXT": "87", "CentrdDD_X": -3.04766, "CentrdDD_Y": 59.0246, "percClad": 0.0, "areasqkm": 1017.94171543 }, "geometry": { "type": "Point", "coordinates": [ -3.048828312490255, 59.025228325210527 ] } }
+,
+{ "type": "Feature", "id": 79, "properties": { "CTYID": 88, "CTY_Name": "PEEBLES", "Shape_Leng": 192861.830288, "Shape_Area": 897261379.33500004, "CTY_TXT": "88", "CentrdDD_X": -3.28797, "CentrdDD_Y": 55.6221, "percClad": 0.0, "areasqkm": 897.26137933500002 }, "geometry": { "type": "Point", "coordinates": [ -3.289282720765876, 55.622488811797488 ] } }
+,
+{ "type": "Feature", "id": 80, "properties": { "CTYID": 89, "CTY_Name": "PERTH", "Shape_Leng": 554413.82585799997, "Shape_Area": 6576628841.5699997, "CTY_TXT": "89", "CentrdDD_X": -3.96294, "CentrdDD_Y": 56.524, "percClad": 0.0, "areasqkm": 6576.6288415700001 }, "geometry": { "type": "Point", "coordinates": [ -3.964012017431974, 56.525515259327619 ] } }
+,
+{ "type": "Feature", "id": 81, "properties": { "CTYID": 90, "CTY_Name": "RENFREW", "Shape_Leng": 162306.29671, "Shape_Area": 622360328.01300001, "CTY_TXT": "90", "CentrdDD_X": -4.5359, "CentrdDD_Y": 55.8338, "percClad": 0.0, "areasqkm": 622.36032801299996 }, "geometry": { "type": "Point", "coordinates": [ -4.537394678146907, 55.833925318076552 ] } }
+,
+{ "type": "Feature", "id": 82, "properties": { "CTYID": 91, "CTY_Name": "ROSS & CROMARTY", "Shape_Leng": 1992699.46546, "Shape_Area": 8292258215.1599998, "CTY_TXT": "91", "CentrdDD_X": -5.35538, "CentrdDD_Y": 57.7707, "percClad": 0.0, "areasqkm": 8292.25821516 }, "geometry": { "type": "Point", "coordinates": [ -5.359898697087489, 57.774147778918611 ] } }
+,
+{ "type": "Feature", "id": 83, "properties": { "CTYID": 92, "CTY_Name": "ROXBURGH", "Shape_Leng": 316471.311647, "Shape_Area": 1724796976.3299999, "CTY_TXT": "92", "CentrdDD_X": -2.64548, "CentrdDD_Y": 55.4262, "percClad": 0.0, "areasqkm": 1724.79697633 }, "geometry": { "type": "Point", "coordinates": [ -2.646660161035003, 55.426838073077818 ] } }
+,
+{ "type": "Feature", "id": 84, "properties": { "CTYID": 93, "CTY_Name": "SELKIRK", "Shape_Leng": 183417.348724, "Shape_Area": 695767246.33200002, "CTY_TXT": "93", "CentrdDD_X": -3.04596, "CentrdDD_Y": 55.4998, "percClad": 0.0, "areasqkm": 695.76724633200001 }, "geometry": { "type": "Point", "coordinates": [ -3.04723971177243, 55.500001730020685 ] } }
+,
+{ "type": "Feature", "id": 85, "properties": { "CTYID": 94, "CTY_Name": "SHETLAND", "Shape_Leng": 1633178.50248, "Shape_Area": 1464483208.0599999, "CTY_TXT": "94", "CentrdDD_X": -1.2546, "CentrdDD_Y": 60.3814, "percClad": 0.0, "areasqkm": 1464.4832080599999 }, "geometry": { "type": "Point", "coordinates": [ -1.255669534990846, 60.383357239882223 ] } }
+,
+{ "type": "Feature", "id": 86, "properties": { "CTYID": 95, "CTY_Name": "STIRLING", "Shape_Leng": 301984.08872, "Shape_Area": 1200410257.97, "CTY_TXT": "95", "CentrdDD_X": -4.16377, "CentrdDD_Y": 56.0629, "percClad": 0.0, "areasqkm": 1200.41025797 }, "geometry": { "type": "Point", "coordinates": [ -4.165435691158859, 56.06315088818674 ] } }
+,
+{ "type": "Feature", "id": 87, "properties": { "CTYID": 96, "CTY_Name": "SUTHERLAND", "Shape_Leng": 874808.157877, "Shape_Area": 5438952399.1999998, "CTY_TXT": "96", "CentrdDD_X": -4.45184, "CentrdDD_Y": 58.2519, "percClad": 0.0, "areasqkm": 5438.9523992000004 }, "geometry": { "type": "Point", "coordinates": [ -4.453446109528064, 58.252930675097744 ] } }
+,
+{ "type": "Feature", "id": 88, "properties": { "CTYID": 97, "CTY_Name": "WEST LOTHIAN", "Shape_Leng": 118583.014154, "Shape_Area": 320376908.47899997, "CTY_TXT": "97", "CentrdDD_X": -3.57814, "CentrdDD_Y": 55.9301, "percClad": 0.0, "areasqkm": 320.37690847900001 }, "geometry": { "type": "Point", "coordinates": [ -3.579465369951699, 55.930186679435998 ] } }
+,
+{ "type": "Feature", "id": 89, "properties": { "CTYID": 98, "CTY_Name": "WIGTOWN", "Shape_Leng": 285902.91525899997, "Shape_Area": 1269581125.8099999, "CTY_TXT": "98", "CentrdDD_X": -4.74649, "CentrdDD_Y": 54.8833, "percClad": 0.0, "areasqkm": 1269.58112581 }, "geometry": { "type": "Point", "coordinates": [ -4.747855361000378, 54.883720585085051 ] } }
+
+]
+}

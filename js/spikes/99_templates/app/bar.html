@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<div id="main">
+  <div id="chart-root">
+    <div id="chart-title"></div>
+    <div id="chart-draw-area">
+      <svg width="400" height="300"></svg>
+    </div>
+  </div>
+</div>
+
+<script src="https://d3js.org/d3.v4.js"></script>
+<script>
+    d3.json("data/categorical.json", function(error, d) {
+      if (error) throw error;
+      data = d.categorical
+
+      svg = d3.select("svg")
+      let bbox = svg.node().getBoundingClientRect()
+
+      let x = d3
+        .scaleBand()
+        .domain(data.map(d => d.variable))
+        .rangeRound([0, bbox.width])
+        .padding(0.1)
+
+      let y = d3
+        .scaleLinear()
+        .domain([0, d3.max(data, d => d.count)])
+        .rangeRound([bbox.height, 0])
+
+      svg.selectAll('.bar')
+        .data(data)
+        .enter()
+        .append('g')
+        .attr("transform", function(d,i) {return "translate("+ x(d.variable) +",0)"})
+        .append('rect')
+        .attr('class', 'bar')
+        .attr('y', d => y(d.count))
+        .attr('width', 100)
+        .attr('height', d =>  bbox.height - y(d.count))
+        .attr('fill', d => d.variable)
+
+      svg.selectAll("text")
+        .data(data)
+        .enter()
+        .append('g')
+        .attr("transform", d => "translate("+ x(d.variable) +","+ (y(d.count) + 20)+")")
+        .append("text")
+        .text(d => d.count)
+        .attr('fill', 'white')
+
+    })
+</script>

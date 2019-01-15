@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font: 10px sans-serif;
+            background-color: #fffbee;
+        }
+        #panel {
+            background-color: #9baa83;
+        }
+        .shaded{
+            fill: #e5fff3;
+        }
+		.overlay {
+		  fill: none;
+		  pointer-events: all;
+		}
+    </style>
+    <!--<script src="d3.min.js"></script>-->
+    <script>
+      var data ={
+        "posterior":{
+          "beta":[0.9602735272685492,0.46848192756130114,0.558528075269688,0.06344806765966149,0.3555774442880901,0.392037555385475,0.3492970152720808,0.9343896994557463,0.8955280705996235,0.8884295072660447],
+          "eta":[0.4617560054009463,0.5812882365905139,0.38029627050680137,0.7694561515549165,0.35737026659612914,0.7431627358956465,0.8472520965841766,0.3743248103147182,0.5187886827434581,0.4634968165449274],
+          "gamma":[0.6246534905238333,0.4037115678787902,0.41782452631102396,0.325275274610046,0.3893829191409276,0.2675776237659774,0.7026818426300739,0.5432991094702753,0.3593333522597296,0.5827340923545443],
+          "delta":[0.019439840982900095,0.011842808341715468,0.012621838380913398,0.011189182809480266,0.01272167092910532,0.00910290160179791,0.01972155000010771,0.017057952822287097,0.010887865577822325,0.01759238467537689],
+          "sigma":[0.2771076700614088,0.25653251815941336,0.3578183005272916,0.2604593879271514,0.24702418115033087,0.32618371944419994,0.11872987190130632,0.25748816131045615,0.27384213464384566,0.2074567520475666],
+          "sigma2":[0.0547197915149826,0.06100527587149776,0.07293067050643287,0.08870290494308315,0.020510030211025584,0.1655807770440967,0.21681914648563594,0.09795861225055466,0.1241088128963357,0.09141694130960125],
+          "offset":[2,2,1,2,1,2,3,2,2,2]
+        }
+      };
+    </script>
+    <script src="http://d3js.org/d3.v3.js"></script>
+</head>
+
+
+<body>
+
+<svg width="100%" height="99%"></svg>
+
+<script>
+    var cell = {
+        "size":70,
+        "pad": 5
+    };
+
+    var padding = 10;
+
+    var panel = d3.select("svg")
+		.append("g")
+		.attr("id", "panel")
+		.attr("transform", "translate(" + padding + "," + padding + ")")
+		.append("g")
+		.call(d3.behavior.zoom().scaleExtent([1, 8]).on("zoom", zoom))
+		.append("g");
+
+    panel.append("rect")
+    	.attr("class", "overlay")
+    	.attr("width", "100%")
+    	.attr("height", "99%")
+    
+// Hacked to used self contained data
+//    d3.json("truncated.json", function(error, json){
+//        if(error) console.warn(error);
+        paramNames = d3.keys(data.posterior);
+        var posteriorCoords = paramNames.map(function(name){
+           return data.posterior[name].slice(0, 500)
+        });
+        particles = d3.transpose(posteriorCoords).slice(0, 500);
+
+        go(paramNames, data.posterior);
+//    });
+
+    function go(paramNames, posteriorCoords){
+        var dim = paramNames.length;
+
+        var width = parseInt(d3.select("body").style("width")) - padding * 2;
+        var height = parseInt(d3.select("body").style("height")) - padding * 2;
+
+        var cellData = getCellPositions(dim).map(function(pos){
+          function range(array) {
+            var maxMin = d3.extent(array)
+            var min = maxMin[0]
+            var max = maxMin[1]
+            if(min < 1 && min > 0) min = 0;
+            if(max < 1 && max > 0) max = 1;
+            return [min, max];
+          }
+
+          return {
+            "rowIdx": pos.row,
+            "colIdx": pos.col,
+            "rowName": paramNames[pos.row],
+            "colName": paramNames[pos.col],
+            "rowExtent": range(posteriorCoords[paramNames[pos.row]]),
+            "colExtent": range(posteriorCoords[paramNames[pos.col]])
+          };
+        });
+
+        var cells = panel
+          .selectAll("cell")
+          .data(cellData)
+          .enter()
+          .append("g");
+
+        function doCellPlot(d, dIndex) {
+            var padL = 20;
+            var padB = 20;
+            var width = cell.size - padL;
+            var height = cell.size - padB;
+
+            var xScale = d3.scale
+              .linear()
+              .domain(d.colExtent)
+              .range([ 0, width ]);
+            var yScale = d3.scale
+              .linear()
+              .domain(d.rowExtent)
+              .range([ height, 0 ]);
+
+            var line = d3.svg.line()
+              .x(function(d) {return xScale(d.x);})
+              .y(function(d) {return yScale(d.y);});
+
+            var root = d3.select(this)
+              .attr("transform", function(d){
+                  var x = d.rowIdx * (cell.size + cell.pad);
+                  var y = d.colIdx * (cell.size + cell.pad);
+                  return "translate("+ x+","+y+")";
+              });
+
+            root.append("rect")
+              .attr("width", cell.size)
+              .attr("height", cell.size)
+              .attr("class", "shaded");
+
+            var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(3);
+            var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(3);
+
+            root.append("g")
+              .attr("transform", "translate("+padL+",0)")
+              .attr("class","y axis")
+              .call(yAxis);
+            root.append("g")
+              .attr("transform", "translate("+padL+"," + height + ")")
+              .attr("class","x axis")
+              .call(xAxis);
+
+            root.append("g")
+              .attr("transform", "translate(" + padL + ",0)")
+              .selectAll(".dot")
+              .data(function(d,i) {
+                  var x = posteriorCoords[d.colName];
+                  var y = posteriorCoords[d.rowName];
+                  var t = d3.transpose([x,y]);
+                  return t;
+              })
+              .enter()
+              .append("circle")
+              .attr("cx", function(d){
+                  return xScale(d[0]);})
+              .attr("cy", function(d){ return yScale(d[1]);})
+              .attr("r", 1);
+        }
+
+        cells.each(doCellPlot);
+    };
+
+    function getCellPositions(dim) {
+        var cellPositions = [];
+
+        for(c = 0; c < dim; c++){
+            for(r = 0; r < dim; r++){
+                if(r < c) continue;
+                cellPositions.push({"row": r, "col": c});
+            }
+        }
+
+        return cellPositions;
+    }
+
+    function zoom() {
+        panel.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    }
+
+</script>
+
+</body>
+</html>

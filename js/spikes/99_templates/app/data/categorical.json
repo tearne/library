@@ -1,0 +1,12 @@
+{
+  "categorical" : [ {
+    "variable" : "Red",
+    "count" : 12
+  }, {
+    "variable" : "Blue",
+    "count" : 55
+  }, {
+    "variable" : "Green",
+    "count" : 33
+  } ]
+}

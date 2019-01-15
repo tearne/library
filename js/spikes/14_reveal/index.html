@@ -1,0 +1,111 @@
+<!doctype html>
+<meta charset="utf-8">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.6.0/css/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.6.0/css/theme/white.css">
+  <style>
+  .path-line {
+    fill: none;
+    stroke-width: 1px;
+    stroke: steelblue;
+  }
+  </style>
+
+  <script src="https://d3js.org/d3.v5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.6.0/js/reveal.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/headjs/0.96/head.min.js"></script>
+
+<div class="reveal">
+	<div class="slides">
+		<section>
+      Slide 1: Spiral thingey
+      <div id="thing">Hello</div>
+    </section>
+		<section>Slide 2</section>
+    <section data-math>
+					<!--
+						A `data-math` attribute is set here, as `math.enableGlobally` was set to `false`.
+						This allows to use `\$` characters on other slide without escaping, but you have
+						to enable formula replacements *per slide*.
+					-->
+
+					<h2>Tex style (dollars)</h2>
+
+					<!-- \$ escaping in action here: -->
+					<p class="formula-source"><code>\$\$\frac{1}{1 + e^{-x}}\$\$</code></p>
+
+					<p>for example yields a display formula (block):</p>
+					$$
+						\frac{1}{1 + e^{-x}}
+					$$
+
+					<p>
+						Single <code>\$…\$</code> render in-line:&ensp;$-\sum_{i=1}^n p(x_i) \log p(x_i)$.
+					</p>
+
+					<p>
+						Escape literal dollars with <code>\\$</code>.
+					</p>
+				</section>
+	</div>
+</div>
+
+
+<script>
+	Reveal.initialize({
+    dependencies: [
+        { src: 'plugin/math-katex/math-katex.js', async: true }
+    ]
+  });
+</script>
+
+<script>
+  let myData = (() => {
+    let ticks = 2000;
+    let tickAngle = 2 * Math.PI / ticks;
+
+    return _.range(ticks).map(i => {
+      let angle = i * tickAngle;
+      let fast = 511;
+      return {
+        x: 0.7 *Math.sin(angle) + 0.4 * Math.sin(angle * fast),
+        y: 0.7 * Math.cos(angle) + 0.4 * Math.cos(angle * fast)
+      };
+    });
+  })();
+
+  let margin = {top: 10, right: 10, bottom: 10, left: 10};
+
+  console.log(d3.select("#thing"))
+  let svg = d3.select("#thing").append("svg");
+
+  let plotGroup = svg
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  let path = plotGroup
+    .append("path")
+    .classed("path-line", true)
+    .datum(myData);
+
+  let pageWidth = d3.select("#thing").node().clientWidth;
+
+  let width = pageWidth - margin.left - margin.right,
+     height = pageWidth - margin.top - margin.bottom;
+
+  svg
+    .attr("width", pageWidth)
+    .attr("height", pageWidth)
+
+  let xScale = d3.scaleLinear().domain([-1,1]).range([0,width]),
+      yScale = d3.scaleLinear().domain([-1,1]).range([height, 0]);
+
+  let line = d3.line()
+    .x(d => xScale(d.x))
+    .y(d => yScale(d.y))
+    .curve(d3.curveBasisClosed);
+
+  path.attr("d", line);
+</script>
