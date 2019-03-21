@@ -13,7 +13,7 @@
 <style>
   #column {
     width: 400px;
-    height: 800px;
+    height: 500px;
     background-color: darkgray;
   }
   #chart {
@@ -23,66 +23,72 @@
   }
 </style>
 
-<div id="column">
-  <div id="chart"></div>
-</div>
-
-<script>
-let chartWidth  = d3.select("#column").node().clientWidth,
-    chartHeight = parseInt(d3.select("#chart").style("height"));
-
-let div = d3.select("#chart");
-
-let svg = div
-  .append("svg")
-  .attrs({"width": div.node().clientWidth, "height": div.node().clientHeight})
-</script>
-
-
+<body>
+  <div id="column">
+    <div id="chart"></div>
+  </div>
+</body>
 
 <script type="module">
-import {drawGrid} from "./drawgrid.js"
-import {getData} from "./data.js"
-import {histogram} from "./plots.js"
-import {density} from "./density.js"
+  import {getData} from "./data.js"
 
-const data = getData();
+  import {drawGrid} from "./drawgrid.js"
+  
+  import {histogram} from "./plots.js"
+  import {density} from "./density.js"
 
-function drawCell(svg, i, j){
-  const size = svg.node().getBoundingClientRect()
+  let chartWidth  = d3.select("#column").node().clientWidth,
+      chartHeight = parseInt(d3.select("#chart").style("height"));
 
-  if(i == j){
-    histogram(svg, data)
-    density(svg, data, 0.5)
-  } else {
-    let colour = '#'+(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6)
+  let div = d3.select("#chart");
 
-    let g = svg.append("g")
+  let svg = div
+    .append("svg")
+    .attrs({"width": div.node().clientWidth, "height": div.node().clientHeight})
 
-    g
-      .append("rect")
-      .attr("width", size.width)
-      .attr("height", size.height)
-      .attr("fill", colour)
+  const data = getData();
 
-    let data = [4,7,2,5,1,7,8,1,1,4]
 
-    let y = d3.scaleLinear()
-      .domain([0, 8])
-      .range([size.height, 0]);
 
-    g
-      .selectAll("rect")
-      .data(data)  
-      .enter()
-      .append("rect")
-      .attr("y",d => y(d))
-      .attr("x", (d,i) => i * 10)
-      .attr("width", 10)
-      .attr("height", d => size.height - y(d))
-      .attr("fill", "black"); 
+  function drawCell(svg, i, j){
+    
+    const width = svg.attr("width"),
+        height = svg.attr("height")
+
+    if(i == j){
+      histogram(svg, data)
+      density(svg, data, 0.5)
+    } else {
+      // Placeholder stuff for off-diagonal cells
+      
+      let colour = '#'+(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6)
+
+      let g = svg.append("g")
+
+      g
+        .append("rect")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("fill", colour)
+
+      let data = [4,7,2,5,1,7,8,1,1,4]
+
+      let y = d3.scaleLinear()
+        .domain([0, 8])
+        .range([height, 0]);
+
+      g
+        .selectAll("rect")
+        .data(data)  
+        .enter()
+        .append("rect")
+        .attr("y",d => y(d))
+        .attr("x", (d,i) => i * 10)
+        .attr("width", 10)
+        .attr("height", d => height - y(d))
+        .attr("fill", "black"); 
+    }
   }
-}
 
-drawGrid(svg, 3, 3, drawCell);
+  drawGrid(svg, 3, 3, drawCell);
 </script>

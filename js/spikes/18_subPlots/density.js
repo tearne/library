@@ -1,13 +1,14 @@
 import * as ss from "https://unpkg.com/simple-statistics@7.0.2/index.js?module"
 
 export function density(svg, data, adjust = 1){
-  const size = svg.node().getBoundingClientRect()
+  const width = svg.attr("width"),
+       height = svg.attr("height")
 
   const numBins = 200
   const xDomain = d3.extent(data);
   let x = d3.scaleLinear()
     .domain(xDomain)
-    .range([0, size.width]);
+    .range([0, width]);
   const binWidth = (xDomain[1] - xDomain[0]) / numBins
 
   let bins = (() => {
@@ -45,7 +46,7 @@ export function density(svg, data, adjust = 1){
 
   let y = d3.scaleLinear()
     .domain([0, d3.max(points, d => d.y)])
-    .range([size.height, 0])
+    .range([height, 0])
 
   let line = d3.line()
     .x(d => x(d.x))

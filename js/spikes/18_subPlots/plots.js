@@ -1,5 +1,6 @@
 export function histogram(svg, data){
-  const size = svg.node().getBoundingClientRect()
+ const width = svg.attr("width"),
+      height = svg.attr("height")
   
   let xDomain = d3.extent(data);
   
@@ -7,11 +8,11 @@ export function histogram(svg, data){
   
   let x = d3.scaleLinear()
       .domain(xDomain)
-      .range([0, size.width]);
+      .range([0, width]);
 
   let y = d3.scaleLinear()
       .domain([0, d3.max(bins, b => b.length)])
-      .range([size.height, 0]);
+      .range([height, 0]);
 
   svg.append("g")
       .selectAll("rect")
