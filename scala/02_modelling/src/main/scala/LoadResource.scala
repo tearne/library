@@ -1,5 +1,15 @@
 import scala.io.Source
 
+//  Loading a configs.json from resources.  Tested to work within both
+//  1) IntelliJ IDEA
+//
+//  AND
+//
+//  2) On the command line with jars and configs.json in a lib dir: java -cp "lib/*:lib" LoadResource
+//  where lib contains jars and resources
+//
+//  To build far jar just "clean" and "package" and jar will appear in target
+
 object LoadResource extends App {
   val resourceName = "my.resource"
 
@@ -8,3 +18,4 @@ object LoadResource extends App {
   println("----- Resource -----")
   resourceLines.foreach(println(_))
 }
+

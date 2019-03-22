@@ -1,3 +1,5 @@
+enablePlugins(JavaAppPackaging)
+
 val commonsMath3 = "org.apache.commons" % "commons-math3" % "3.2"
 //val scalaTest = "org.scalatest" %% "scalatest" % "3.0.4" % "test"
 //val playJson = "com.typesafe.play" %% "play-json" % "2.6.7"
