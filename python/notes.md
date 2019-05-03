@@ -1,5 +1,7 @@
 # Notes
 
+* https://docs.python-guide.org/
+
 ## Virtual environments
 https://realpython.com/python-virtual-environments-a-primer/
 
@@ -15,5 +17,9 @@ https://realpython.com/python-virtual-environments-a-primer/
 * https://medium.com/knerd/best-practices-for-python-dependency-management-cc8d1913db82
 
 * https://github.com/kennethreitz/setup.py
+
+## System audit
+
+* https://github.com/sgabe/benchit
 
 
