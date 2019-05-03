@@ -2,12 +2,74 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8df10ec2-e94d-4e47-a244-6b3fe219e8d3" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../.idea/modules/library-build.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.idea/modules/library.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/sbt__org_scala_lang_scala_library_2_12_6_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/scala_compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../scala/02_modelling/build.sbt" beforeDir="false" afterPath="$PROJECT_DIR$/../scala/02_modelling/build.sbt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scala/02_modelling/src/main/scala/ODEwithState.scala" beforeDir="false" afterPath="$PROJECT_DIR$/../scala/02_modelling/src/main/scala/ODEwithState.scala" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/default/library$sbt_2.12/0.1.0-SNAPSHOT/resolved.xml.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/default/library$sbt_2.12/0.1.0-SNAPSHOT/resolved.xml.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/default/library$sources/0.1.0-SNAPSHOT/resolved.xml.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/default/library$sources/0.1.0-SNAPSHOT/resolved.xml.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/default/library$sources_2.12/0.1.0-SNAPSHOT/resolved.xml.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/default/library$sources_2.12/0.1.0-SNAPSHOT/resolved.xml.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/default/library_2.12/0.1.0-SNAPSHOT/resolved.xml.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/default/library_2.12/0.1.0-SNAPSHOT/resolved.xml.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library$sbt_2.12-compile.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library$sbt_2.12-optional.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library$sbt_2.12-provided.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library$sbt_2.12-runtime.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library$sbt_2.12-test.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library$sources-compile-internal.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library$sources-compile.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library$sources-optional.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library$sources-plugin.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library$sources-pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library$sources-provided.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library$sources-runtime-internal.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library$sources-runtime.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library$sources-scala-tool.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library$sources-test-internal.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library$sources-test.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library$sources_2.12-compile.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library$sources_2.12-default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library$sources_2.12-optional.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library$sources_2.12-provided.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library$sources_2.12-runtime.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library$sources_2.12-test.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library_2.12-compile-internal.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library_2.12-compile.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library_2.12-optional.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library_2.12-plugin.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library_2.12-pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library_2.12-provided.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library_2.12-runtime-internal.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library_2.12-runtime.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library_2.12-scala-tool.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library_2.12-test-internal.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/default-library_2.12-test.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/ivy-report.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/scala-2.12/resolution-cache/reports/ivy-report.xsl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/$global/$global/dumpStructure/$global/streams/out" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/$global/dependencyPositions/$global/streams/update_cache_2.12/input_dsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/$global/dependencyPositions/$global/streams/update_cache_2.12/output_dsp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/$global/ivyConfiguration/$global/streams/out" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/$global/ivySbt/$global/streams/out" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/$global/projectDescriptors/$global/streams/out" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/$global/update/$global/streams/out" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/$global/update/$global/streams/update_cache_2.12/inputs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/$global/update/$global/streams/update_cache_2.12/output" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/$global/updateClassifiers/$global/streams/out" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/$global/updateSbtClassifiers/$global/streams/out" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/compile/externalDependencyClasspath/$global/streams/export" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/compile/managedClasspath/$global/streams/export" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/compile/unmanagedClasspath/$global/streams/export" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/compile/unmanagedJars/$global/streams/export" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/runtime/externalDependencyClasspath/$global/streams/export" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/runtime/managedClasspath/$global/streams/export" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/runtime/unmanagedClasspath/$global/streams/export" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/runtime/unmanagedJars/$global/streams/export" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/test/externalDependencyClasspath/$global/streams/export" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/test/managedClasspath/$global/streams/export" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/test/unmanagedClasspath/$global/streams/export" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../target/streams/test/unmanagedJars/$global/streams/export" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -85,27 +147,20 @@
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
-    <navigator proportions="" version="1">
+    <navigator currentView="Scope" currentSubView="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope" proportions="" version="1">
       <autoscrollFromSource Scope="true" />
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
               <item name="examples" type="b2602c69:ProjectViewProjectNode" />
-              <item name="library" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="examples" type="b2602c69:ProjectViewProjectNode" />
-              <item name="library" type="462c0819:PsiDirectoryNode" />
               <item name="examples" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="examples" type="b2602c69:ProjectViewProjectNode" />
-              <item name="library" type="462c0819:PsiDirectoryNode" />
               <item name="examples" type="462c0819:PsiDirectoryNode" />
               <item name=".idea" type="462c0819:PsiDirectoryNode" />
             </path>
@@ -113,17 +168,24 @@
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
       <pane id="Scope">
         <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
           <expand>
             <path>
               <item name="examples" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="library" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
             </path>
             <path>
               <item name="examples" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="library" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-              <item name="examples" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name=".idea" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="examples" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name=".idea" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="libraries" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
           </expand>
           <select />
@@ -194,30 +256,6 @@
     </recent_temporary>
   </component>
   <component name="SbtLocalSettings">
-    <option name="availableProjects">
-      <map>
-        <entry>
-          <key>
-            <ExternalProjectPojo>
-              <option name="name" value="library" />
-              <option name="path" value="$PROJECT_DIR$/.." />
-            </ExternalProjectPojo>
-          </key>
-          <value>
-            <list>
-              <ExternalProjectPojo>
-                <option name="name" value="library [file:/home/ubuntu/CODE/library/]" />
-                <option name="path" value="$PROJECT_DIR$/.." />
-              </ExternalProjectPojo>
-              <ExternalProjectPojo>
-                <option name="name" value="library-build" />
-                <option name="path" value="$PROJECT_DIR$/../project" />
-              </ExternalProjectPojo>
-            </list>
-          </value>
-        </entry>
-      </map>
-    </option>
     <option name="modificationStamps">
       <map>
         <entry key="$PROJECT_DIR$/build.sbt" value="3284000423" />
@@ -245,9 +283,9 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="2560" height="1369" extended-state="6" />
+    <frame x="-2" y="-1" width="2564" height="1372" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17806041" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17925279" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Favorites" order="3" side_tool="true" />
@@ -265,14 +303,14 @@
       <window_info anchor="bottom" id="Version Control" order="11" sideWeight="0.7329094" weight="0.204" />
       <window_info anchor="bottom" id="Build" order="12" weight="0.27272728" />
       <window_info anchor="bottom" id="Messages" order="13" weight="0.32970297" />
-      <window_info anchor="right" id="R Packages" />
-      <window_info anchor="right" id="R Graphics" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Maven" order="3" />
       <window_info anchor="right" id="Palette&#9;" order="4" />
       <window_info anchor="right" id="sbt" order="5" weight="0.11305732" />
+      <window_info anchor="right" id="R Graphics" order="6" />
+      <window_info anchor="right" id="R Packages" order="7" />
     </layout>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
