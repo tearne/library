@@ -1,20 +1,26 @@
-export function drawGrid(svg, columns, rows, drawFn){
-    // var bBox = svg.getBBox();
-    let width = svg.node().getBoundingClientRect().width
-    let height = svg.node().getBoundingClientRect().height
+export function drawGrid(svg, margin, columns, rows, drawFn) {
 
-    let cellWidth = width / columns
-    let cellHeight = height / rows
+    let chartGroup = svg
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    let width = svg.attr("width") - margin.left - margin.right,
+        height = svg.attr("height") - margin.top - margin.bottom;
+
+    let cellWidth = width / columns,
+        cellHeight = height / rows;
+
+    let chartMargins = { left: 5, top: 5 };
 
     for (var r = 0; r < rows; r++) {
         for (var c = 0; c < columns; c++) {
-            let sub = svg
+            let sub = chartGroup
                 .append("g")
-                .attr("transform", "translate("+ (cellWidth * c) +","+ (cellHeight * r) +")")
-                .attr("width", cellWidth)
-                .attr("height", cellHeight)
+                .attr("transform", "translate(" + (cellWidth * c) + "," + (cellHeight * r) + ")")
+                .attr("width", cellWidth - chartMargins.left)
+                .attr("height", cellHeight - chartMargins.top);
 
-            drawFn(sub, r, c)
+            drawFn(sub, r, c);
         }
     }
 }
