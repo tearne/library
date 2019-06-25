@@ -1,6 +1,4 @@
-let formatValue = d3.format(",.4f");
-
-export function medianLine(svg, data) {
+export function vline(svg, data) {
     const width = svg.attr("width");
     const height = svg.attr("height");
     const median = d3.median(data);
@@ -20,12 +18,26 @@ export function medianLine(svg, data) {
             y2: 0
         })
         .attr("class", "vertical-line");
+}
 
-    svg.append("text")
+export function hline(svg, data) {
+    const width = svg.attr("width");
+    const height = svg.attr("height");
+    const median = d3.median(data);
+
+    const yDomain = d3.extent(data);
+
+    let y = d3.scaleLinear()
+        .domain(yDomain)
+        .range([height, 0]);
+
+    svg.append("g")
+        .append("line")
         .attrs({
-            x: x(0),
-            y: 1
+            x1: 0,
+            y1: y(median),
+            x2: width,
+            y2: y(median)
         })
-        .text(formatValue(median))
-        .attr("class","graphlabels")
+        .attr("class", "vertical-line");
 }

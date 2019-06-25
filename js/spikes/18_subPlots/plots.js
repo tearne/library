@@ -1,10 +1,10 @@
-export function histogram(svg, data) {
+export function histogram(svg, histData) {
     const width = svg.attr("width"),
         height = svg.attr("height")
 
-    let xDomain = d3.extent(data);
+    let xDomain = d3.extent(histData);
 
-    let bins = d3.histogram().domain(xDomain).thresholds(20)(data);
+    let bins = d3.histogram().domain(xDomain).thresholds(20)(histData);
 
     let x = d3.scaleLinear()
         .domain(xDomain)

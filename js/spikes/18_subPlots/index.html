@@ -2,122 +2,129 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <title> Sample ABC Outputs </title>
-    <script src="https://d3js.org/d3.v5.js"></script>
-    <script src="https://d3js.org/d3-selection-multi.v1.js"></script>
+  <meta charset="utf-8">
+  <title> Sample ABC Outputs </title>
+  <script src="https://d3js.org/d3.v5.js"></script>
+  <script src="https://d3js.org/d3-selection-multi.v1.js"></script>
+  <script src="https://d3js.org/d3-contour.v1.min.js"></script>
 
-    <style>
-        #column {
-            width: 100%;
-            height: 800px;
-            background-color: darkgrey;
-        }
+  <style>
+    #column {
+      width: 100%;
+      height: 800px;
+      background-color: darkgrey;
+    }
 
-        #chart {
-            width: 600px;
-            height: 600px;
-            background-color: whitesmoke;
-        }
+    #chart {
+      width: 600px;
+      height: 600px;
+      background-color: whitesmoke;
+    }
 
-        .graphlabels {
-            text-anchor: start;
-            dominant-baseline: hanging;
-            font-size: 16px;
-            fill: red
-        }
+    .graphlabels {
+      text-anchor: start;
+      dominant-baseline: hanging;
+      font-size: 16px;
+      fill: red
+    }
 
-        .correlations {
-            text-anchor: middle;
-            dominant-baseline: middle;
-            font-size: 18px;
-        }
+    .correlations {
+      text-anchor: middle;
+      dominant-baseline: middle;
+      font-size: 18px;
+    }
 
-        .histbars {
-            fill: midnightblue;
-        }
+    .histbars {
+      fill: midnightblue;
+    }
 
-        .densityLine {
-            fill: none;
-            stroke: cornflowerblue;
-            stroke-width: 3;
-        }
+    .densityLine {
+      fill: none;
+      stroke: cornflowerblue;
+      stroke-width: 3;
+    }
 
-        .vertical-line {
-            stroke: red;
-            stroke-width: 3;
-        }
+    .vertical-line {
+      stroke: red;
+      stroke-width: 3;
+    }
 
-        .axis text {
-            font: 18px sans-serif;
-        }
+    .axis text {
+      font: 18px sans-serif;
+    }
 
-        .tick line {
-            visibility: hidden;
-        }
+    .tick line {
+      visibility: hidden;
+    }
 
-        .axis path,
-        .axis line {
-            visibility: hidden;
-        }
-    </style>
+    .axis path,
+    .axis line {
+      visibility: hidden;
+    }
+  </style>
 </head>
 
 <body>
-    <div id="column">
-        <div id="chart"></div>
-    </div>
+  <div id="column">
+    <div id="chart"></div>
+  </div>
 </body>
 
 <script type="module">
-    import { histogram } from "./plots.js";
-    import { density } from "./density.js";
-    import { medianLine } from "./vline.js";
-    import { drawGrid } from "./drawgrid.js";
-    import { corr } from "./corr.js";
-    import { heatmap } from "./heatmap.js";
-    import { drawAxis } from "./drawAxis.js";
+  import { histogram } from "./plots.js";
+  import { density } from "./density.js";
+  import { vline } from "./vline.js";
+  import { hline } from "./vline.js";
+  import { medianLabels } from "./medianLabels.js";
+  import { drawGrid } from "./drawgrid.js";
+  import { corr } from "./corr.js";
+  import { heatmap } from "./heatmap.js";
+  import { drawAxis } from "./drawAxis.js";
 
+  let div = d3.select("#chart");
 
-    let div = d3.select("#chart");
+  let svg = div
+    .append("svg")
+    .attrs({
+      width: div.node().clientWidth,
+      height: div.node().clientHeight
+    })
 
-    let svg = div
-        .append("svg")
-        .attrs({
-            width: div.node().clientWidth,
-            height: div.node().clientHeight
-        })
+  var margin = { left: 30, right: 20, top: 20, bottom: 30 };
 
-    var margin = { left: 30, right: 20, top: 20, bottom: 30 };
+  // Read the data in from json file
+  // TODO get the JSON to read from here: /efs/compModelling/2018_CR2000c_SalmonellaPigs/ABCOutputs/01.Old/20190301-FourParams/progress/Gen010.json
+  d3.json("gen10.json")
+    .then(function (jsData) {
+      let params = jsData["particle-details"].map(d => d.p)
+      let keys = d3.keys(params[0])
 
-    // Read the data in from json file
-    d3.json("data.json")
-        .then(function (jsData) {
-            let keys = d3.keys(jsData[0])
+      // Create array for each parameter
+      let data = [
+        params.map(d => d.beta),
+        params.map(d => d.gamma),
+        params.map(d => d.a),
+        params.map(d => d.b)];
 
-            // Create array for each parameter
-            let data = [
-                jsData.map(d => d.alpha),
-                jsData.map(d => d.beta),
-                jsData.map(d => d.gamma),
-                jsData.map(d => d.delta)];
+      function toPlot(chart, i, j) {
+        if (i == j) {
+          histogram(chart, data[i]);
+          density(chart, data[i], 1);
+          vline(chart, data[i]);
+          medianLabels(chart, data[i]);
+        } else if (i < j) {
+          corr(chart, data[i], data[j]);
+        }
+        else {
+          heatmap(chart, data[i], data[j]);
+          vline(chart, data[j]);
+          hline(chart, data[i]);
+        }
+      }
 
-            function toPlot(chart, i, j) {
-                if (i == j) {
-                    histogram(chart, data[i]);
-                    density(chart, data[i], 0.75);
-                    medianLine(chart, data[i]);
-                } else if (i < j) {
-                    corr(chart, data[i], data[j]);
-                }
-                else {
-                    heatmap(chart);
-                }
-            }
-
-            drawGrid(svg, margin, keys.length, keys.length, toPlot);
-            drawAxis(svg, keys, margin);
-        });
+      drawGrid(svg, margin, keys.length, keys.length, toPlot);
+      drawAxis(svg, keys, margin);
+    });
 </script>
 
 </html>

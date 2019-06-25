@@ -21,6 +21,21 @@ export function drawGrid(svg, margin, columns, rows, drawFn) {
                 .attr("height", cellHeight - chartMargins.top);
 
             drawFn(sub, r, c);
+
+            // TODO axes for the grid - something like this would be nice, but drawGrid doesn't have the data 
+            // if (r == 0) { //?
+            //     sub.append("g")
+            //         .attr("class", "axis")
+            //         .attr("transform", `translate(${margin.left},${height + margin.top})`)
+            //         .call(xAxis);
+            // }
+
+            // if (c == columns - 1) { //?
+            //     sub.append("g")
+            //         .attr("class", "axis")
+            //         .attr("transform", `translate(${margin.left},${margin.top})`)
+            //         .call(yAxis)
+            // }
         }
     }
 }

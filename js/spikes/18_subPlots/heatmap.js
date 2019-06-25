@@ -1,32 +1,37 @@
-// Placeholder stuff for off-diagonal cells
-export function heatmap(svg) {
-    let colour = '#' + (0x1000000 + (Math.random()) * 0xffffff).toString(16).substr(1, 6)
-
+export function heatmap(svg, yData, xData) {
     let width = svg.attr("width")
     let height = svg.attr("height")
 
-    let g = svg.append("g")
+    let data = d3.zip(xData, yData);
+    // setup x-scale 
+    var x = d3.scaleLinear()
+        .domain(d3.extent(xData))
+        .range([0, width]);
 
-    g
-        .append("rect")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("fill", colour)
-
-    let data = [4, 7, 2, 5, 1, 7, 8, 1, 1, 4]
-
-    let y = d3.scaleLinear()
-        .domain([0, 8])
+    // setup y-scale
+    var y = d3.scaleLinear()
+        .domain(d3.extent(yData))
         .range([height, 0]);
 
-    g
-        .selectAll("rect")
-        .data(data)
-        .enter()
-        .append("rect")
-        .attr("y", d => y(d))
-        .attr("x", (d, i) => i * 10)
-        .attr("width", 10)
-        .attr("height", d => height - y(d))
-        .attr("fill", "black");
+    // setup colour scale 
+    var color = d3.scalePow()
+        .exponent(0.33)
+        .domain([0.025, 1])
+        .range(["midnightblue", "red"]);
+
+    // compute the density data
+    var densityData = d3.contourDensity()
+        .x(function (d) { return x(d[0]); })
+        .y(function (d) { return y(d[1]); })
+        .size([width, height])
+        .bandwidth(0.5)
+        .cellSize(8)
+        (data);
+
+    // plot contours
+    svg.selectAll("path")
+        .data(densityData)
+        .enter().append("path")
+        .attr("d", d3.geoPath())
+        .attr("fill", function (d) { return color(d.value); });
 }
