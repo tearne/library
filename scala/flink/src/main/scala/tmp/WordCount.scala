@@ -27,6 +27,10 @@ import org.apache.flink.api.scala._
   */
 object WordCount {
 
+  case class Word(str: String){
+    def firstCharacter() = str.charAt(0)
+  }
+
   def main(args: Array[String]) {
 
     val params: ParameterTool = ParameterTool.fromArgs(args)
@@ -40,9 +44,15 @@ object WordCount {
         env.readTextFile("/usr/share/dict/words")
 
     val counts = text.flatMap { _.toLowerCase.split("\\W+") filter { _.nonEmpty } }
-      .map { word => (word, word.charAt(0),1) }
-      .groupBy(1)
-      .sum(2)
+        .map(str => Word(str))
+        .groupBy(_.firstCharacter())
+          .reduceGroup { items =>
+            val itemsSeq = items.toSeq
+            val count = itemsSeq.size
+            val letter = itemsSeq.head.firstCharacter
+
+            s"Words beginning with the letter $letter: $count"
+          }
 
     if (params.has("output")) {
       counts.writeAsCsv(params.get("output"), "\n", " ")
