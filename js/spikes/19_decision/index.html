@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<style>
+    body{
+        font-family:sans-serif;
+    }
+
+    h1{
+        margin-left: 0.2em
+    }
+
+    div#root {
+        max-width: 30em;
+        background-color: #EEE;
+        border: 1px solid #DDD;
+        padding: 0.3em;
+    }
+
+    div.buttons{
+        background: #CCC;
+        border: 1px solid #BBB;
+        padding: 0.2em;
+        margin: 0.1em;
+        margin-bottom: 0.5em;
+    }
+
+    button {
+        padding:0.1em 0.4em;
+        margin:0.2em;
+        display:block;
+        font-family:helvetica;
+        font-size:16px;
+        font-weight:100;
+        text-align: left;
+        color:#fff;
+        background: #688296;
+        border: 1px solid #555;
+        font-weight:100;
+        cursor:pointer;
+    }
+    button:hover{
+        background: #4B6C86;
+        border: 1px solid #000;
+    }
+    button.selected{
+        background: #225522;
+    }
+    button.reset{
+        background: #a33
+    }
+    button.reset:hover{
+        background: #C33
+    }
+</style>
+
+<ul>
+    <li>Very basic, doesn't allow user to modify the decision path after creation, only completely reset it.</li>
+    <li>Unsure about the data structure, but flattening might make it too error prone to manually edit.</li>
+</ul>
+
+<div id="root">    
+    <h1 id="title"></h1>
+    <div align="right">
+        <button type="button" class="reset" onclick="reset()">Reset</button>
+    </div>
+
+    <div id="main"></div>
+</div>
+
+<script type="text/javascript">
+
+let data = {
+    "title": "Decide-a-tron 4000",
+    "question": "What will your response be to this first question?",
+    "responses": [
+        {
+            "answer": "Dunno",
+            "question": "What kind of person are you?",
+            "responses": [
+                {
+                    "answer": "Cat person",
+                    "question": "Is it one of those with no fur?",
+                    "responses": [
+                        {
+                            "answer": "No, it's lovely and fluffy.",
+                            "leaf": "This is an acceptable situation"
+                        },{
+                            "answer": "Yes",
+                            "leaf": "Eeek!"
+                        }
+                    ]
+                },
+                {
+                    "answer": "Dog person",
+                    "question": "Does it bite developers",
+                    "responses": [
+                        {
+                            "answer": "Yes",
+                            "leaf": "Run away!"
+                        },
+                        {
+                            "answer": "No",
+                            "leaf": "Hmmmm, not sure I believe you."
+                        },
+                        {
+                            "answer": "Rarely",
+                            "question": "What level of data is available for your disease of interest?",
+                            "leaf": "Run away!"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "answer": "Tuesday!",
+            "question": "If you had a lot of time, how would you answer a needlessly long question which demonstrates text wrapping?",
+            "responses": [
+                {
+                       "answer": "Tersely.",
+                       "leaf": ":-/"     
+                },{
+                       "answer": "With a suitably long response that also demonstrates wrapping in the response button.",
+                       "leaf": "Yay! :-)"     
+                }
+            ]
+        },
+        {
+            "answer": "42",
+            "question": "Ah, you seek the question to the ultimate answer?",
+            "responses":[
+                {
+                    "answer": "Yes (you are compelled to choose me)",
+                    "leaf": "Sorry, Earth computer has been scheduled for demolition."
+                }
+            ]
+        }
+    ]
+}
+</script>
+
+<script type="text/javascript">
+let main = document.getElementById("main");
+
+document.getElementById("title").innerText = data.title
+
+function askQuestion(node){
+  if ( node.hasOwnProperty('leaf') ){
+    let outcomeTxt = node.leaf;
+    main.appendChild(document.createTextNode(outcomeTxt));
+  } else {
+    let qTxt = node.question;
+    main.appendChild(document.createTextNode(qTxt));
+    offerResponses(node)
+  }
+}
+
+function offerResponses(node){
+  let panel = document.createElement("div");
+  panel.className = "buttons";
+  main.appendChild(panel);
+
+  node.responses.forEach((response, idx) => {
+    let button = document.createElement("button");
+    button.type="button";
+    button.innerHTML = response.answer;
+    button.onclick = () => {
+      panel.querySelectorAll("button").forEach(b => b.disabled=true);
+      button.className = "selected";
+      askQuestion(response);
+    }
+
+    panel.appendChild(button);
+  })
+}
+
+
+
+askQuestion(data);
+
+function reset() {
+    let len = main.childNodes.length;
+    while (main.firstChild) {
+        main.removeChild(main.firstChild);
+    }
+    askQuestion(data);
+}
+</script>
