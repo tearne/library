@@ -82,7 +82,7 @@ function askQuestion(subTree, levelIdx = 0) {
     if ( subTree.hasOwnProperty('outcome') )
         levelDiv.appendChild(document.createTextNode(subTree.outcome));
     else {
-        levelDiv.appendChild(document.createTextNode(subTree.question));
+        levelDiv.appendChild(documen    t.createTextNode(subTree.question));
         showOptions();
     }
 
@@ -160,7 +160,6 @@ function getData() {
                             },
                             {
                                 "answer": "Rarely",
-                                "question": "What level of data is available for your disease of interest?",
                                 "outcome": "Walk away!"
                             }
                         ]
