@@ -82,7 +82,7 @@ function askQuestion(subTree, levelIdx = 0) {
     if ( subTree.hasOwnProperty('outcome') )
         levelDiv.appendChild(document.createTextNode(subTree.outcome));
     else {
-        levelDiv.appendChild(documen    t.createTextNode(subTree.question));
+        levelDiv.appendChild(document.createTextNode(subTree.question));
         showOptions();
     }
 
