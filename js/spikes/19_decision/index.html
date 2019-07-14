@@ -1,24 +1,15 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 
-<div id="notes">
-        Known issues:
-        <ul>
-            <li>Can't modify decisions, only completely reset.</li>
-            <li>Hierarchical data structure may become unwieldy, but flattening it might make it too error prone to manually edit.</li>
-        </ul>
+    
+<div id="root">    
+    <h1 id="title"></h1>
+    <div align="right">
+        <button type="button" class="reset" onclick="reset()">Reset</button>
     </div>
-    
-    <br>
-    
-    <div id="root">    
-        <h1 id="title"></h1>
-        <div align="right">
-            <button type="button" class="reset" onclick="reset()">Reset</button>
-        </div>
-    
-        <div id="main"></div>
-    </div>
+
+    <div id="main"></div>
+</div>
 
 <style>
     body{
@@ -63,10 +54,11 @@
         border: 1px solid #000;
     }
     button.selected{
-        background: #225522;
+        background: #363;
     }
     button.reset{
-        background: #a33
+        font-size: 75%;
+        background: #a33;
     }
     button.reset:hover{
         background: #C33
@@ -74,120 +66,131 @@
 </style>
 
 <script type="text/javascript">
-
-let data = {
-    "title": "Decide-a-tron 4000",
-    "question": "What will your response be to this first question?",
-    "responses": [
-        {
-            "answer": "Dunno",
-            "question": "What kind of person are you?",
-            "responses": [
-                {
-                    "answer": "Cat person",
-                    "question": "Is it one of those with no fur?",
-                    "responses": [
-                        {
-                            "answer": "No, it's lovely and fluffy.",
-                            "leaf": "This is an acceptable situation"
-                        },{
-                            "answer": "Yes",
-                            "leaf": "Eeek!"
-                        }
-                    ]
-                },
-                {
-                    "answer": "Dog person",
-                    "question": "Does it bite developers",
-                    "responses": [
-                        {
-                            "answer": "Yes",
-                            "leaf": "Run away!"
-                        },
-                        {
-                            "answer": "No",
-                            "leaf": "Hmmmm, not sure I believe you."
-                        },
-                        {
-                            "answer": "Rarely",
-                            "question": "What level of data is available for your disease of interest?",
-                            "leaf": "Run away!"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "answer": "Tuesday!",
-            "question": "If you had a lot of time, how would you answer a needlessly long question, which is only meant to demonstrate text wrapping?",
-            "responses": [
-                {
-                       "answer": "Tersely.",
-                       "leaf": ":-/"     
-                },{
-                       "answer": "With a suitably long response that also demonstrates wrapping in the response button.",
-                       "leaf": "Yay! :-)"     
-                }
-            ]
-        },
-        {
-            "answer": "42",
-            "question": "Ah, you seek the question to the ultimate answer?",
-            "responses":[
-                {
-                    "answer": "Yes (you are compelled to choose me)",
-                    "leaf": "Sorry, Earth computer has been scheduled for demolition."
-                }
-            ]
-        }
-    ]
-}
-</script>
-
-<script type="text/javascript">
 let main = document.getElementById("main");
+let rootData = getData();
 
-document.getElementById("title").innerText = data.title
+document.getElementById("title").innerText = rootData.title
 
-function askQuestion(node){
-  if ( node.hasOwnProperty('leaf') ){
-    let outcomeTxt = node.leaf;
-    main.appendChild(document.createTextNode(outcomeTxt));
-  } else {
-    let qTxt = node.question;
-    main.appendChild(document.createTextNode(qTxt));
-    offerResponses(node)
-  }
-}
+askQuestion(rootData);
 
-function offerResponses(node){
-  let panel = document.createElement("div");
-  panel.className = "buttons";
-  main.appendChild(panel);
+function askQuestion(subTree, levelIdx = 0) {
+    let levelDiv = document.createElement("div");
+    levelDiv.className = "level";
+    levelDiv.id = levelIdx;
+    main.appendChild(levelDiv);
 
-  node.responses.forEach((response, idx) => {
-    let button = document.createElement("button");
-    button.type="button";
-    button.innerHTML = response.answer;
-    button.onclick = () => {
-      panel.querySelectorAll("button").forEach(b => b.disabled=true);
-      button.className = "selected";
-      askQuestion(response);
+    if ( subTree.hasOwnProperty('outcome') )
+        levelDiv.appendChild(document.createTextNode(subTree.outcome));
+    else {
+        levelDiv.appendChild(document.createTextNode(subTree.question));
+        showOptions();
     }
 
-    panel.appendChild(button);
-  })
+    function showOptions() {
+        let responsePanel = document.createElement("div");
+        responsePanel.className = "buttons";
+        levelDiv.appendChild(responsePanel);
+
+        subTree.responses.forEach( response => {
+            let btn = document.createElement("button");
+            btn.type = "button";
+            btn.innerHTML = response.answer;
+            btn.onclick = () => {
+                removeDescendantsOf(levelIdx);
+                askQuestion(response, levelIdx + 1);
+                responsePanel
+                    .querySelectorAll("button")
+                    .forEach(b => {
+                        if(b == btn) b.className = "selected"
+                        else b.classList.remove("selected")
+                    });
+            }
+            responsePanel.appendChild(btn);
+        })
+    }
 }
 
-
-
-askQuestion(data);
+function removeDescendantsOf(levelIdx) {
+    let len = main.childNodes.length;
+    
+    [...main.querySelectorAll("div.level")]
+        .filter(d => d.id > levelIdx)
+        .forEach(d => main.removeChild(d));
+}
 
 function reset() {
-    let len = main.childNodes.length;
-    while (main.firstChild) {
-        main.removeChild(main.firstChild);
+    removeDescendantsOf(0);
+    main.querySelectorAll("button")
+        .forEach(b => b.classList.remove("selected"));
+}
+
+function getData() {
+    return {
+        "title": "Decide-a-tron 4000",
+        "question": "What will your response be to this first question?",
+        "responses": [
+            {
+                "answer": "Dunno",
+                "question": "What kind of person are you?",
+                "responses": [
+                    {
+                        "answer": "Cat person",
+                        "question": "Is it one of those with no fur?",
+                        "responses": [
+                            {
+                                "answer": "No, it's lovely and fluffy.",
+                                "outcome": "This is an acceptable situation"
+                            },{
+                                "answer": "Yes",
+                                "outcome": "Eeek!"
+                            }
+                        ]
+                    },
+                    {
+                        "answer": "Dog person",
+                        "question": "Does it bite developers",
+                        "responses": [
+                            {
+                                "answer": "Yes",
+                                "outcome": "Run away!"
+                            },
+                            {
+                                "answer": "No",
+                                "outcome": "Hmmmm, not sure I believe you."
+                            },
+                            {
+                                "answer": "Rarely",
+                                "question": "What level of data is available for your disease of interest?",
+                                "outcome": "Walk away!"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "answer": "Tuesday!",
+                "question": "If you had a lot of time, how would you answer a needlessly long question, which is only meant to demonstrate text wrapping?",
+                "responses": [
+                    {
+                        "answer": "Tersely.",
+                        "outcome": ":-/"     
+                    },{
+                        "answer": "With a suitably long response that also demonstrates wrapping in the response button.",
+                        "outcome": "Good show!"     
+                    }
+                ]
+            },
+            {
+                "answer": "42",
+                "question": "Ah, you seek the question to the ultimate answer?",
+                "responses":[
+                    {
+                        "answer": "Yes (no other options!?)",
+                        "outcome": "Sorry, the Earth computer has been scheduled for demolition."
+                    }
+                ]
+            }
+        ]
     }
-    askQuestion(data);
 }
 </script>
