@@ -1,8 +1,9 @@
-export function heatmap(svg, yData, xData) {
+export function heatmap(svg, xData, yData) {
     let width = svg.attr("width")
     let height = svg.attr("height")
 
     let data = d3.zip(xData, yData);
+
     // setup x-scale 
     var x = d3.scaleLinear()
         .domain(d3.extent(xData))
