@@ -104,7 +104,7 @@ object output {
     val lineWidth = 1.5
     val script =
       s"""
-         |lapply(c("ggplot2", "reshape2", "deSolve", "jsonlite","plyr"), require, character.only=T)
+         |lapply(c("ggplot2", "reshape2", "jsonlite"), require, character.only=T)
          |pdf("compareTauLeap.pdf", width=12, height=6, title = "compare Tau Leap solver with ODE solver")
          |
          |ode = (fromJSON("$odeFileName"))
