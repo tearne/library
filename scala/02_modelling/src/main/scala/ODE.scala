@@ -5,7 +5,7 @@ import org.apache.commons.io.FileUtils
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
 import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator
 import org.apache.commons.math3.ode.sampling.{FixedStepHandler, StepNormalizer}
-import play.api.libs.json.{JsValue, Json, OFormat}
+import play.api.libs.json.{Json, OFormat}
 import sampler.r.script.RScript
 
 import scala.collection.mutable
@@ -46,32 +46,34 @@ trait ODE extends FirstOrderDifferentialEquations {
 
 object demoODESolver extends App {
 
-  case class Parameters(alpha: Double)
+  case class Parameters(beta: Double, gamma: Double)
 
-  case class SolutionPoint(time: Double, x: Double, y: Double)
-  object SolutionPoint{
+  case class SolutionPoint(time: Double, S: Double, I: Double, R: Double)
+
+  object SolutionPoint {
     implicit val dataWrite: OFormat[SolutionPoint] = Json.format[SolutionPoint]
   }
 
   case class MyODE(p: Parameters) extends ODE {
-    override def getDimension: Int = 2
+    override def getDimension: Int = 3
 
     override def computeDerivatives(t: Double, y: Array[Double], yDot: Array[Double]): Unit = {
-      yDot(0) = p.alpha * y(1)
-      yDot(1) = -p.alpha * y(0)
+      yDot(0) = -p.beta * y(0) * y(1)
+      yDot(1) = p.beta * y(0) * y(1) - p.gamma * y(1)
+      yDot(2) = p.gamma * y(1)
     }
   }
 
-  val y0 = Array(10.0, 20.0)
-  val p = Parameters(2.2)
+  val y0 = Array(500.0, 1.0, 0.0)
+  val p = Parameters(0.001, 0.1)
   val startTime = 0
-  val endTime = 5
-  val stepSize = 0.2
+  val endTime = 60
+  val stepSize = 1
 
   val ode = MyODE(p)
   val odeSolution: Seq[SolutionPoint] = ode
       .solve(y0, startTime, endTime, stepSize)
-      .map { case (t, arr) => SolutionPoint(t, arr(0), arr(1)) }
+      .map { case (t, arr) => SolutionPoint(t, arr(0), arr(1), arr(2)) }
 
   CompareSolutionWithR.saveOutput(odeSolution)
 
@@ -101,19 +103,23 @@ object CompareSolutionWithR {
          |scalaData$$solver = "Scala"
          |
          |params = c(
-         |  alpha = ${p.alpha}
+         |  beta = ${p.beta},
+         |  gamma = ${p.gamma}
          |)
          |
          |Y0 = c(
-         |  x = ${y0(0)},
-         |  y = ${y0(1)}
+         |  S = ${y0(0)},
+         |  I = ${y0(1)},
+         |  R = ${y0(2)}
          |)
+         |
          |dY <-function(t, state, parameters) {
          |  with(as.list(c(state, parameters)),{
-         |    dx <- alpha * y
-         |    dy <- -alpha * x
+         |    ds <- - beta * S*I
+         |    di <- beta * S*I - gamma*I
+         |    dr <- gamma*I
          |
-         |list(c(dx, dy))
+         |list(c(ds, di, dr))
          |  })
          |}
          |
@@ -145,4 +151,5 @@ object CompareSolutionWithR {
       """.stripMargin
     RScript(script, outDir.resolve("myScript.R"))
   }
+// TODO issue with rounding / float point when comparing the two models...need to round or something??
 }

@@ -8,6 +8,7 @@ val samplerCore = "org.tearne" %% "sampler-core" % "0.3.16"
 //val samplerAbc = "org.tearne" %% "sampler-abc" % "0.3.16"
 //val logbackClassic = "ch.qos.logback" % "logback-classic" % "1.1.1"
 val commonsIo = "commons-io" % "commons-io" % "2.4"
+val breeze = "org.scalanlp" %% "breeze" % "0.13.2"
 
 lazy val root = (project in file(".")).
     settings(
@@ -22,6 +23,7 @@ lazy val root = (project in file(".")).
         samplerCore,
         commonsIo,
         commonsMath3,
+        breeze,
         scalameter
       )
     )
