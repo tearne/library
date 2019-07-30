@@ -15,12 +15,12 @@ export function drawAxis(svg, keys, margin) {
 
     svg.append("g")
         .attr("class", "axis")
-        .attr("transform", "translate(" + margin.left + "," + (height + margin.top) + ")")
+        .attr("transform", "translate(" + margin.left + "," + (height + margin.top+30) + ")")
         .call(xAxis);
 
     svg.append("g")
         .attr("class", "axis")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .attr("transform", "translate(" + 25 + "," + margin.top + ")")
         .call(yAxis)
         .selectAll("text")
         .attrs({

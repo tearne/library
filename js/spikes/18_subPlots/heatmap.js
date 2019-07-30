@@ -14,6 +14,9 @@ export function heatmap(svg, xData, yData) {
         .domain(d3.extent(yData))
         .range([height, 0]);
 
+    var xAxis = d3.axisBottom(x)
+    var yAxis = d3.axisLeft(y)
+
     // setup colour scale 
     var color = d3.scalePow()
         .exponent(0.33)
@@ -35,4 +38,23 @@ export function heatmap(svg, xData, yData) {
         .enter().append("path")
         .attr("d", d3.geoPath())
         .attr("fill", function (d) { return color(d.value); });
+
+    svg.select(".xaxis")
+        .append("g")
+        .attr("transform", "translate( 0," + height + ")")
+        .call(xAxis)
+
+        .selectAll("text")
+        .style("text-anchor", "end")
+        .attrs({
+            dx: "-.8em",
+            dy: ".15em"
+        })
+        .attr("transform", function (d) {
+            return "rotate(-55)"
+        });
+
+    svg.select(".yaxis")
+        .append("g")
+        .call(yAxis);
 }

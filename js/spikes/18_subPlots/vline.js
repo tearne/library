@@ -1,4 +1,6 @@
 export function vline(svg, data) {
+    // todo would rather something like vline(svg,xvalue,scale,[label?])
+    
     const width = svg.attr("width");
     const height = svg.attr("height");
     const median = d3.median(data);
