@@ -37,14 +37,14 @@ object DemoTauLeapSolver extends App {
   val p = Parameters(0.001, 0.1)
 
   val startTime: Double = 0
-  val endTime: Double = 60
+  val endTime: Double = 50
   val stepSize: Double = 1
 
-  val y0 = Array(500.0, 1.0, 0.0)
+  val y0 = Array(500.0, 10.0, 0.0)
 
   case class myTauLeap(p: Parameters) extends TauLeap {
     def computeNextStep(y: Array[Double], timeStep: Double): Array[Double] = {
-      val StoI = Math.min(Poisson(p.beta * y(0) * y(1) * timeStep).sample, y(0))
+      val StoI = Math.min(Poisson(p.beta * y(0) * y(1) * timeStep).sample, y(0)) // cannot convert more than available
       val ItoC = Math.min(Poisson((p.gamma * y(1)) * timeStep).sample, y(1))
 
       val dy0 = y(0) - StoI
@@ -55,9 +55,7 @@ object DemoTauLeapSolver extends App {
     }
   }
 
-  // TODO for plot: do a bunch of tau-leap sim's, draw ribbon to show 95% CI & draw a sim or 2 to show 'wigglyness'
-
-  val tauSolution = (1 to 1000).map { _ =>
+  val tauSolution = (1 to 10000).map { _ =>
     myTauLeap(p).solve(y0, startTime, endTime, stepSize)
         .map { case (t, arr) => SolutionPoint(t, arr(0), arr(1), arr(2)) }
   }
@@ -83,7 +81,7 @@ object DemoTauLeapSolver extends App {
   val odeSolution = solveODE(p)
 
   output.saveOutput(odeSolution, tauSolution)
-  //  output.compareWithODE(startTime, endTime)
+  output.compareWithODE(startTime, endTime)
 }
 
 object output {
@@ -108,12 +106,14 @@ object output {
     val script =
       s"""
          |lapply(c("ggplot2", "reshape2", "jsonlite","plyr"), require, character.only=T)
-         |pdf("compareTauLeap.pdf", width=12, height=6, title = "compare Tau Leap solver with ODE solver")
+         |pdf("compareTauLeap.pdf", width=10, height=8, title = "compare Tau Leap solver with ODE solver")
          |
          |ode = (fromJSON("$odeFileName"))
          |tauLeap = (fromJSON("$tauLeapFileName"))
          |
          |tauLeapEx1 = tauLeap[22]
+         |ex1 = melt(tauLeapEx1,id=("time"))
+         |names(ex1) = c("time","variable","example")
          |
          |allTauSims = do.call(rbind,tauLeap)
          |
@@ -121,28 +121,21 @@ object output {
          |names(odeData) = c("time","variable","ODE")
          |
          |tauData = melt(allTauSims,id=c("time"))
-         |lower = aggregate(value~time+variable,tauData,quantile,probs=c(0.25))
-         |names(lower) = c("time","variable","lower")
-         |upper = aggregate(value~time+variable,tauData,quantile,probs=c(0.75))
-         |names(upper) = c("time","variable","upper")
+         |tauData = aggregate(value~time+variable,tauData,quantile,probs=c(0.025,0.25,0.5,0.75,0.975))
          |
-         |lower$$upper = upper$$upper
-         |tauData = lower
+         |data = merge(merge(odeData,tauData,by=c("time","variable")),ex1,by=c("time","variable"))
          |
-         |data = merge(odeData,tauData,by=c("time","variable"))
          |ggplot(data,aes(x=time)) +
-         |geom_ribbon(aes(ymin=lower, ymax=upper)) +
-         |facet_grid(variable~.)
-
+         |facet_grid(variable~.) +
+         |geom_ribbon(aes(ymin = value[,1], ymax = value[,5],fill="Tau-Leap 95% CI")) +
+         |geom_line(aes(y = ODE, color = "ODE Solution"),size = $lineWidth) +
+         |theme(text = element_text(size = 20)) +
+         |theme(axis.text.x = element_text(size = 14)) +
+         |scale_x_continuous(breaks = seq($startTime, $endTime,5), labels = seq($startTime, $endTime,5)) +
+         |scale_fill_manual(name = "", values = c("Tau-Leap 95% CI" = "grey")) +
+         |scale_color_manual(name = "", values = c("ODE Solution" = "blue")) +
+         |ggtitle("Comparison of solutions by ODE solver and Tau-Leap Solver")
        """.stripMargin
-
-//    ggplot(data, aes(x=time, y=value,colour=solver)) +
-//        geom_line(size=$lineWidth) +
-//        facet_grid(variable~.) +
-//        theme(text = element_text(size = 20)) +
-//        scale_x_continuous(breaks = c($startTime : $endTime), labels = c($startTime : $endTime)) +
-//        theme(axis.text.x = element_text(size = 10, angle = 65, hjust = 1, vjust = 1)) +
-//        ggtitle("Comparison of solutions by ODE solver and Tau-Leap Solver")
 
     RScript(script, outDir.resolve("compareTauLeapScript.R"))
   }
