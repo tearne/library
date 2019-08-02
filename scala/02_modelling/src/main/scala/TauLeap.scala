@@ -42,7 +42,7 @@ object DemoTauLeapSolver extends App {
 
   val y0 = Array(500.0, 10.0, 0.0)
 
-  case class myTauLeap(p: Parameters) extends TauLeap {
+  case class MyTauLeap(p: Parameters) extends TauLeap {
     def computeNextStep(y: Array[Double], timeStep: Double): Array[Double] = {
       val StoI = Math.min(Poisson(p.beta * y(0) * y(1) * timeStep).sample, y(0)) // cannot convert more than available
       val ItoC = Math.min(Poisson((p.gamma * y(1)) * timeStep).sample, y(1))
@@ -55,8 +55,9 @@ object DemoTauLeapSolver extends App {
     }
   }
 
+  // Do lots of reps to get a confidence ribbon across time
   val tauSolution = (1 to 10000).map { _ =>
-    myTauLeap(p).solve(y0, startTime, endTime, stepSize)
+    MyTauLeap(p).solve(y0, startTime, endTime, stepSize)
         .map { case (t, arr) => SolutionPoint(t, arr(0), arr(1), arr(2)) }
   }
 
