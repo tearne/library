@@ -128,12 +128,14 @@ object output {
          |ggplot(data,aes(x=time)) +
          |facet_grid(variable~.) +
          |geom_ribbon(aes(ymin = value[,1], ymax = value[,5],fill="Tau-Leap 95% CI")) +
+         |geom_line(aes(y = example, color = "Tau Leap Solution"),size = $lineWidth) +
          |geom_line(aes(y = ODE, color = "ODE Solution"),size = $lineWidth) +
          |theme(text = element_text(size = 20)) +
          |theme(axis.text.x = element_text(size = 14)) +
          |scale_x_continuous(breaks = seq($startTime, $endTime,5), labels = seq($startTime, $endTime,5)) +
+         |scale_y_continuous(name = "") +
          |scale_fill_manual(name = "", values = c("Tau-Leap 95% CI" = "grey")) +
-         |scale_color_manual(name = "", values = c("ODE Solution" = "blue")) +
+         |scale_color_manual(name = "", values = c("ODE Solution" = "blue","Tau Leap Solution" = "red")) +
          |ggtitle("Comparison of solutions by ODE solver and Tau-Leap Solver")
        """.stripMargin
 

@@ -19,8 +19,8 @@ export function heatmap(svg, xData, yData) {
 
     // setup colour scale 
     var color = d3.scalePow()
-        .exponent(0.33)
-        .domain([0.025, 1])
+        .exponent(0.25)
+        .domain([0.01, 1])
         .range(["midnightblue", "red"]);
 
     // compute the density data
