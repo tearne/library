@@ -20,7 +20,7 @@ trait TauLeap {
       val (prevTime, prevY) = acc.last
 //      val newY = computeNextStep(prevY, nextTime - prevTime)
       val newY = computeNextStep(prevY, stepSize)
-      acc :+ (nextTime, newY)
+      acc :+ (nextTime.toDouble, newY)
     }
   }
 }
