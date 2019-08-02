@@ -6,27 +6,22 @@ import org.apache.commons.io.FileUtils
 import play.api.libs.json.Json
 import sampler.r.script.RScript
 
-import scala.annotation.tailrec
 
 trait TauLeap {
 
   def computeNextStep(y: Array[Double], timeStep: Double): Array[Double]
 
-  def solve(y0: Array[Double], t0: Double, t1: Double, timeStep: Double): IndexedSeq[(Double, Array[Double])] = {
+  def solve(y0: Array[Double], t0: Double, t1: Double, stepSize: Double): IndexedSeq[(Double, Array[Double])] = {
 
-    @tailrec def go(toProcess: Seq[BigDecimal], y: Array[Double], acc: IndexedSeq[(Double, Array[Double])]): IndexedSeq[(Double, Array[Double])] = {
-      if (toProcess.isEmpty) {
-        acc
-      } else {
-        val thisState = computeNextStep(y, timeStep)
-        val solutionPoint = (toProcess.head.toDouble, thisState)
+    val times: Seq[Double] = t0 to t1 by stepSize
+    val initialCondition = (t0, y0)
 
-        go(toProcess.tail, thisState, acc.:+(solutionPoint))
-      }
+    times.foldLeft(IndexedSeq(initialCondition)){case (acc, nextTime) =>
+      val (prevTime, prevY) = acc.last
+//      val newY = computeNextStep(prevY, nextTime - prevTime)
+      val newY = computeNextStep(prevY, stepSize)
+      acc :+ (nextTime, newY)
     }
-
-    val times: Seq[BigDecimal] = BigDecimal(t0) to t1 by timeStep
-    go(times, y0, IndexedSeq((0.0, y0)))
   }
 }
 
@@ -56,7 +51,7 @@ object DemoTauLeapSolver extends App {
   }
 
   // Do lots of reps to get a confidence ribbon across time
-  val tauSolution = (1 to 10000).map { _ =>
+  val tauSolution = (1 to 1000).map { _ =>
     MyTauLeap(p).solve(y0, startTime, endTime, stepSize)
         .map { case (t, arr) => SolutionPoint(t, arr(0), arr(1), arr(2)) }
   }
