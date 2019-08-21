@@ -1,27 +1,68 @@
-<!doctype html>
-<meta charset="utf-8">
+<!DOCTYPE html>
+<html lang="en">
 
-<script src="https://d3js.org/d3.v5.js"></script>
-<script src="https://d3js.org/d3-selection-multi.v1.js"></script>
+<head>
+  <meta charset="utf-8">
+  <title> Sample ABC Outputs </title>
+  <script src="https://d3js.org/d3.v5.js"></script>
+  <script src="https://d3js.org/d3-selection-multi.v1.js"></script>
+  <script src="https://d3js.org/d3-contour.v1.min.js"></script>
 
-<script type="module" src="drawgrid.js"></script>
+  <style>
+    #column {
+      width: 100%;
+      height: 800px;
+      background-color: darkgrey;
+    }
 
-<title>
-  Page Title
-</title>
+    #chart {
+      width: 600px;
+      height: 600px;
+      background-color: whitesmoke;
+    }
 
-<style>
-  #column {
-    width: 400px;
-    height: 500px;
-    background-color: darkgray;
-  }
-  #chart {
-    width: 100%;
-    height: 400px;
-    background-color: lightgrey;
-  }
-</style>
+    .graphlabels {
+      text-anchor: start;
+      dominant-baseline: hanging;
+      font-size: 16px;
+      fill: red
+    }
+
+    .correlations {
+      text-anchor: middle;
+      dominant-baseline: middle;
+      font-size: 18px;
+    }
+
+    .histbars {
+      fill: midnightblue;
+    }
+
+    .densityLine {
+      fill: none;
+      stroke: cornflowerblue;
+      stroke-width: 3;
+    }
+
+    .vertical-line {
+      stroke: red;
+      stroke-width: 3;
+    }
+
+    .axis text {
+      font: 18px sans-serif;
+    }
+
+    .tick line {
+      visibility: hidden;
+    }
+
+    .axis path,
+    .axis line {
+      visibility: hidden;
+    }
+  </style>
+</head>
 
 <body>
   <div id="column">
@@ -30,65 +71,60 @@
 </body>
 
 <script type="module">
-  import {getData} from "./data.js"
-
-  import {drawGrid} from "./drawgrid.js"
-  
-  import {histogram} from "./plots.js"
-  import {density} from "./density.js"
-
-  let chartWidth  = d3.select("#column").node().clientWidth,
-      chartHeight = parseInt(d3.select("#chart").style("height"));
+  import { histogram } from "./plots.js";
+  import { density } from "./density.js";
+  import { vline } from "./vline.js";
+  import { hline } from "./vline.js";
+  import { medianLabels } from "./medianLabels.js";
+  import { drawGrid } from "./drawgrid.js";
+  import { corr } from "./corr.js";
+  import { heatmap } from "./heatmap.js";
+  import { drawAxis } from "./drawAxis.js";
 
   let div = d3.select("#chart");
 
   let svg = div
     .append("svg")
-    .attrs({"width": div.node().clientWidth, "height": div.node().clientHeight})
+    .attrs({
+      width: div.node().clientWidth,
+      height: div.node().clientHeight
+    })
 
-  const data = getData();
+  var margin = { left: 50, right: 20, top: 20, bottom: 60 };
 
+  // Read the data in from json file
+  // TODO get the JSON to read from here: /efs/compModelling/2018_CR2000c_SalmonellaPigs/ABCOutputs/01.Old/20190301-FourParams/progress/Gen010.json
+  d3.json("gen10.json")
+    .then(function (jsData) {
+      let params = jsData["particle-details"].map(d => d.p)
+      let keys = d3.keys(params[0])
 
+      // Create array for each parameter
+      let data = [
+        params.map(d => d.beta),
+        params.map(d => d.gamma),
+        params.map(d => d.a),
+        params.map(d => d.b)];
 
-  function drawCell(svg, i, j){
-    
-    const width = svg.attr("width"),
-        height = svg.attr("height")
+      function toPlot(chart, i, j) {
+        if (i == j) {
+          histogram(chart, data[i]);
+          density(chart, data[i], 1);
+          vline(chart, data[i]);
+          medianLabels(chart, data[i]);
+        } else if (i < j) {
+          corr(chart, data[i], data[j]);
+        }
+        else {
+          heatmap(chart, data[j], data[i]);
+          vline(chart, data[j]);
+          hline(chart, data[i]);
+        }
+      }
 
-    if(i == j){
-      histogram(svg, data)
-      density(svg, data, 0.5)
-    } else {
-      // Placeholder stuff for off-diagonal cells
-      
-      let colour = '#'+(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6)
-
-      let g = svg.append("g")
-
-      g
-        .append("rect")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("fill", colour)
-
-      let data = [4,7,2,5,1,7,8,1,1,4]
-
-      let y = d3.scaleLinear()
-        .domain([0, 8])
-        .range([height, 0]);
-
-      g
-        .selectAll("rect")
-        .data(data)  
-        .enter()
-        .append("rect")
-        .attr("y",d => y(d))
-        .attr("x", (d,i) => i * 10)
-        .attr("width", 10)
-        .attr("height", d => height - y(d))
-        .attr("fill", "black"); 
-    }
-  }
-
-  drawGrid(svg, 3, 3, drawCell);
+      drawGrid(svg, margin, keys.length, keys.length, toPlot);
+      drawAxis(svg, keys, margin);
+    });
 </script>
+
+</html>
