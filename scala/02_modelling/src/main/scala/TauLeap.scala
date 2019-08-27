@@ -13,14 +13,14 @@ trait TauLeap {
 
   def solve(y0: Array[Double], t0: Double, t1: Double, stepSize: Double): IndexedSeq[(Double, Array[Double])] = {
 
-    val times: Seq[Double] = t0 to t1 by stepSize
+    val times = BigDecimal(t0) to t1 by stepSize
     val initialCondition = (t0, y0)
 
-    times.foldLeft(IndexedSeq(initialCondition)){case (acc, nextTime) =>
+    times.tail.foldLeft(IndexedSeq(initialCondition)) { case (acc, nextTime) => {
       val (prevTime, prevY) = acc.last
-//      val newY = computeNextStep(prevY, nextTime - prevTime)
-      val newY = computeNextStep(prevY, stepSize)
+      val newY = computeNextStep(prevY, (nextTime - prevTime).toDouble)
       acc :+ (nextTime.toDouble, newY)
+    }
     }
   }
 }
@@ -39,9 +39,9 @@ object DemoTauLeapSolver extends App {
 
   case class MyTauLeap(p: Parameters) extends TauLeap {
     def computeNextStep(y: Array[Double], timeStep: Double): Array[Double] = {
-      val StoI = Math.min(Poisson(p.beta * y(0) * y(1) * timeStep).sample, y(0)) // cannot convert more than available
+      val StoI = Math.min(Poisson(p.beta * y(0) * y(1) * timeStep).sample, y(0))
+      // cannot convert more than available
       val ItoC = Math.min(Poisson((p.gamma * y(1)) * timeStep).sample, y(1))
-
       val dy0 = y(0) - StoI
       val dy1 = y(1) + StoI - ItoC
       val dy2 = y(2) + ItoC
@@ -50,7 +50,7 @@ object DemoTauLeapSolver extends App {
     }
   }
 
-  // Do lots of reps to get a confidence ribbon across time
+  // Do lots of reps to get a confidence ribbon
   val tauSolution = (1 to 1000).map { _ =>
     MyTauLeap(p).solve(y0, startTime, endTime, stepSize)
         .map { case (t, arr) => SolutionPoint(t, arr(0), arr(1), arr(2)) }
@@ -67,9 +67,7 @@ object DemoTauLeapSolver extends App {
       }
     }
 
-    val ode = MyODE(p)
-
-    ode
+    MyODE(p)
         .solve(y0, startTime, endTime, stepSize)
         .map { case (t, arr) => SolutionPoint(t, arr(0), arr(1), arr(2)) }
   }
@@ -113,6 +111,7 @@ object output {
          |
          |allTauSims = do.call(rbind,tauLeap)
          |
+         |ode$$time = ode$$time
          |odeData = melt(ode,id=c("time"))
          |names(odeData) = c("time","variable","ODE")
          |
