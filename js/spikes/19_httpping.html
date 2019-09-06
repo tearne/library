@@ -1,0 +1,176 @@
+<!doctype html>
+<meta charset="utf-8">
+
+<style>
+  #column {
+    width: 600px;
+  }
+  #chart {
+    height: 400px;
+    width: 100%;
+    background-color: lightgrey;
+  }
+  input {
+      width: 100%;
+  }
+</style>
+
+<div id="column">
+  <div id="chart"></div>
+  <input
+  id=inputBox
+  type="text"
+  name="fname"
+  value="https://dynamodb.eu-west-1.amazonaws.com/"
+  required
+  oninput="updateData(this);"
+  onkeyup="if(event.keyCode == 13) doPlot();"
+  />
+  <button type="button" id="startButton">Init</button>
+</div>
+
+<script src="https://d3js.org/d3.v5.min.js"></script>
+
+<script>
+
+let pingData = []
+let numPings = 10
+
+let chartHeight = d3.select("#chart").node().getBoundingClientRect().height;
+let chartWidth = d3.select("#chart").node().getBoundingClientRect().width;
+
+let chartDiv = document.getElementById("chart");
+let svg = d3
+    .select("#chart")
+    .append("svg")
+    .attr("height", chartHeight)
+    .attr("width", chartWidth);
+
+let margin = {top: 10, right: 10, bottom: 30, left: 30};
+
+let plotGroup = svg
+      .append("g")
+    //   .attr("class", "main-group")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+let plotHeight = chartHeight - margin.top - margin.bottom;
+
+let yScale = d3.scaleLinear().domain([0,50]).rangeRound([plotHeight, 0])
+let yAxis =  d3.axisLeft().scale(yScale);
+let yAxisGroup = plotGroup.append("g");
+yAxisGroup.call(yAxis);
+
+let plotWidth = chartWidth - margin.left - margin.right
+let xScale = d3.scaleBand()
+    .domain(d3.range(0,numPings))
+    .rangeRound([0,plotWidth])
+    .paddingInner(0.2);
+let xAxis = d3.axisBottom().scale(xScale);
+let xAxisGroup = plotGroup
+    .append("g")
+    .attr("transform", "translate(0,"+plotHeight+")")
+xAxisGroup.call(xAxis);
+
+function updatePlot(){
+    //TODO what should this be called?
+    let thingey = plotGroup.selectAll("rect")
+        .data(pingData)
+
+    thingey
+      .exit()
+      .remove();
+
+    thingey
+        .enter()
+        .append("rect")
+        // .merge()
+        .attr('width', xScale.bandwidth())
+        .attr('x', (d,i) => xScale(i))
+        .attr('y', d => plotHeight - yScale(d))
+        .attr('height', d => yScale(d))
+        .attr("fill", "red")
+}
+
+
+
+let button = document.getElementById("startButton")
+button.textContent = "Start";
+button.onclick = clickButton
+document.body.appendChild(button)
+
+let inputBox = document.getElementById("inputBox")
+var endpoint = ""
+
+var taskStartTime = 0
+
+let imageBox = (() => {
+    let img = document.createElement("img");
+    img.innerHTML = "<img id='pingImage' style='display: none'>"
+    return img;
+})()
+
+let isRunning = () => button.textContent != "Start";
+
+function clickButton(){
+    if(!isRunning()){
+        button.textContent = "Stop"
+        pingData = []
+        updatePlot()
+        start()
+    } 
+    else button.textContent = "Start"
+}
+
+function start(){
+    endpoint = inputBox.value
+
+    let timeToStop = () => {
+        return !isRunning() || pingData.length == numPings - 1
+    }
+
+    let execute = () => {
+        if(taskStartTime == 0){
+            // Start ping test 
+            doTiming()
+        }
+        else if(performance.now() - taskStartTime > 2000){
+            // Give up waiting for last ping, start again
+            taskStartTime == 0
+            doTiming()
+        } 
+        // else still waiting on timout, do nothing
+
+        if(!timeToStop()) setTimeout(execute, 1000)
+    }
+
+    execute()
+}
+
+function httpingTime(callback){
+    let wrappedCallback = () => {
+        let duration = performance.now() - start
+        callback(duration)
+    }
+
+    let randomString = Math.floor(Math.random()*0xFFFFFFFFFFFFFFFF).toString(36);
+    let url = endpoint + "ping?x="+randomString
+    
+    imageBox.src = "#"
+    imageBox.onerror = wrappedCallback
+
+    let start = performance.now()
+    imageBox.src = url
+}
+
+function doTiming(){
+    let done = (d) => {
+        taskStartTime = 0;
+        pingData.push(d)
+        button.disabled = false;
+        console.log(d)
+        updatePlot()
+    }
+    httpingTime(done)
+}
+
+</script>
