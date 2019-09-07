@@ -54,37 +54,6 @@ let plotGroup = svg
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
       .attr("id", "plotArea");
 
-
-    //     let myData = [1,2,3,4,5,6]
-    //   let line = plotGroup.selectAll("line")
-    //         .data(myData)
-
-    //     line
-    //         .enter()
-    //         .append("line")
-    //         .style("stroke", "black")
-    //         .merge(line)
-    //         .attrs(d => ({
-    //             x1: 10 * d,
-    //             y1: 20 * d,
-    //             x2: 30 * d,
-    //             y2: 40 * d
-    //         }))
-
-    // plotGroup.selectAll("line")
-    //         .datum([1,2,3,4])
-    //         // .enter()
-    //         .append("line")
-    //         // .merge()
-    //         .style("stroke", "black")
-    //         .attrs(d => ({
-    //             x1: 10 * d,
-    //             y1: 20 * d,
-    //             x2: 30 * d,
-    //             y2: 40 * d
-    //         }))
-
-
 let plotHeight = chartHeight - margin.top - margin.bottom;
 
 let yScale = d3.scaleLinear().domain([0,50]).rangeRound([plotHeight, 0])
@@ -142,7 +111,6 @@ function updatePlot(){
             u => u.attrs(d => ({x1: xScale(0), y1: yScale(d), x2: xScale(numPings)+xScale.bandwidth(), y2: yScale(d)} ))
         )
 }
-
 
 
 let button = document.getElementById("startButton")
