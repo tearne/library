@@ -6,7 +6,7 @@
     width: 600px;
   }
   #chart {
-    height: 400px;
+    height: 200px;
     width: 100%;
     background-color: lightgrey;
   }
@@ -16,7 +16,7 @@
 </style>
 
 <div id="column">
-  <div id="chart"></div>
+    <h1>HTTPS Ping Test</h1>
   <input
   id=inputBox
   type="text"
@@ -24,17 +24,18 @@
   value="https://dynamodb.eu-west-1.amazonaws.com/"
   required
   oninput="updateData(this);"
-  onkeyup="if(event.keyCode == 13) doPlot();"
-  />
+  onkeyup="if(event.keyCode == 13) doPlot();"/>
   <button type="button" id="startButton">Init</button>
+  <div id="chart"></div>
 </div>
 
-<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://d3js.org/d3.v5.js"></script>
+<script src="https://d3js.org/d3-selection-multi.v1.js"></script>
 
 <script>
 
 let pingData = []
-let numPings = 10
+let numPings = 40
 
 let chartHeight = d3.select("#chart").node().getBoundingClientRect().height;
 let chartWidth = d3.select("#chart").node().getBoundingClientRect().width;
@@ -50,19 +51,52 @@ let margin = {top: 10, right: 10, bottom: 30, left: 30};
 
 let plotGroup = svg
       .append("g")
-    //   .attr("class", "main-group")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+      .attr("id", "plotArea");
+
+
+    //     let myData = [1,2,3,4,5,6]
+    //   let line = plotGroup.selectAll("line")
+    //         .data(myData)
+
+    //     line
+    //         .enter()
+    //         .append("line")
+    //         .style("stroke", "black")
+    //         .merge(line)
+    //         .attrs(d => ({
+    //             x1: 10 * d,
+    //             y1: 20 * d,
+    //             x2: 30 * d,
+    //             y2: 40 * d
+    //         }))
+
+    // plotGroup.selectAll("line")
+    //         .datum([1,2,3,4])
+    //         // .enter()
+    //         .append("line")
+    //         // .merge()
+    //         .style("stroke", "black")
+    //         .attrs(d => ({
+    //             x1: 10 * d,
+    //             y1: 20 * d,
+    //             x2: 30 * d,
+    //             y2: 40 * d
+    //         }))
+
 
 let plotHeight = chartHeight - margin.top - margin.bottom;
 
 let yScale = d3.scaleLinear().domain([0,50]).rangeRound([plotHeight, 0])
 let yAxis =  d3.axisLeft().scale(yScale);
-let yAxisGroup = plotGroup.append("g");
-yAxisGroup.call(yAxis);
+plotGroup
+    .append("g")
+    .attr("class", "y-axis")
+    .call(yAxis);
 
 let plotWidth = chartWidth - margin.left - margin.right
 let xScale = d3.scaleBand()
-    .domain(d3.range(0,numPings))
+    .domain(d3.range(1,numPings+1))
     .rangeRound([0,plotWidth])
     .paddingInner(0.2);
 let xAxis = d3.axisBottom().scale(xScale);
@@ -72,23 +106,41 @@ let xAxisGroup = plotGroup
 xAxisGroup.call(xAxis);
 
 function updatePlot(){
-    //TODO what should this be called?
-    let thingey = plotGroup.selectAll("rect")
+    yScale.domain([0, 2* d3.mean(pingData)])
+    yAxis.scale(yScale)
+    plotGroup.selectAll("g.y-axis").transition()
+                .duration(500).call(yAxis)
+
+    plotGroup.selectAll("rect")
         .data(pingData)
+        .join(
+            enter => enter
+                .append("rect")
+                .attr('y', d => yScale(0))
+                .call(e => e.transition().delay(200)    
+                    .attr('height', d => plotHeight - yScale(d))
+                    .attr('y', d => yScale(d))
+                )
+                .attr("fill", "red")
+                .attr('width', xScale.bandwidth())
+                .attr('x', (d,i) => xScale(i+1)),
+            update => update
+                .transition()
+                .duration(500)
+                .attr('y', d => yScale(d))
+                .attr('height', d => plotHeight - yScale(d)),
+            exit => exit.remove()
+        )
 
-    thingey
-      .exit()
-      .remove();
+    meanPoint = [pingData.length > 1 ? d3.mean(pingData) : 25 ]
 
-    thingey
-        .enter()
-        .append("rect")
-        // .merge()
-        .attr('width', xScale.bandwidth())
-        .attr('x', (d,i) => xScale(i))
-        .attr('y', d => plotHeight - yScale(d))
-        .attr('height', d => yScale(d))
-        .attr("fill", "red")
+    plotGroup
+        .selectAll(".meanLine")
+        .data([d3.mean(pingData)])
+        .join(
+            e => e.append("line").attr("class", "meanLine").style("stroke", "blue"),
+            u => u.attrs(d => ({x1: xScale(0), y1: yScale(d), x2: xScale(numPings)+xScale.bandwidth(), y2: yScale(d)} ))
+        )
 }
 
 
@@ -118,7 +170,11 @@ function clickButton(){
         updatePlot()
         start()
     } 
-    else button.textContent = "Start"
+    else stop()
+}
+
+function stop(){
+    button.textContent = "Start"
 }
 
 function start(){
@@ -141,13 +197,14 @@ function start(){
         // else still waiting on timout, do nothing
 
         if(!timeToStop()) setTimeout(execute, 1000)
+        else stop()
     }
 
     execute()
 }
 
 function httpingTime(callback){
-    let wrappedCallback = () => {
+    let wrappedCallback = (errorEvent) => {
         let duration = performance.now() - start
         callback(duration)
     }
