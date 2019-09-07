@@ -102,13 +102,6 @@
       else return d
     };
 
-    // update
-    box
-      .transition().duration(1500)
-      .attr('y', d => height - scale(d))
-      .attr('height', d => scale(d))
-      .attr('fill', myColour);
-
     // enter
     box
       .enter()
@@ -126,7 +119,12 @@
       .on('mouseout', function(d,i){
         d3.select(this).attr("stroke","none");
         d3.select('#l'+i).style('opacity', 0);
-      });
+      })
+      .merge(box) // merge with update
+      .transition().duration(1500)
+      .attr('y', d => height - scale(d))
+      .attr('height', d => scale(d))
+      .attr('fill', myColour);
 
     // exit
     box
