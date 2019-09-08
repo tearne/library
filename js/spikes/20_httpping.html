@@ -2,31 +2,41 @@
 <meta charset="utf-8">
 
 <style>
-  #column {
-    width: 600px;
-  }
-  #chart {
-    height: 200px;
-    width: 100%;
-    background-color: lightgrey;
-  }
-  input {
-      width: 100%;
-  }
+    * {
+        color: #000;
+        font-family: sans-serif;
+    }
+
+    #column {
+        width: 600px;
+    }
+    
+    #chart {
+        height: 200px;
+        width: 100%;
+        background-color: lightgrey;
+    }
+
+    input {
+        width: 100%;
+    }
 </style>
 
 <div id="column">
-    <h1>HTTPS Ping Test</h1>
-  <input
-  id=inputBox
-  type="text"
-  name="fname"
-  value="https://dynamodb.eu-west-1.amazonaws.com/"
-  required
-  oninput="updateData(this);"
-  onkeyup="if(event.keyCode == 13) doPlot();"/>
-  <button type="button" id="startButton">Init</button>
-  <div id="chart"></div>
+    <h1>HTTP Ping Test</h1>
+    <p>One niggle... if you put in a duff hostname the ping times are 
+        merely how long it takes to fail to resolve the name :-/  Don't
+        know how to fix that yet...
+    </p>
+    <input
+        id=inputBox
+        type="text"
+        name="fname"
+        value="https://dynamodb.eu-west-1.amazonaws.com/"
+        required
+        onkeyup="if(event.keyCode == 13) doPlot();"/>
+    <button type="button" id="startButton">Init</button>
+    <div id="chart"></div>
 </div>
 
 <script src="https://d3js.org/d3.v5.js"></script>
@@ -35,7 +45,7 @@
 <script>
 
 let pingData = []
-let numPings = 40
+let numPings = 20
 
 let chartHeight = d3.select("#chart").node().getBoundingClientRect().height;
 let chartWidth = d3.select("#chart").node().getBoundingClientRect().width;
@@ -47,7 +57,7 @@ let svg = d3
     .attr("height", chartHeight)
     .attr("width", chartWidth);
 
-let margin = {top: 10, right: 10, bottom: 30, left: 30};
+let margin = {top: 10, right: 10, bottom: 30, left: 40};
 
 let plotGroup = svg
       .append("g")
@@ -55,6 +65,7 @@ let plotGroup = svg
       .attr("id", "plotArea");
 
 let plotHeight = chartHeight - margin.top - margin.bottom;
+let plotWidth = chartWidth - margin.left - margin.right
 
 let yScale = d3.scaleLinear().domain([0,50]).rangeRound([plotHeight, 0])
 let yAxis =  d3.axisLeft().scale(yScale);
@@ -63,22 +74,31 @@ plotGroup
     .attr("class", "y-axis")
     .call(yAxis);
 
-let plotWidth = chartWidth - margin.left - margin.right
+plotGroup.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 0 - margin.left)
+    .attr("x",0 - plotHeight / 2)
+    .style("dominant-baseline","hanging")
+    .style("text-anchor", "middle")
+    .text("ms");  
+
 let xScale = d3.scaleBand()
-    .domain(d3.range(1,numPings+1))
+    .domain(d3.range(1, numPings + 1))
     .rangeRound([0,plotWidth])
     .paddingInner(0.2);
 let xAxis = d3.axisBottom().scale(xScale);
-let xAxisGroup = plotGroup
+plotGroup
     .append("g")
     .attr("transform", "translate(0,"+plotHeight+")")
-xAxisGroup.call(xAxis);
+    .call(xAxis);
 
 function updatePlot(){
-    yScale.domain([0, 2* d3.mean(pingData)])
-    yAxis.scale(yScale)
-    plotGroup.selectAll("g.y-axis").transition()
-                .duration(500).call(yAxis)
+    yScale.domain([0, 2 * d3.mean(pingData)])
+    plotGroup
+        .selectAll("g.y-axis")
+        .transition()
+        .duration(500)
+        .call(yAxis)
 
     plotGroup.selectAll("rect")
         .data(pingData)
@@ -100,8 +120,6 @@ function updatePlot(){
                 .attr('height', d => plotHeight - yScale(d)),
             exit => exit.remove()
         )
-
-    meanPoint = [pingData.length > 1 ? d3.mean(pingData) : 25 ]
 
     plotGroup
         .selectAll(".meanLine")
@@ -192,7 +210,7 @@ function doTiming(){
         taskStartTime = 0;
         pingData.push(d)
         button.disabled = false;
-        console.log(d)
+        console.log("response after "+d+" ms")
         updatePlot()
     }
     httpingTime(done)
