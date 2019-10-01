@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "jquery": "^2.2.1",
+    "jquery": "^3.4.1",
     "plotly": "^1.0.6"
   }
 }
