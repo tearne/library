@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "/Users/o/sshfs"
+		},
+		{
+			"path": "04_EV3"
+		}
+	],
+	"settings": {
+		"debug.openDebug": "neverOpen"
+	}
+}
