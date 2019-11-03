@@ -166,54 +166,43 @@ function stop(){
 function start(){
     endpoint = inputBox.value
 
-    let timeToStop = () => {
-        return !isRunning() || pingData.length == numPings - 1
-    }
-
-    let execute = () => {
-        if(taskStartTime == 0){
-            // Start ping test 
-            doTiming()
-        }
-        else if(performance.now() - taskStartTime > 2000){
-            // Give up waiting for last ping, start again
-            taskStartTime == 0
-            doTiming()
-        } 
-        // else still waiting on timout, do nothing
-
-        if(!timeToStop()) setTimeout(execute, 1000)
+    function go(){
+        if(isRunning() && pingData.length < numPings)
+            return ping().catch(e => console.error(e)).then(pause).then(() => go())
         else stop()
     }
 
-    execute()
-}
-
-function httpingTime(callback){
-    let wrappedCallback = (errorEvent) => {
-        let duration = performance.now() - start
-        callback(duration)
+    function pause(){
+        return new Promise(resolve => setTimeout(resolve, 500))
     }
 
-    let randomString = Math.floor(Math.random()*0xFFFFFFFFFFFFFFFF).toString(36);
-    let url = endpoint + "ping?x="+randomString
-    
-    imageBox.src = "#"
-    imageBox.onerror = wrappedCallback
-
-    let start = performance.now()
-    imageBox.src = url
+    go()
 }
 
-function doTiming(){
-    let done = (d) => {
-        taskStartTime = 0;
-        pingData.push(d)
+function ping(){
+    function sendWithTimeout(){
+        let sendPromise = new Promise(resolve => {
+            let randomString = Math.floor(Math.random()*0xFFFFFFFFFFFFFFFF).toString(36);
+            let url = endpoint + "ping?x="+randomString
+
+            imageBox.src = "#"
+            imageBox.onerror = (errorEvent) => resolve(performance.now() - start)    
+
+            let start = performance.now()
+            imageBox.src = url
+        })
+
+        let timeoutPromise = new Promise((res, reject) => setTimeout(() => reject("timeout"), 1000))
+
+        return Promise.race([sendPromise, timeoutPromise])
+    }
+
+    return sendWithTimeout().then(response => {
+        pingData.push(response)
         button.disabled = false;
-        console.log("response after "+d+" ms")
+        console.log("response after "+response+" ms")
         updatePlot()
-    }
-    httpingTime(done)
+    })
 }
 
 </script>
