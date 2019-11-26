@@ -1,18 +1,15 @@
-from scrollbit import set_pixel as setpx
+from scrollbit import set_pixel, get_pixel
 from scrollbit import show
 from random import getrandbits, randint
-import microbit
-from time import sleep
+from microbit import sleep, i2c, button_a, button_b, display
+
+FOOD_BRIGHT = 255
+SNAKE_BRIGHT = 40
 
 UP = 0
 DOWN = 1
 LEFT = 2
 RIGHT = 3
-
-start = (3,5,UP)
-snake = [start, (3,4,0), (3,3,0), (3,2,0), (3,1,0)]
-setpx(start[0], start[1], 40)
-show()
 
 TOP_EDGE = 0
 BOTTOM_EDGE = 6
@@ -52,11 +49,8 @@ def go_left(pt):
 def go_right(pt):
     return (pt[0] + 1, pt[1], RIGHT)
 
-def up_down_random(pt):
-    return go_up(pt) if bool(getrandbits(1)) else go_down(pt)
-
-def left_right_random(pt):
-    return go_left(pt) if bool(getrandbits(1)) else go_right(pt)
+def turn_random(pt):
+    return turn_clock(pt) if bool(getrandbits(1)) else turn_anti(pt)
 
 def hit_edge(pt):
     x = pt[0]
@@ -68,13 +62,16 @@ def hit_edge(pt):
         (x == LEFT_EDGE and d == LEFT) or \
         (x == RIGHT_EDGE and d == RIGHT)
 
+def is_ded(pt):
+    x = pt[0]
+    y = pt[1]
+    return x == -1 or x == 17 or y == -1 or y == 7 or get_pixel(x,y) == SNAKE_BRIGHT
 
-def appendNext(snakeArr):
-
+def append_next_move(snakeArr):
     def nextMove(pt):
-        if microbit.button_a.was_pressed():
+        if button_a.was_pressed():
             return turn_clock(pt)
-        elif microbit.button_b.was_pressed():
+        elif button_b.was_pressed():
             return turn_anti(pt)
         elif hit_edge(pt):
             return turn_clock(pt)
@@ -84,71 +81,63 @@ def appendNext(snakeArr):
     prev = snakeArr[-1]
     return snakeArr + [nextMove(prev)]
 
-    # def nextMove(pt):
-    #     x = pt[0]
-    #     y = pt[1]
-    #     d = pt[2]
+def new_food(snake):
+    def doesnt_intersect_snake(pt):
+        for s in snake:
+            if s[0:2] == pt: return False
+        return True
 
-    #     if y == TOP_EDGE:
-    #         if x == LEFT_EDGE:
-    #             if d == UP:
-    #                 return go_right(pt)
-    #             else:  # d == LEFT:
-    #                 return go_down(pt)
-    #         elif x == RIGHT_EDGE:
-    #             if d == UP:
-    #                 return go_left(pt)
-    #             else: # d == RIGHT:
-    #                 return go_down(pt)
-    #         else:     # middle of top edge
-    #             return left_right_random(pt)
-    #     elif y == BOTTOM_EDGE:
-    #         if x == LEFT_EDGE:
-    #             if d == DOWN:
-    #                 return go_right(pt)
-    #             else: # d == LEFT
-    #                 return go_up(pt)
-    #         elif x == RIGHT_EDGE:
-    #             if d == DOWN:
-    #                 return go_left(pt)
-    #             else: # d == RIGHT
-    #                 return go_up(pt)
-    #         else:     # middle of bottom edge
-    #             return left_right_random(pt)
-    #     # Now know not on top or bottom edges
-    #     elif x == LEFT_EDGE:
-    #         return up_down_random(pt)
-    #     elif x == RIGHT_EDGE:
-    #         return up_down_random(pt)
-    #     else:
-    #         return go_on(pt)
-    #    
-    # prev = snakeArr[-1]
-    # return snakeArr + [nextMove(prev)]
+    while True:
+        candidate = (randint(0,16), randint(0,6))
+        if doesnt_intersect_snake(candidate):
+            break
 
-food = (randint(0,16), randint(0,6))
-setpx(food[0], food[1], 255)
+    return candidate
 
-def doFood(food, snake):
+def eval_food(food, snake):
     snakePosition = snake[-1][0:2]
     if snakePosition == food:
-        snake = [snake[0]] + snake
-        food = (randint(0,16), randint(0,6))
-        setpx(food[0], food[1], 255)
+        snake = [snake[0], snake[0]] + snake
+        food = new_food(snake)
+        set_pixel(food[0], food[1], FOOD_BRIGHT)
+
+        points = int(len(snake) / 2) - 1
+        if points > 24: end()
+        display.set_pixel(points % 5, int(points / 5), 9)
         return (food, snake)
     else:
         return (food, snake)
 
+def end():
+    while True:
+        for x in range(10):
+            set_pixel(randint(0,16), randint(0,6), randint(0,3)*10)
+        show()
 
-while True:
-    snake = appendNext(snake)
-    newPt = snake[-1]
-    oldPt = snake[0]
-    snake = snake[1:]
-
-    food, snake = doFood(food, snake)
-    
-    setpx(newPt[0], newPt[1], 30)
-    setpx(oldPt[0], oldPt[1], 0)
+def start():
+    start = (3,5,UP)
+    snake = [start, start]
+    set_pixel(start[0], start[1], SNAKE_BRIGHT)
     show()
-    sleep(0.1)
+    display.set_pixel(0,0,9)
+
+    food = new_food(snake)
+    set_pixel(food[0], food[1], FOOD_BRIGHT)
+
+    while True:
+        snake = append_next_move(snake)
+        newPt = snake[-1]
+        oldPt = snake[0]
+        snake = snake[1:]
+
+        if is_ded(newPt): end()
+
+        food, snake = eval_food(food, snake)
+        
+        set_pixel(newPt[0], newPt[1], SNAKE_BRIGHT)
+        set_pixel(oldPt[0], oldPt[1], 0)
+        show()
+
+        sleep(100)
+
+start()

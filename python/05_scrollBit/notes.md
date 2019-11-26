@@ -8,11 +8,11 @@
 * Flash a fresh micropython using a blank source file 
   * `uflash`
 * Copy on libs 
-  * `ufs put somelib.py`
+  * `ufs put scrollbit.py`
 * Copy on a main 
-  * `ufs put main`
-* REPL
-  * `screen /dev/cu.usbmodem14202 115200`
+  * `ufs put main.py`
+* If you need REPL
+  * `screen /dev/cu.usbmodem14202 115200` (on mac)
 
 ## Moar linkage
 
