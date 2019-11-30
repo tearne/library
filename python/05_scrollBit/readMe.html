@@ -2,7 +2,7 @@
 
 <p>Thankyou for purchasing or stealing the <em>PM Simulator 2000</em>.  With careful use it will bring you years of frustration.  This guide will tempt you with flashing lights and then show you how to edit Python 3 code.</p>
 
-<p>First, build it.  The two main parts are the <strong>scroll:bit</strong> (matrix of white LEDS) and the <strong>micro:bit</strong> (a microcontroller).  Plug them together and stick on the battery pack so it looks like this:</p>
+<p>First, assemble it.  The two main parts are the <strong>scroll:bit</strong> (matrix of white LEDs) and the <strong>micro:bit</strong> (a microcontroller).  Plug them together and stick on the battery pack so it looks like this:</p>
 
 <p><img src="assembled.png" alt="assembled.png" /></p>
 
@@ -22,10 +22,13 @@
 
 <h2>Visual Studio Code</h2>
 
-<p>This is the source code editor and will provide a terminal for running commands.
-* Download and install from https://code.visualstudio.com/download
-* Once installed open the VS Code application and from the menu bar click <em>Terminal</em> -> <em>New Terminal</em>.
-* In the terminal type <code>python --version</code>, it should say Python 3.8, or similar.  </p>
+<p>This is the source code editor and will provide a terminal for running commands.</p>
+
+<ul>
+<li>Download and install from https://code.visualstudio.com/download</li>
+<li>Once installed open the VS Code application and from the menu bar click <em>Terminal</em> -> <em>New Terminal</em>.</li>
+<li>In the terminal type <code>python --version</code>, it should say Python 3.8, or similar.  </li>
+</ul>
 
 <p>Note that at various points VS Code will offer to install plug-ins which it thinks will be helpful, based on what it can see you doing.  You don't have to install them, and sometimes they will be stupid, but they shouldn't  do any harm.  They do things like colour the code nicely or show syntax errors.</p>
 
@@ -45,8 +48,8 @@
 
 <ul>
 <li>Copy the <code>project</code> folder from the USB stick to somewhere on your computer.</li>
-<li>In VSCode select <em>Menu</em> -> <em>Add Folder to Workspace...</em> and then select the <code>project</code> folder.  The folder will be added to file explorer view on the left side of the editor. It's possible to add lots of folder this way.</li>
-<li>Open this <code>readMe.md</code> file to continue reading with glorious markdown syntax highlighting.  You can also press an icon in the top right to open a preview window to display the rendered markdown view. </li>
+<li>In VSCode select <em>Menu</em> -> <em>Add Folder to Workspace...</em>, highlight the <code>project</code> folder and press <em>Add</em>.  The folder will be added to file explorer on the left. It's possible to add lots of folder this way.</li>
+<li>Open <code>readMe.md</code> file to continue reading this text but now with glorious markdown syntax highlighting.  Once opened, you can also press an icon in the top right to open a preview window displaying the rendered view. </li>
 </ul>
 
 <h2>Setup terminal</h2>
@@ -56,7 +59,7 @@
 <li>Type <code>ls</code> and it should show you the files in the project folder.</li>
 </ul>
 
-<p>Contratulations, you have set up your development environment.  Celebrate by cancelling a high profile work project.</p>
+<p>Contratulations, you have set up your development environment.  Celebrate by cancelling a high profile project at work.</p>
 
 <h1>Code!</h1>
 
@@ -86,8 +89,10 @@
 
 <p>There are a bunch of examples programs available <a href="https://github.com/pimoroni/micropython-scrollbit/tree/master/examples">here</a>, but to run them you will need to replace the cut-down version of the scrollbit library with the <a href="https://github.com/pimoroni/micropython-scrollbit/tree/master/library">full version</a> which offers more functions like showing text and images.  Note there are two versions:</p>
 
-<p>1) <em><span>scrollbit.source</span>py</em> which is easier to read (if you like that sort of thing) but a bigger file which takes up more memory.
-2) <em><span>scrollbit</span>py</em> which is more compact.</p>
+<ol>
+<li><em><span>scrollbit.source</span>py</em> which is easier to read (if you like that sort of thing) but a bigger file which takes up more memory.</li>
+<li><em><span>scrollbit</span>py</em> which is more compact.</li>
+</ol>
 
 <p>Let's install the <em><span>nice_blinkys.</span>py</em> program, overwriting the currently installed program.  The code is already downloaded in the <code>official</code> sub-directory in the project folder.</p>
 

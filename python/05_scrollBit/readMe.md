@@ -2,7 +2,7 @@
 
 Thankyou for purchasing or stealing the *PM Simulator 2000*.  With careful use it will bring you years of frustration.  This guide will tempt you with flashing lights and then show you how to edit Python 3 code.
 
-First, build it.  The two main parts are the **scroll:bit** (matrix of white LEDS) and the **micro:bit** (a microcontroller).  Plug them together and stick on the battery pack so it looks like this:
+First, assemble it.  The two main parts are the **scroll:bit** (matrix of white LEDs) and the **micro:bit** (a microcontroller).  Plug them together and stick on the battery pack so it looks like this:
 
 ![assembled.png](assembled.png)
 
@@ -20,6 +20,7 @@ Switch it on and press buttons.  Note there is a reset button on the back of the
 
 ## Visual Studio Code
 This is the source code editor and will provide a terminal for running commands.
+
 * Download and install from https://code.visualstudio.com/download
 * Once installed open the VS Code application and from the menu bar click *Terminal* -> *New Terminal*.
 * In the terminal type `python --version`, it should say Python 3.8, or similar.  
@@ -37,14 +38,14 @@ Congratulations.  You have installed stuff.  Celebrate with cake and a chocolate
 
 ## Scource code folder
 * Copy the `project` folder from the USB stick to somewhere on your computer.
-* In VSCode select *Menu* -> *Add Folder to Workspace...* and then select the `project` folder.  The folder will be added to file explorer view on the left side of the editor. It's possible to add lots of folder this way.
-* Open this `readMe.md` file to continue reading with glorious markdown syntax highlighting.  You can also press an icon in the top right to open a preview window to display the rendered markdown view. 
+* In VSCode select *Menu* -> *Add Folder to Workspace...*, highlight the `project` folder and press *Add*.  The folder will be added to file explorer on the left. It's possible to add lots of folder this way.
+* Open `readMe.md` file to continue reading this text but now with glorious markdown syntax highlighting.  Once opened, you can also press an icon in the top right to open a preview window displaying the rendered view. 
 
 ## Setup terminal
 * Now the project folder is set up, if you open a terminal (*Terminal* -> *New Terminal*) it should automagically set the terminal to be "in" the project folder. 
 * Type `ls` and it should show you the files in the project folder.
 
-Contratulations, you have set up your development environment.  Celebrate by cancelling a high profile work project.
+Contratulations, you have set up your development environment.  Celebrate by cancelling a high profile project at work.
 
 # Code!
 
@@ -69,8 +70,8 @@ If at any point there is an error in the code, the micro:bit will scroll a messa
 
 There are a bunch of examples programs available [here](https://github.com/pimoroni/micropython-scrollbit/tree/master/examples), but to run them you will need to replace the cut-down version of the scrollbit library with the [full version](https://github.com/pimoroni/micropython-scrollbit/tree/master/library) which offers more functions like showing text and images.  Note there are two versions:
 
-1) *<span>scrollbit.source</span>py* which is easier to read (if you like that sort of thing) but a bigger file which takes up more memory.
-2) *<span>scrollbit</span>py* which is more compact.
+1. *<span>scrollbit.source</span>py* which is easier to read (if you like that sort of thing) but a bigger file which takes up more memory.
+2. *<span>scrollbit</span>py* which is more compact.
 
 Let's install the *<span>nice_blinkys.</span>py* program, overwriting the currently installed program.  The code is already downloaded in the `official` sub-directory in the project folder.
 
