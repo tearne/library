@@ -1,3 +1,9 @@
+
+
+
+
+
+# Summary notes
 ## Setup dev env
 * `pip3 install uflash` 
   * https://uflash.readthedocs.io
@@ -13,6 +19,10 @@
   * `ufs put main.py`
 * If you need REPL
   * `screen /dev/cu.usbmodem14202 115200` (on mac)
+
+## Markdown to html
+* `pip3 install markdown2`
+* `markdown2 readMe.md > readMe.html`
 
 ## Moar linkage
 
