@@ -71,6 +71,8 @@
 <li>The yellow LED on the back of the micro:bit will flash during the transfer.  Once completed it might reboot on it's own, or you may need to press the reset button on the back to enjoy the  silly fast game.</li>
 </ul>
 
+<p>If at any point there is an error in the code, the micro:bit will scroll a message on it's small red LED display, hopefully telling you which line it thinks the problem relates to.</p>
+
 <h2>Break it and fix it</h2>
 
 <ul>
@@ -84,8 +86,8 @@
 
 <p>There are a bunch of examples programs available <a href="https://github.com/pimoroni/micropython-scrollbit/tree/master/examples">here</a>, but to run them you will need to replace the cut-down version of the scrollbit library with the <a href="https://github.com/pimoroni/micropython-scrollbit/tree/master/library">full version</a> which offers more functions like showing text and images.  Note there are two versions:</p>
 
-<p>1) <code>scrollbit.source.py</code> which is easier to read (if you like that sort of thing) but a bigger file which takes up more memory.
-2) <code>scrollbit.py</code> which is more compact.</p>
+<p>1) <em><span>scrollbit.source</span>py</em> which is easier to read (if you like that sort of thing) but a bigger file which takes up more memory.
+2) <em><span>scrollbit</span>py</em> which is more compact.</p>
 
 <p>Let's install the <em><span>nice_blinkys.</span>py</em> program, overwriting the currently installed program.  The code is already downloaded in the <code>official</code> sub-directory in the project folder.</p>
 
@@ -95,7 +97,7 @@
 <li>Afer a reset, assuming you are following standard protocol and sitting in a pitch black room, you will blinded.</li>
 </ul>
 
-<p>There are a couple of other examples in the <code>official</code> sub directory.</p>
+<p>There are a couple of other examples in the <code>official</code> sub directory.  If you've already loaded the full <em><span>scrollbit.</span>py</em> file, you only need to load the new example code, e.g. with <code>ufs put official/tilt_dot.py main.py</code></p>
 
 <h1>Onward</h1>
 
