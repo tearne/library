@@ -97,22 +97,28 @@ def new_food(snake):
 def eval_food(food, snake):
     snakePosition = snake[-1][0:2]
     if snakePosition == food:
-        snake = [snake[0], snake[0]] + snake
+        snake = [snake[0]] + snake
         food = new_food(snake)
         set_pixel(food[0], food[1], FOOD_BRIGHT)
 
-        points = int(len(snake) / 2) - 1
-        if points > 24: end()
-        display.set_pixel(points % 5, int(points / 5), 9)
-        return (food, snake)
+        return (food, snake, True)
     else:
-        return (food, snake)
+        return (food, snake, False)
 
 def end():
     while True:
         for x in range(10):
             set_pixel(randint(0,16), randint(0,6), randint(0,3)*10)
         show()
+
+def win():
+    b = [2,4,8,16,32,64,128,255]
+    while True:
+        for i in b:
+            for x in range(17):
+                for y in range(7):
+                    set_pixel(x, y, i)
+                    show()
 
 def start():
     start = (3,5,UP)
@@ -132,12 +138,17 @@ def start():
 
         if is_ded(newPt): end()
 
-        food, snake = eval_food(food, snake)
+        food, snake, ate = eval_food(food, snake)
+
+        if ate:
+            points = len(snake) - 2
+            display.set_pixel(points % 5, int(points / 5), 9)
+            if points >= 24: win()
         
         set_pixel(newPt[0], newPt[1], SNAKE_BRIGHT)
         set_pixel(oldPt[0], oldPt[1], 0)
         show()
 
-        sleep(100)
+        sleep(70)
 
 start()
