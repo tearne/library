@@ -1,5 +1,6 @@
-from scrollbit import setpx
+from scrollbit import set_pixel
 from scrollbit import show
+from microbit import sleep
 
 def win():
     icon = [
@@ -13,7 +14,7 @@ def win():
         (7,3)
     ]
 
-    def draw(x, y, b): setpx((x + shift) % 17, y, b)
+    def draw(x, y, b): set_pixel((x + shift) % 17, y, b)
 
     shift = 0
 
@@ -22,3 +23,4 @@ def win():
         shift = 0 if shift == 16 else shift + 1
         for x,y in icon: draw(x,y, 200)
         show()
+        sleep(100)

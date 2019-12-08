@@ -29,10 +29,10 @@ def show():
     _w(253, 11)
     _w(1, _f)
 
-def setpx(col, row, brightness):
+def set_pixel(col, row, brightness):
     _b[_pixel_addr(col, row)] = brightness
 
-def getpx(col, row):
+def get_pixel(col, row):
     return _b[_pixel_addr(col, row)]
     
 def _pixel_addr(x, y):
