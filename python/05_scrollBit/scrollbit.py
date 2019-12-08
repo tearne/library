@@ -9,7 +9,7 @@ INVERT = 1
 
 _f = 0
 _b = bytearray(145)
-_i = [getattr(I,x) for x in dir(I) if hasattr(getattr(I,x),'get_pixel')]
+_i = [getattr(I,x) for x in dir(I) if hasattr(getattr(I,x),'getpx')]
 
 def _w(*args):
     if len(args) == 1: args = args[0]
@@ -29,10 +29,10 @@ def show():
     _w(253, 11)
     _w(1, _f)
 
-def set_pixel(col, row, brightness):
+def setpx(col, row, brightness):
     _b[_pixel_addr(col, row)] = brightness
 
-def get_pixel(col, row):
+def getpx(col, row):
     return _b[_pixel_addr(col, row)]
     
 def _pixel_addr(x, y):
