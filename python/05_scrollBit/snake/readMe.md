@@ -59,7 +59,8 @@ If at any point there is an error in the code, the micro:bit will scroll a messa
 ## Break it and fix it
 * In the terminal, wipe its memory with the command `uflash`.  This will connect to the micro:bit, erase everything on it, and load a fresh version of the MicroPython interpreter.  It's like installing an operating system without any pre-installed programs.
 * Load the library which makes it easier to program the while LED matrix onto the micro:bit using the command `ufs put scrollbit.py`.  This file is a cut down version of the [official](https://github.com/pimoroni/micropython-scrollbit/blob/master/library/scrollbit.source.py) version, to save space so we can fit more of our own code on.  Official docs for the full library are [here](https://github.com/pimoroni/micropython-scrollbit).
-* Load our program with `ufs put main.py`.  Note that the main program must always be called `main.py` in order to be detected and run.
+* Do `ufs put medal.py` and `ufs put operations.py` to load the other modules.
+* Load the main program with `ufs put main.py`.  Note that the main program must always be called `main.py` in order to be detected and run.
 * If the micro:bit hasn't automatically started running, reach behind its face to press reset.
 
 # Onward
