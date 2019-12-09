@@ -1,16 +1,12 @@
 # Introduction
 
-Thankyou for purchasing or stealing the *PM Simulator 2000*.  With careful use it will bring you years of frustration.  This guide will tempt you with flashing lights and then show you how to edit Python 3 code.
-
-First, assemble it.  The two main parts are the **scroll:bit** (matrix of white LEDs) and the **micro:bit** (a microcontroller).  Plug them together and stick on the battery pack so it looks like this:
+The two main parts are the **scroll:bit** (matrix of white LEDs) and the **micro:bit** (a microcontroller).  Plug them together and stick on the battery pack so it looks like this:
 
 ![assembled.png](assembled.png)
 
 Note the micro:bit needs to be pushed (quite hard) all the way into the edge connector so none of the "teeth" are showing.  The power switch is sticking out the side on the battery box and represents the peak of design sophistication.
 
-Switch it on and press buttons.  Note there is a reset button on the back of the micro:bit.
-
-# Installation & Setup
+# Installation & Setup (Windows)
 
 ## Python 3
 
@@ -37,8 +33,8 @@ Congratulations.  You have installed stuff.  Celebrate with cake and a chocolate
 # Prepare the project
 
 ## Scource code folder
-* Copy the `project` folder from the USB stick to somewhere on your computer.
-* In VSCode select *Menu* -> *Add Folder to Workspace...*, highlight the `project` folder and press *Add*.  The folder will be added to file explorer on the left. It's possible to add lots of folder this way.
+* Copy this folder from the USB stick to somewhere on your computer.
+* In VSCode select *Menu* -> *Add Folder to Workspace...*, highlight this folder and press *Add*.  The folder will be added to file explorer on the left. It's possible to add lots of folder this way.
 * Open `readMe.md` file to continue reading this text but now with glorious markdown syntax highlighting.  Once opened, you can also press an icon in the top right to open a preview window displaying the rendered view. 
 
 ## Setup terminal
@@ -62,24 +58,9 @@ If at any point there is an error in the code, the micro:bit will scroll a messa
 
 ## Break it and fix it
 * In the terminal, wipe its memory with the command `uflash`.  This will connect to the micro:bit, erase everything on it, and load a fresh version of the MicroPython interpreter.  It's like installing an operating system without any pre-installed programs.
-* Load the library which makes it easier to program the while LED matrix onto the micro:bit using the command `ufs put scrollbit.py`.  This file is cut down version of the [official](https://github.com/pimoroni/micropython-scrollbit/blob/master/library/scrollbit.source.py) version, to save space so we can fit more of our own code on.  Official docs for the full library are [here](https://github.com/pimoroni/micropython-scrollbit).
+* Load the library which makes it easier to program the while LED matrix onto the micro:bit using the command `ufs put scrollbit.py`.  This file is a cut down version of the [official](https://github.com/pimoroni/micropython-scrollbit/blob/master/library/scrollbit.source.py) version, to save space so we can fit more of our own code on.  Official docs for the full library are [here](https://github.com/pimoroni/micropython-scrollbit).
 * Load our program with `ufs put main.py`.  Note that the main program must always be called `main.py` in order to be detected and run.
 * If the micro:bit hasn't automatically started running, reach behind its face to press reset.
-
-## Experiment
-
-There are a bunch of examples programs available [here](https://github.com/pimoroni/micropython-scrollbit/tree/master/examples), but to run them you will need to replace the cut-down version of the scrollbit library with the [full version](https://github.com/pimoroni/micropython-scrollbit/tree/master/library) which offers more functions like showing text and images.  Note there are two versions:
-
-1. *<span>scrollbit.source</span>py* which is easier to read (if you like that sort of thing) but a bigger file which takes up more memory.
-2. *<span>scrollbit</span>py* which is more compact.
-
-Let's install the *<span>nice_blinkys.</span>py* program, overwriting the currently installed program.  The code is already downloaded in the `official` sub-directory in the project folder.
-
-* Run `ufs put official/scrollbit.py` to load the full led matric library code.
-* Run `ufs put official/nice_blinkys.py main.py` This command tells `ufs` to rename tne nice_blinkys.py files as `main.py` when uploaded so it will be detected and run.
-* Afer a reset, assuming you are following standard protocol and sitting in a pitch black room, you will blinded.
-
-There are a couple of other examples in the `official` sub directory.  If you've already loaded the full *<span>scrollbit.</span>py* file, you only need to load the new example code, e.g. with `ufs put official/tilt_dot.py main.py`
 
 # Onward
 
