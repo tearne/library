@@ -1,6 +1,8 @@
+(Half-baked guide to micro:bit snake)
+
 # Introduction
 
-The two main parts are the **scroll:bit** (matrix of white LEDs) and the **micro:bit** (a microcontroller).  Plug them together and stick on the battery pack so it looks like this:
+The two main parts are the [**scroll:bit**](https://coolcomponents.co.uk/products/scroll-bit) (matrix of white LEDs) and the [**micro:bit**](https://coolcomponents.co.uk/products/bbc-micro-bit-official-board-only) (a microcontroller).  Plug them together and stick on the [battery pack](https://coolcomponents.co.uk/collections/micro-bit/products/battery-holder-with-switch-and-lid-2x-aaa-with-2-pin-jst-connector-for-bbc-micro-bit) so it looks like this:
 
 ![assembled.png](assembled.png)
 
