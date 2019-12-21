@@ -45,7 +45,7 @@ def update_grid(g):
                 if x > 0: updated[x-1][y] = value 
 
     updated[7][randrange(8)] = ASTEROID
-    updated[7][randrange(8)] = ASTEROID if random() > 0.1 else POWER
+    updated[7][randrange(8)] = ASTEROID if random() > 0.2 else POWER
 
     return updated
 
@@ -58,49 +58,52 @@ def update_ship(s):
 
 def hit(points):
     pin1.write_digital(1)
-    sleep(50)
+    sleep(10)
     pin1.write_digital(0)
-    points = points -1
+    points = max(points - 1, 0)
     redraw_points(points)
     return points
 
 def power_up(points):
+    points = min(25, points + 1)
     for i in range(3):
-        music.pitch(300 + i * 100, duration=20, pin=pin2)
-    points = points + 1
+        music.pitch(200 + i * 20 + 5 * points, duration=20, pin=pin2)
     redraw_points(points)
     return points
 
 def redraw_points(points):
     for i in range(25):
-        display.set_pixel(i % 5, int(i / 5), 9 if points >= i else 0)
+        display.set_pixel(i % 5, int(i / 5), 9 if points > i else 0)
 
 
 prev = utime.ticks_ms()
-delay = 500
-sub_delay = delay / 3
 
-points = 5
+points = 24
 redraw_points(points)
 
+def get_delay(points):
+    return 400 - (points - 5) * 10
+
 while True:
-    new_ship = update_ship(ship)
-    if not new_ship == ship:
-        ship = new_ship
-        music.pitch(100, duration=10, pin=pin2, wait=False)
-        sleep(sub_delay)
+    delay = get_delay(points)
 
     if utime.ticks_diff(utime.ticks_ms(), prev) > delay:
         prev = utime.ticks_ms()
-        # music.pitch(50, duration=100, pin=pin2, wait=False)
         grid = update_grid(grid)
         plot(grid)
         
-        if grid[0][ship] == POWER: 
+        ship_pos = grid[0][ship]
+        if ship_pos == POWER: 
             points = power_up(points)
         elif grid[0][ship] == ASTEROID: 
             points = hit(points)
 
+    new_ship = update_ship(ship)
+    if not new_ship == ship:
+        ship = new_ship
+        sleep(120)
+
     np_plot(0,ship, 5, 5, 10)
+
     np.show()
 
