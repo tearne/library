@@ -1,5 +1,6 @@
-from microbit import pin0, pin1, pin2, pin8, pin14, sleep, display
+from microbit import pin0, pin1, pin2, pin8, pin14, pin15, pin16, sleep, display
 import neopixel, music, utime
+import constants
 from random import randint, randrange, random
 
 # Pin0:  8x8 ZIP LED Display
@@ -14,40 +15,37 @@ from random import randint, randrange, random
 # Pin20: Button Expansion Point 1
 # Pin19: Button Expansion Point 2
 
-
 np = neopixel.NeoPixel(pin0, 64)
 
-def np_plot(x, y, r, g, b):
-    np[x+(y*8)] = (r, g, b)
+def np_plot(x, y, rgb):
+    np[x+(y*8)] = (rgb[0], rgb[1], rgb[2])
 
 grid = [ [0] * 8 for i in range(8)]
 ship = 3
 
-EMPTY = 0
-ASTEROID = 1
-POWER = 2
-
-
 def plot(g):
     for x, column in enumerate(g):
         for y, v in enumerate(column):
-            if v == ASTEROID: np_plot(x, y, 5, 1, 1)
-            elif v == POWER:  np_plot(x, y, 1, 5, 1)
-            else:             np_plot(x, y, 0, 0, 0)
-    np.show()
+            if v == constants.ASTEROID:  np_plot(x, y, constants.ASTEROID_COLOUR)
+            elif v == constants.POWER:   np_plot(x, y, constants.POWER_COLOUR)
+            elif v == constants.MISSILE: np_plot(x, y, constants.MISSILE_COLOUR)
+            else:                        np_plot(x, y, constants.BLACK)
 
 def update_grid(g):
     updated = [ [0] * 8 for i in range(8)]
 
     for x, column in enumerate(g):
         for y, value in enumerate(column):
-            if not value == EMPTY:
+            if not value == constants.EMPTY:
                 if x > 0: updated[x-1][y] = value 
 
-    updated[7][randrange(8)] = ASTEROID
-    updated[7][randrange(8)] = ASTEROID if random() > 0.2 else POWER
+    # updated[7][randrange(8)] = ASTEROID
+    updated[7][randrange(8)] = constants.ASTEROID if random() > 0.3 else constants.POWER
+    if random() < 0.1:
+        updated[7][randrange(8)] = constants.MISSILE
 
     return updated
+
 
 def update_ship(s):
     if pin14.read_digital() == 0 and s < 7:
@@ -67,7 +65,7 @@ def hit(points):
 def power_up(points):
     points = min(25, points + 1)
     for i in range(3):
-        music.pitch(200 + i * 20 + 5 * points, duration=20, pin=pin2)
+        music.pitch(200 + i * 10 + 10 * points, duration=20, pin=pin2)
     redraw_points(points)
     return points
 
@@ -78,11 +76,66 @@ def redraw_points(points):
 
 prev = utime.ticks_ms()
 
-points = 24
+points = 2
 redraw_points(points)
 
 def get_delay(points):
-    return 400 - (points - 5) * 10
+    return 600 - (points - 5) * 15
+
+got_missile = False
+
+
+def plot_ship(ship, missile):
+    colour = constants.MISSILE_COLOUR if missile.got_missile() else constants.SHIP_COLOUR
+    np_plot(0,ship, colour)
+
+class Missile:
+    NONE = 0
+    HOLDING = 1
+    AWAY = 2
+
+    def __init__(self):
+        self._status = Missile.NONE
+
+    def acquire(self):
+        self._status = Missile.HOLDING
+        music.pitch(200, duration=50, pin=pin2)
+        music.pitch(400, duration=300, wait=False, pin=pin2)
+
+    def got_missile(self):
+        return self._status == Missile.HOLDING
+
+    def fire(self, y_pos):
+        self._status = Missile.AWAY
+        self._x = 0
+        self._y = y_pos
+
+    def is_away(self):
+        return self._status == Missile.AWAY
+
+    def pos(self):
+        return (self._x, self._y)
+
+    def step_and_plot(self, grid):
+        newGrid = grid
+
+        if self._x > 7:
+            self._status = Missile.NONE
+        elif grid[self._x][self._y] == constants.ASTEROID:
+            sleep(50)
+            np_plot(self._x,self._y, constants.FIRE_COLOUR)
+            newGrid = [row[:] for row in grid]
+            newGrid[self._x][self._y] = constants.EMPTY
+        else:
+            np_plot(self._x, self._y, constants.MISSILE_COLOUR)
+            sleep(50)
+        
+        self._x = self._x + 1
+
+        return newGrid
+
+
+missile = Missile()
 
 while True:
     delay = get_delay(points)
@@ -93,17 +146,27 @@ while True:
         plot(grid)
         
         ship_pos = grid[0][ship]
-        if ship_pos == POWER: 
+        if ship_pos == constants.POWER: 
             points = power_up(points)
-        elif grid[0][ship] == ASTEROID: 
+        if ship_pos == constants.MISSILE:
+            missile.acquire()
+            music.pitch(200, duration=50, pin=pin2)
+            music.pitch(400, duration=300, wait=False, pin=pin2)
+        elif grid[0][ship] == constants.ASTEROID: 
             points = hit(points)
 
     new_ship = update_ship(ship)
+
+    if missile.got_missile() and pin15.read_digital() == 0:
+        missile.fire(ship)
+
+    if missile.is_away():
+        grid = missile.step_and_plot(grid)
+
     if not new_ship == ship:
         ship = new_ship
-        sleep(120)
+        sleep(100)
 
-    np_plot(0,ship, 5, 5, 10)
+    plot_ship(ship, missile)
 
     np.show()
-
