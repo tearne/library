@@ -209,13 +209,10 @@ while keep_looping():
     job_config = JobConfig(msg.body)
     log.info(str(job_config))
 
-    # Execute the job
     run_job(job_config, processed_counter)
 
-    # TODO test uploading of results
     upload_results(job_config)
 
-    # Delete temp files
     clean_up(job_config)
 
 log.info("Worker ran %i job(s), exiting", processed_counter)
