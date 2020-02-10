@@ -81,7 +81,7 @@ def setup_queue():
 
 class JobConfig:
     # Parses the job message and extracts details such as user script name and results files to upload.
-    # Also creates the temporary directory which the job will be copied into and executed from.
+    # Also chooses the temporary directory which the job will be copied into and executed from.
     def __init__(self, raw_json):
         parsed = json.loads(raw_json)
 
