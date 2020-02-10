@@ -7,6 +7,7 @@ from time import sleep
 
 def setup_logger():
     # TODO save log to file and upload frequently
+    # Only send warn or worse to stderr
     log = logging.getLogger(__name__)
     log.setLevel(logging.DEBUG)
     h1 = logging.StreamHandler(sys.stdout)
@@ -52,7 +53,7 @@ def parse_args():
     parser.add_argument('--debug', '-d', dest = 'debug', default = False, action='store_true', help='Switch on debug mode')
     parser.add_argument('--limit-jobs', '-l', nargs = '?', default = 0, type=int, help='limit the number of jobs to process before exiting')
     args = parser.parse_args()
-    log.info("Arguments: %s", args)
+    log.debug(f"Arguments: {args}")
     return args
 args = parse_args()
 
@@ -74,7 +75,7 @@ def setup_queue():
     region = m.group(1)
     account = m.group(2)
     name = m.group(3)
-    log.info("SQS Region: %s, Account: %s, QName: %s",region, account, name)
+    log.debug(f"SQS Region: {region}, Account: {account}, QName: {name}")
     resource = boto3.resource('sqs', region_name = region)
     return resource.get_queue_by_name(QueueName = name, QueueOwnerAWSAccountId = account)
 
@@ -88,11 +89,11 @@ class JobConfig:
             self.id = self.__get_job_id(parsed)
             self.job_dir = Path(parsed["job"]["app"]["directory"])
             self.script_path = Path(parsed["job"]["app"]["executable"])
-            assert (self.job_dir/self.script_path).exists(), "Path {} doesn't exist".format(self.job_dir/self.script_path)
+            assert (self.job_dir/self.script_path).exists(), f"Path {self.job_dir/self.script_path} doesn't exist"
             self.bucket_name = parsed["job"]["results"]["bucket"]
             self.results_paths = list(map(lambda s: Path(s), parsed["job"]["results"]["uploadData"]))
         except KeyError as e:
-            log.exception("Failed to parse job config\n%s\n", json.dumps(parsed, indent=2))
+            log.exception(f"Failed to parse job config\n{json.dumps(parsed, indent=2)}\n")
 
         self.tmp_dir = Path(TemporaryDirectory().name)
         self.raw_json = raw_json
@@ -107,16 +108,15 @@ class JobConfig:
             if "WORKER_ID" in os.environ:
                 pod_uid = os.environ.get("WORKER_ID")
                 log.info("Found $WORKER_ID. Will append with local task number to form job ID")
-                return str(pod_uid+"_"+format(processed_counter, '03'))
+                return f"{pod_uid}_{processed_counter:03d}"
             else:
                 log.info("Falling back on UUID for job ID")
                 return str(uuid.uuid1())
 
     def __repr__(self):
-        # TODO simpler way to do nice __str__?
-        return self.__class__.__name__+'JobConfig(' \
-            'id = %s, job_dir = %s, script_path = %s, results_paths = %s, bucket_name = %s, tmp_dir = %s)' \
-            % (self.id, self.job_dir, self.script_path.absolute(), self.results_paths, self.bucket_name, self.tmp_dir)
+        return f"{self.__class__.__name__}(" \
+               f"id = {self.id}, job_dir = {self.job_dir}, script_path = {self.script_path.absolute()}, " \
+               f"results_paths = self.results_paths, bucket_name = self.bucket_name, tmp_dir = self.tmp_dir)"
 
 
 
@@ -127,54 +127,58 @@ def run_job(job_config, processed_counter):
     job_id = job_config.id
     script_path = job_config.script_path
 
-    log.info("Setup temporary run dir: copying %s to %s", str(job_dir), str(tmp_dir))
+    log.info(f"Setup temporary run dir: copying {job_dir} to {tmp_dir}")
     shutil.copytree(str(job_dir), str(tmp_dir))
 
     config_file = job_config.tmp_dir/'job_config.json'
     with open(str(config_file), 'w', encoding='utf-8') as file:
         file.write(raw_json)
-    log.info("Wrote config file: %s", str(config_file))
+    log.debug(f"Wrote config file: {config_file}")
 
     job_env = os.environ.copy()
     job_env["JOB_ID"] = job_id
 
     command = [str(tmp_dir/script_path),  str(tmp_dir/config_file.name)]
-    log.info("Running command: %s", ' '.join(command))
+    log.info(f"Running command: {' '.join(command)}")
 
     try:
         completed = subprocess.run(command, check=True, env=job_env)
-        log.info(completed)
+        log.debug(completed)
     except subprocess.CalledProcessError as e:
-        log.error("command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))
+        log.error(f"command '{e.cmd}' return with error (code {e.returncode}): {e.output}")
 
 
 def clean_up(job_config):
     tmp_dir = str(job_config.tmp_dir)
-    log.info("Delete temporary run directory %s", tmp_dir)
+    log.info(f"Delete temporary run directory {tmp_dir}")
     shutil.rmtree(tmp_dir)
 
 
 def upload_results(job_config):
-    log.info("Uploading: {}".format(job_config.results_paths))
+    log.info(f"Uploading: {job_config.results_paths}")
     for path_str in job_config.results_paths:
         path = job_config.tmp_dir/path_str
-        command = ["aws", "s3", "cp", str(path.resolve()), "s3://"+job_config.bucket_name+"/"+job_config.id, "--acl",  "bucket-owner-full-control"]
+        command = [
+            "aws", "s3",
+            "cp", str(path.resolve()),
+            "s3://"+job_config.bucket_name+"/"+job_config.id,
+            "--acl",  "bucket-owner-full-control"]
         if path.is_dir():
             command.append("--recursive")
 
-        log.info("Running upload command: %s",' '.join(command))
+        log.debug(f"Running upload command: {' '.join(command)}")
         try:
             completed = subprocess.run(command, check=True)
-            log.info(completed)
+            log.debug(completed)
         except subprocess.CalledProcessError as e:
             # TODO e.output just says 'None' upon error
-            log.error("S3 upload command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))
+            log.error(f"S3 upload command '{e.cmd}' return with error (code {e.returncode}): {e.output}")
 
 
 def get_msg(queue):
     msg_list = queue.receive_messages(MaxNumberOfMessages=1)
     if len(msg_list) == 0:
-        log.info("No more messages.")
+        log.debug("No more messages.")
         return None
     else:
         msg = msg_list[0]
@@ -185,7 +189,7 @@ def get_msg(queue):
 limit = args.limit_jobs
 processed_counter = 0
 sqs = setup_queue()
-empty_retries = 60 # 10 min
+empty_retries = 30 # 5 min
 retries_remaining = empty_retries
 retry_seconds = 10
 
@@ -197,12 +201,12 @@ while keep_looping():
     msg = get_msg(sqs)
     if msg is None:
         retries_remaining -= 1
-        log.warning("No messages from SQS, sleeping for %i seconds.  Attempts left %i", retry_seconds, retries_remaining)
+        log.warning(f"No messages from SQS, sleeping for {retry_seconds} seconds.  Attempts left {retries_remaining}")
         sleep(retry_seconds)
         continue
     else:
         retries_remaining = empty_retries
-    log.debug("Raw message body: \n%s", msg.body)
+    log.debug(f"Raw message body: \n{msg.body}", )
     processed_counter += 1
 
     # Parse msg to a job config
@@ -215,4 +219,4 @@ while keep_looping():
 
     clean_up(job_config)
 
-log.info("Worker ran %i job(s), exiting", processed_counter)
+log.info(f"Worker ran {processed_counter} job(s), exiting")
