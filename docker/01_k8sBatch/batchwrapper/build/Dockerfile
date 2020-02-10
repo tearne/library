@@ -1,9 +1,9 @@
-FROM openjdk:11-jre
+FROM adoptopenjdk:11-jre-hotspot-bionic
 
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update -y \
-&&  apt-get -y upgrade \
+&&  apt-get -y dist-upgrade \
 &&  apt-get install -y --no-install-recommends \
         vim \
         nano \
@@ -12,8 +12,8 @@ RUN apt-get update -y \
         python3-pip \
 &&  apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN  pip3 install --upgrade pip setuptools \
-&&   pip3 --no-cache-dir install awscli boto3
+RUN  python3 -m pip install --upgrade --user pip setuptools \
+&&   python3 -m pip --no-cache-dir install awscli boto3
 
 WORKDIR /app
 ADD app .
