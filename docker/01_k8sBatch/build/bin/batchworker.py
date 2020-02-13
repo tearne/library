@@ -156,17 +156,28 @@ def clean_up(job_config):
 
 def upload_results(job_config):
     log.info(f"Uploading: {job_config.results_paths}")
-    # TODO add debug for the local directory contents
+    log.debug(f"The working directory contains files/folders: {os.listdir(job_config.tmp_dir)}")
+
     for path_str in job_config.results_paths:
-        # TODO upload the directory, not just the content
         path = job_config.tmp_dir/path_str
-        command = [
-            "aws", "s3",
-            "cp", str(path.resolve()),
-            "s3://"+job_config.bucket_name+"/"+job_config.id,
-            "--acl",  "bucket-owner-full-control"]
+
         if path.is_dir():
-            command.append("--recursive")
+            command = [
+                "aws", "s3",
+                "cp", str(path.resolve()),
+                f"s3://{job_config.bucket_name}/{job_config.id}/{path.name}",
+                "--acl",
+                "bucket-owner-full-control",
+                "--recursive"
+            ]
+        else:
+            command = [
+                "aws", "s3",
+                "cp", str(path.resolve()),
+                f"s3://{job_config.bucket_name}/{job_config.id}",
+                "--acl",
+                "bucket-owner-full-control"
+            ]
 
         log.debug(f"Running upload command: {' '.join(command)}")
         try:
