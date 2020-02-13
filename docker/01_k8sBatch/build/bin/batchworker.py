@@ -156,7 +156,9 @@ def clean_up(job_config):
 
 def upload_results(job_config):
     log.info(f"Uploading: {job_config.results_paths}")
+    # TODO add debug for the local directory contents
     for path_str in job_config.results_paths:
+        # TODO upload the directory, not just the content
         path = job_config.tmp_dir/path_str
         command = [
             "aws", "s3",
