@@ -187,7 +187,6 @@ def upload_results(job_config):
             # TODO e.output just says 'None' upon error
             log.error(f"S3 upload command '{e.cmd}' return with error (code {e.returncode}): {e.output}")
 
-
 def get_msg(queue, retries, retry_seconds):
     msg_list = queue.receive_messages(MaxNumberOfMessages=1)
     for _ in range(retries):
@@ -201,14 +200,14 @@ def get_msg(queue, retries, retry_seconds):
         log.debug("No more messages")
         return None
 
-
 job_limit = args.limit_jobs
 sqs = setup_queue()
-RETRY_SECONDS = 10
 RETRY_LIMIT = 30
+RETRY_SECONDS = 10
+
 
 for job_number in range(job_limit):
-    msg = get_msg(sqs)
+    msg = get_msg(sqs, RETRY_LIMIT, RETRY_SECONDS)
     if msg:
         log.debug(f"Raw message body: \n{msg.body}", )
         job_config = JobConfig(msg.body)
