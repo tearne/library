@@ -212,7 +212,7 @@ for job_number in range(job_limit):
         log.debug(f"Raw message body: \n{msg.body}", )
         job_config = JobConfig(msg.body)
         log.info(str(job_config))
-        run_job(job_config, processed_counter)
+        run_job(job_config, job_number)
         upload_results(job_config)
         clean_up(job_config)
     else:
