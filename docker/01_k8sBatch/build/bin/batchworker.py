@@ -187,49 +187,37 @@ def upload_results(job_config):
             # TODO e.output just says 'None' upon error
             log.error(f"S3 upload command '{e.cmd}' return with error (code {e.returncode}): {e.output}")
 
-
-def get_msg(queue):
+def get_msg(queue, retries, retry_seconds):
     msg_list = queue.receive_messages(MaxNumberOfMessages=1)
-    if len(msg_list) == 0:
-        log.debug("No more messages.")
-        return None
-    else:
-        msg = msg_list[0]
-        msg.delete()
-        return msg
-
-
-limit = args.limit_jobs
-processed_counter = 0
-sqs = setup_queue()
-empty_retries = 30 # 5 min
-retries_remaining = empty_retries
-retry_seconds = 10
-
-def keep_looping():
-    return retries_remaining > 0 and (limit == 0 or processed_counter < limit)
-
-while keep_looping():
-    # Dequeue a message
-    msg = get_msg(sqs)
-    if msg is None:
-        retries_remaining -= 1
+    for _ in range(retries):
+        if msg_list:
+            msg = msg_list[0]
+            msg.delete()
+            return msg
         log.warning(f"No messages from SQS, sleeping for {retry_seconds} seconds.  Attempts left {retries_remaining}")
         sleep(retry_seconds)
-        continue
     else:
-        retries_remaining = empty_retries
-    log.debug(f"Raw message body: \n{msg.body}", )
-    processed_counter += 1
+        log.debug("No more messages")
+        return None
 
-    # Parse msg to a job config
-    job_config = JobConfig(msg.body)
-    log.info(str(job_config))
+job_limit = args.limit_jobs
+sqs = setup_queue()
+RETRY_LIMIT = 30
+RETRY_SECONDS = 10
 
-    run_job(job_config, processed_counter)
 
-    upload_results(job_config)
+for job_number in range(job_limit):
+    msg = get_msg(sqs, RETRY_LIMIT, RETRY_SECONDS)
+    if msg:
+        log.debug(f"Raw message body: \n{msg.body}", )
+        job_config = JobConfig(msg.body)
+        log.info(str(job_config))
+        run_job(job_config, job_number)
+        upload_results(job_config)
+        clean_up(job_config)
+    else:
+        break
+else:
+    job_number = job_limit
 
-    clean_up(job_config)
-
-log.info(f"Worker ran {processed_counter} job(s), exiting")
+log.info(f"Worker ran {job_number} job(s), exiting")
