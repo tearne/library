@@ -10,7 +10,7 @@ export function drawGrid(svg, margin, columns, rows, drawFn) {
     let cellWidth = width / columns,
         cellHeight = height / rows;
 
-    let chartMargins = { left: 5, top: 5};
+    let chartMargins = { left: 5, top: 5 };
 
     for (var r = 0; r < rows; r++) {
         for (var c = 0; c < columns; c++) {
@@ -20,15 +20,9 @@ export function drawGrid(svg, margin, columns, rows, drawFn) {
                 .attr("width", cellWidth - chartMargins.left)
                 .attr("height", cellHeight - chartMargins.top);
 
-            if (r == rows - 1) {
-                sub.append("g")
-                    .attr("class", "xaxis");
-            }
+            if (r == rows - 1) { sub.append("g").attr("class", "xaxis"); }
 
-            if (c == 0) {
-                sub.append("g")
-                    .attr("class", "yaxis");
-            }
+            if (c == 0) { sub.append("g").attr("class", "yaxis"); }
 
             drawFn(sub, r, c);
         }

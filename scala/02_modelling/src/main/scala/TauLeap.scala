@@ -1,11 +1,12 @@
 import java.nio.file.{Path, Paths}
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 import breeze.stats.distributions.Poisson
 import demoODESolver.SolutionPoint
 import org.apache.commons.io.FileUtils
 import play.api.libs.json.Json
 import sampler.r.script.RScript
-
 
 trait TauLeap {
 
@@ -33,7 +34,7 @@ object DemoTauLeapSolver extends App {
 
   val startTime: Double = 0
   val endTime: Double = 50
-  val stepSize: Double = 1
+  val stepSize: Double = 5
 
   val y0 = Array(500.0, 10.0, 0.0)
 
@@ -75,7 +76,7 @@ object DemoTauLeapSolver extends App {
   val odeSolution = solveODE(p)
 
   output.saveOutput(odeSolution, tauSolution)
-  output.compareWithODE(startTime, endTime)
+  output.compareWithODE(startTime, endTime, stepSize)
 }
 
 object output {
@@ -95,12 +96,17 @@ object output {
     )
   }
 
-  def compareWithODE(startTime: Double, endTime: Double): Unit = {
+  def compareWithODE(startTime: Double, endTime: Double, timeStep: Double): Unit = {
+    val myFormatObj = DateTimeFormatter.ofPattern("yyyyMMdd")
+    val today = LocalDate.now().format(myFormatObj)
+
+    val description = s"${today}_timeStep=$timeStep"
     val lineWidth = 1.5
+
     val script =
       s"""
          |lapply(c("ggplot2", "reshape2", "jsonlite","plyr"), require, character.only=T)
-         |pdf("compareTauLeap.pdf", width=10, height=8, title = "compare Tau Leap solver with ODE solver")
+         |pdf("$description.pdf", width=10, height=8, title = "$description")
          |
          |ode = (fromJSON("$odeFileName"))
          |tauLeap = (fromJSON("$tauLeapFileName"))
@@ -111,7 +117,7 @@ object output {
          |
          |allTauSims = do.call(rbind,tauLeap)
          |
-         |ode$$time = ode$$time
+         |ode$$time = round(ode$$time,2)
          |odeData = melt(ode,id=c("time"))
          |names(odeData) = c("time","variable","ODE")
          |
@@ -127,8 +133,8 @@ object output {
          |geom_line(aes(y = ODE, color = "ODE Solution"),size = $lineWidth) +
          |theme(text = element_text(size = 20)) +
          |theme(axis.text.x = element_text(size = 14)) +
-         |scale_x_continuous(breaks = seq($startTime, $endTime,5), labels = seq($startTime, $endTime,5)) +
          |scale_y_continuous(name = "") +
+         |scale_x_continuous(breaks = seq($startTime, $endTime,5), labels = seq($startTime, $endTime,5)) +
          |scale_fill_manual(name = "", values = c("Tau-Leap 95% CI" = "grey")) +
          |scale_color_manual(name = "", values = c("ODE Solution" = "blue","Tau Leap Solution" = "red")) +
          |ggtitle("Comparison of solutions by ODE solver and Tau-Leap Solver")
