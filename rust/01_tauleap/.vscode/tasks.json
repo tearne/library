@@ -4,11 +4,39 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "cargo run",
+            "label": "cargo run a",
             "type": "shell",
             "command": "cargo",
             "args": [
-                "run"
+                "run", "--bin", "a"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$rustc"
+            ]
+        },{
+            "label": "cargo run b",
+            "type": "shell",
+            "command": "cargo",
+            "args": [
+                "run", "--bin", "b"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$rustc"
+            ]
+        },{
+            "label": "cargo run main",
+            "type": "shell",
+            "command": "cargo",
+            "args": [
+                "run","--bin","tauleap"
             ],
             "group": {
                 "kind": "build",
