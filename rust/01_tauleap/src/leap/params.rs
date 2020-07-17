@@ -1,29 +1,18 @@
-use super::cached::Cached;
 
-pub struct Params{
-    pub time_step: f32,
-    tau_num_steps: f32,
-    pub tau_sub_step: f32,
-    pub beta: f32,
-    pub gamma: f32,
-    pub a: f32,
+use crate::epi::EpiParams;
+#[derive(Copy, Clone, Debug)]
+pub struct Params {
+    pub time_step: f64,
+    pub tau_sub_step: f64,
+    pub epi_params: EpiParams,
 }
 
 impl Params {
-    fn new(time_step: f32,
-        tau_num_steps: f32,
-        beta: f32,
-        gamma: f32,
-        a: f32,
-    ) -> Self {
+    pub fn new(time_step: f64, tau_num_steps: i64, epi_params: EpiParams) -> Self {
         Params {
             time_step,
-            tau_num_steps,
-            tau_sub_step: time_step / tau_num_steps,
-            beta,
-            gamma,
-            a,
+            tau_sub_step: time_step / (tau_num_steps as f64),
+            epi_params,
         }
     }
-    
 }

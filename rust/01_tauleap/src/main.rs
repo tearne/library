@@ -1,11 +1,15 @@
-mod leap;
+extern crate tauleap;
+use tauleap::epi;
+use tauleap::test;
 
-fn main() {
-    use rand_distr::{Poisson, Distribution};
+pub fn main() {
+    test();
+
+    use rand_distr::{Distribution, Poisson};
 
     let v: u64 = Poisson::new(5.0).unwrap().sample(&mut rand::thread_rng());
 
-    let _init = leap::SIC{ s:0, i:0, c:0 };
+    let _init = epi::state::State::start();
 
     println!("Hello, world! {}", v);
 }
