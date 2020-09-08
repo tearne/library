@@ -19,7 +19,7 @@ def clear():
     global _b
     del _b
     _b = bytearray(145)
-    
+
 def show():
     global _f
     _f = not _f
@@ -34,7 +34,7 @@ def set_pixel(col, row, brightness):
 
 def get_pixel(col, row):
     return _b[_pixel_addr(col, row)]
-    
+
 def _pixel_addr(x, y):
     y =  (7 - (y + 1))*(1 - orientation) + orientation*y
     x = (17 - (x + 1))*orientation + (1 - orientation)*x

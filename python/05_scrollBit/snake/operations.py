@@ -11,27 +11,27 @@ RIGHT_EDGE = 16
 def snake_init():
     start = (3,5,UP)
     return [start, start]
-    
+
 def turn_clock(pt):
     d = pt[2]
     if d == UP: return go_right(pt)
     elif d == DOWN: return go_left(pt)
     elif d == RIGHT: return go_down(pt)
-    else: return go_up(pt) 
+    else: return go_up(pt)
 
 def turn_anti(pt):
     d = pt[2]
     if d == UP: return go_left(pt)
     elif d == DOWN: return go_right(pt)
     elif d == RIGHT: return go_up(pt)
-    else: return go_down(pt) 
+    else: return go_down(pt)
 
 def go_on(pt):
     d = pt[2]
     if d == UP: return go_up(pt)
     elif d == DOWN: return go_down(pt)
     elif d == RIGHT: return go_right(pt)
-    else: return go_left(pt) 
+    else: return go_left(pt)
 
 def go_up(pt):
     return (pt[0], pt[1] - 1, UP)
