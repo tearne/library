@@ -1,5 +1,3 @@
-(Half-baked guide to micro:bit snake)
-
 # Introduction
 
 You will need a [**scroll:bit**](https://coolcomponents.co.uk/products/scroll-bit) (matrix of LEDs) and the [**micro:bit**](https://coolcomponents.co.uk/products/bbc-micro-bit-official-board-only) (a microcontroller).  If you have a  [battery pack](https://coolcomponents.co.uk/collections/micro-bit/products/battery-holder-with-switch-and-lid-2x-aaa-with-2-pin-jst-connector-for-bbc-micro-bit) you can blutack it to the back:
@@ -30,7 +28,7 @@ At various points VS Code might offer to install plug-ins which it thinks will b
 * Plug the micro:bit into the computer using the micro USB port.  It will spring into life and also appear as a  flash drive, but we can ignore that.  By the way, you don't need to eject it or power it down - you just yank it out, even when it's running a program.
 * Type `ufs ls` in the termianl.  This command should connect to the micro:bit and list the files currenty loaded into it.
 
-# Upload code to the micro:bit
+# Install Code on micro:bit
 
 ## Add Source Code Folder
 * Copy the source code (python files) to a folder on your computer.
@@ -40,11 +38,11 @@ At various points VS Code might offer to install plug-ins which it thinks will b
 * Now the project folder is set up, if you open a terminal (by selecting *Terminal* in the menu bar then *New Terminal*) it will set the terminal to be "in" the project folder.
 * Type `ls` in the terminal and press return.  It should list the files in the project folder.
 
-## Upload Code
+## Installation
 * Start by wiping the micro:bit memory completely.  Type the command `uflash` in the terminal and press return.  This will connect to the micro:bit, erase everything on it, and load a fresh version of the MicroPython interpreter.  It's like formatting the hard drive and installing an operating system.
-* First, we put three 'helper' bits of code on the micro:bit.  Type each of the `ufs` commands below intp the terminal and press enter, one after another. The files are loaded from the folder you loaded into VSCode.
+* We need to put three 'helper' bits of code on the micro:bit.  Type each of the `ufs` commands given below into the terminal and press enter, one after another. The files will be uploaded from the folder you loaded into VSCode.
   * `ufs put scrollbit.py`.  This file is a cut down version of the [official scrollbit code](https://github.com/pimoroni/micropython-scrollbit/blob/master/library/scrollbit.source.py), to save space so we can fit more of our own code on.  Official docs for the full library are [here](https://github.com/pimoroni/micropython-scrollbit).
-  * `ufs put medal.py`.  This file has the code which draws the scrolling the 'medal' image when you win.
+  * `ufs put medal.py`.  This file has the code which draws the scrolling the 'medal' image when you win.  Rowan drew it on graph paper then worked out the pixel numbers.
   * `ufs put operations.py`.  This contains code to help with things like turning the snake clockwise or anticlockwise, and detecting if the snake has hit the edge.
 * The main program is loaded with with `ufs put main.py`.  Note that the main program must always be called `main.py` in order to be detected and run.
 * If the micro:bit hasn't automatically started running press the reset button on the back.
