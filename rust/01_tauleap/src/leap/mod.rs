@@ -1,62 +1,87 @@
-mod params;
-mod cached;
+pub mod params;
 
 use params::Params;
+use crate::epi::state::State;
+use crate::epi::environment::Environment;
 
-trait AutonomousTauLeaper<T: Copy> {
-    fn step(&self, y: T, step_size: f32, params: &Params) -> T;
+pub trait AutonomousTauLeaper<T: Copy> {
+    fn step(y0: T, env: &Environment, params: &Params) -> T;
 
-    //TODO inner mutability on Params
-    fn leap(&self, y0: T, params: &mut Params) -> T {
-        let now = 0.0;
+    fn leap(y0: T, env: &Environment, params: &Params) -> T {
+        let mut now = 0.0;
         let mut position = y0;
         let step_size = params.tau_sub_step;
 
         while now < params.time_step {
-            position = self.step(position, step_size, &params);
+            position = Self::step(position, env, params);
+            now = now + step_size;
         }
 
         position
     }
 }
 
-#[derive(Copy, Clone)]
-pub struct SIC {
-    pub s: u16,
-    pub i: u16,
-    pub c: u16
-}
+pub struct Leaper;
 
-impl AutonomousTauLeaper<SIC> for SIC{
-    fn step(&self, y0: SIC, step_size: f32, p: &Params) -> Self {
-        let enviro: f32 = 0.01;
-
-        fn next_poisson(rate: f32) -> u64 {
+impl AutonomousTauLeaper<State> for Leaper {
+    fn step(y0: State, env: &Environment, p: &Params) -> State {
+        fn next_poisson(rate: f64) -> u64 {
             use rand_distr::Distribution;
-            rand_distr::Poisson::new(5.0).unwrap().sample(&mut rand::thread_rng())
+            println!("Rate = {}", rate);
+            if rate != 0.0 {
+                rand_distr::Poisson::new(rate)
+                    .unwrap()
+                    .sample(&mut rand::thread_rng())
+            } else {
+                0
+            }
         }
 
         use std::cmp::min;
 
-        let s_to_i = min(next_poisson(p.beta * enviro * (self.s as f32) * step_size) as u16, self.s);
-        let i_to_c = min(next_poisson(p.gamma * (self.i as f32) * step_size) as u16, self.i);
-        let c_to_i = min(next_poisson(p.a * (self.c as f32) * step_size) as u16, self.c);
+        let step_size = p.tau_sub_step;
 
-        SIC {
-            s: self.s - s_to_i,
-            i: self.i + s_to_i - i_to_c,
-            c: self.c + i_to_c - c_to_i
+        let beta_int = p.epi_params.beta_internal;
+        let beta_ext = p.epi_params.beta_external;
+        let sigma = p.epi_params.sigma;
+        let gamma = p.epi_params.gamma;
+
+        let s_to_e: u64 = {
+            let within_group_rate =
+                if y0.size() != 0 {
+                    beta_int * y0.s() * y0.i() * step_size / y0.size() as f64
+                } else {
+                    0 as f64
+                };
+            let external_rate =
+                if y0.size() != 0 {
+                    let external_infectious = env.size() - y0.i();
+                    beta_ext * y0.s() * external_infectious * step_size / env.size()
+                } else {
+                    0 as f64
+                };
+
+            min(
+                next_poisson(within_group_rate + external_rate),
+                y0.s,
+            )
+        };
+
+        let e_to_i: u64 = min(
+            next_poisson(sigma * y0.s() * step_size),
+            y0.e,
+        );
+
+        let i_to_r: u64 = min(
+            next_poisson(gamma * y0.i() * step_size),
+            y0.i,
+        );
+
+        State {
+            s: y0.s - s_to_e,
+            e: y0.e + s_to_e - e_to_i,
+            i: y0.i + e_to_i - i_to_r,
+            r: y0.r + i_to_r,
         }
     }
 }
-
-// struct Environment_Leaper<T> {
-//     rng: SmallRng,
-// }
-
-// impl AutonomousTauLeaper for Environment_Leaper<T> {
-//     fn step(y: T, step_size: f32) -> T {
-
-//     }
-// }
-

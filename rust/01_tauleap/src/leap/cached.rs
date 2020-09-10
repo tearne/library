@@ -1,4 +1,6 @@
 
+#![allow(dead_code)]
+
 // https://stackoverflow.com/questions/27831944/how-do-i-store-a-closure-in-a-struct-in-rust
 use std::cell::RefCell;
 
@@ -16,7 +18,6 @@ impl Cached {
     }
 
     pub fn get(&mut self) -> f32 {
-        let t = self.value.borrow();
         match *(self.value.borrow()) {
             Some(v) => v,
             None => {

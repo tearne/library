@@ -79,11 +79,11 @@ def start():
             points = len(snk) - 2
             display.set_pixel(points % 5, int(points / 5), 9)
             if points >= 24: win()
-        
+
         set_pixel(newPt[0], newPt[1], SNAKE_BRIGHT)
         set_pixel(oldPt[0], oldPt[1], 0)
         show()
 
-        sleep(60)
+        sleep(100)
 
 start()
