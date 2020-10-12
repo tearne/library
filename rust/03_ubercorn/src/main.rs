@@ -55,9 +55,9 @@ pub fn main() {
     leds[(y * 16) + x] = RGB8::new(0, 255, 0);
     
     display.apply(&leds);
-    let delay = time::Duration::from_millis(50);
+    let delay = time::Duration::from_millis(1);
 
-    for _ in 1..100 {
+    for _ in 1..100000 {
         // for i in leds.iter_mut() {
         //     // i = RGB8::new(
         //     //     i.r * 0.9 as u8, 
@@ -66,9 +66,11 @@ pub fn main() {
         //     // );
         // }
         let id = rng.gen_range(0, 256);
-        let r = rng.gen_range(127, 256) as u8;
-        let g = rng.gen_range(0, 256) as u8;
-        let b = rng.gen_range(0, 256) as u8;
+        let bright = rng.gen::<f64>();
+        let bright = bright * bright * bright;
+        let r = (rng.gen_range(127.0, 256.0) * bright) as u8;
+        let g = (rng.gen_range(0.0, 256.0) * bright) as u8;
+        let b = (rng.gen_range(0.0, 256.0) * bright) as u8;
         leds[id] = rgb::RGB8::new(r, g, b);
         display.apply(&leds);
         thread::sleep(delay);
