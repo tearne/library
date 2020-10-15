@@ -1,8 +1,15 @@
+mod input_device;
+mod error;
+
 use spidev::{SpiModeFlags, Spidev, SpidevOptions};
 use rgb::*;
-use std::io::prelude::*;
+use std::{collections::HashSet, io::prelude::*};
 use std::{thread, time};
 use rand::Rng;
+use std::sync::mpsc;
+use std::sync::mpsc::Sender;
+use libc::input_event;
+use crate::error::Error;
 
 const BLACK: RGB8 = RGB8 { r: 0, g: 0, b: 0 };
 
@@ -44,7 +51,49 @@ impl Drop for Display {
     }
 }
 
+const KEY_DOWN: i32 = 1;
+
 pub fn main() {
+    let input_filename = "/dev/input/event0".to_string();
+    let mut keys_to_watch = HashSet::new();
+    let keys = input_device::key_map();
+
+    keys_to_watch.insert(keys.get("Q").unwrap());
+    keys_to_watch.insert(keys.get("W").unwrap());
+    keys_to_watch.insert(keys.get("E").unwrap());
+    keys_to_watch.insert(keys.get("R").unwrap());
+    keys_to_watch.insert(keys.get("T").unwrap());
+    keys_to_watch.insert(keys.get("Y").unwrap());
+
+    fn go_loop(tx: Sender<input_event>, input_filename: &str) -> Result<(), Error> {
+        let mut input_device = input_device::InputDevice::open(input_filename).unwrap();
+        input_device.grab()?;
+    
+        loop {
+            let event = input_device.read_event().unwrap();
+            // println!("{:?}", event);
+            if event.value == KEY_DOWN {
+                tx.send(event)?
+            }
+        }
+    }
+
+    let (tx, rx) = mpsc::channel();
+    thread::spawn(move || {
+        let ret = go_loop(tx, &input_filename);
+        if let Err(e) = ret {
+            println!("mapping for {} ended due to error: {}", input_filename, e);
+        }
+    });
+
+    for event in rx {
+        if keys_to_watch.contains(&event.code) {
+            println!("I'm interested in {:?}", event);
+        }
+    }
+
+    
+    
     let mut display = Display::build();
     let mut rng = rand::thread_rng();
 
