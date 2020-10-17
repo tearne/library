@@ -1,6 +1,7 @@
 mod input_device;
 mod error;
 
+use rand::prelude::ThreadRng;
 use spidev::{SpiModeFlags, Spidev, SpidevOptions};
 use rgb::*;
 use std::{collections::HashSet, io::prelude::*};
@@ -55,15 +56,16 @@ const KEY_DOWN: i32 = 1;
 
 pub fn main() {
     let input_filename = "/dev/input/event0".to_string();
-    let mut keys_to_watch = HashSet::new();
     let keys = input_device::key_map();
 
-    keys_to_watch.insert(keys.get("Q").unwrap());
-    keys_to_watch.insert(keys.get("W").unwrap());
-    keys_to_watch.insert(keys.get("E").unwrap());
-    keys_to_watch.insert(keys.get("R").unwrap());
-    keys_to_watch.insert(keys.get("T").unwrap());
-    keys_to_watch.insert(keys.get("Y").unwrap());
+    let keys_wanted = [
+        "Q", "W", "E", "R", "T", "Y", "SPACE"
+    ];
+    let keys_to_watch: HashSet<&u16> = keys_wanted
+        .iter()
+        .cloned()
+        .map(|k| keys.get(k).unwrap())
+        .collect();
 
     fn go_loop(tx: Sender<input_event>, input_filename: &str) -> Result<(), Error> {
         let mut input_device = input_device::InputDevice::open(input_filename).unwrap();
@@ -71,7 +73,6 @@ pub fn main() {
     
         loop {
             let event = input_device.read_event().unwrap();
-            // println!("{:?}", event);
             if event.value == KEY_DOWN {
                 tx.send(event)?
             }
@@ -86,14 +87,8 @@ pub fn main() {
         }
     });
 
-    for event in rx {
-        if keys_to_watch.contains(&event.code) {
-            println!("I'm interested in {:?}", event);
-        }
-    }
 
-    
-    
+
     let mut display = Display::build();
     let mut rng = rand::thread_rng();
 
@@ -104,22 +99,40 @@ pub fn main() {
     leds[(y * 16) + x] = RGB8::new(0, 255, 0);
     
     display.apply(&leds);
-    let delay = time::Duration::from_millis(1);
+    let delay = time::Duration::from_millis(100);
 
-    for _ in 1..100000 {
-        // for i in leds.iter_mut() {
-        //     // i = RGB8::new(
-        //     //     i.r * 0.9 as u8, 
-        //     //     i.g * 0.9 as u8, 
-        //     //     i.b * 0.9 as u8, 
-        //     // );
-        // }
+    let mut ranges: [f64; 6] = [
+        127.0, 256.0,
+        0.0, 127.0,
+        0.0, 127.0
+    ];
+
+    fn randomise_range(arr: &mut [f64; 6], rng: &mut ThreadRng){
+        arr[0] = rng.gen_range(0.0, 250.0);
+        arr[1] = rng.gen_range(arr[0], 256.0);
+        arr[2] = rng.gen_range(0.0, 250.0);
+        arr[3] = rng.gen_range(arr[2], 256.0);
+        arr[4] = rng.gen_range(0.0, 250.0);
+        arr[5] = rng.gen_range(arr[4], 256.0);
+    }
+
+    //for event in rx {
+    loop {
+        let received = rx.try_recv();
+        
+        received.map(|event| {
+            if keys_to_watch.contains(&event.code) {
+                println!("===> {:?}", event);
+                randomise_range(&mut ranges, &mut rng);
+            }
+        });
+
         let id = rng.gen_range(0, 256);
         let bright = rng.gen::<f64>();
         let bright = bright * bright * bright;
-        let r = (rng.gen_range(127.0, 256.0) * bright) as u8;
-        let g = (rng.gen_range(0.0, 256.0) * bright) as u8;
-        let b = (rng.gen_range(0.0, 256.0) * bright) as u8;
+        let r = (rng.gen_range(ranges[0], ranges[1]) * bright) as u8;
+        let g = (rng.gen_range(ranges[2], ranges[3]) * bright) as u8;
+        let b = (rng.gen_range(ranges[4], ranges[5]) * bright) as u8;
         leds[id] = rgb::RGB8::new(r, g, b);
         display.apply(&leds);
         thread::sleep(delay);
