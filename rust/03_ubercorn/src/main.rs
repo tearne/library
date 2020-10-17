@@ -1,6 +1,8 @@
 mod input_device;
 mod error;
+mod pixel;
 
+use crate::pixel::Pixel;
 use rand::prelude::ThreadRng;
 use spidev::{SpiModeFlags, Spidev, SpidevOptions};
 use rgb::*;
@@ -31,13 +33,13 @@ impl Display {
         Display{spi}
     }
 
-    pub fn apply(&mut self, leds: &[rgb::RGB8]) {
+    pub fn apply(&mut self, leds: &[RGB8]) {
         self.spi.write(&[0x72]).expect("SPI write error");
-        let data = Self::as_array(&leds);
+        let data = Self::as_u8(&leds);
         self.spi.write(&data).expect("SPI write error");
     }
 
-    fn as_array(leds: &[rgb::RGB8]) -> Vec<u8> {
+    fn as_u8(leds: &[rgb::RGB8]) -> Vec<u8> {
         let mut arr: Vec<u8> = vec![];
         // use ComponentSlice;
         arr.extend_from_slice(leds.as_slice());
@@ -92,49 +94,29 @@ pub fn main() {
     let mut display = Display::build();
     let mut rng = rand::thread_rng();
 
-    let mut leds: [RGB8; 256] =  [BLACK; 256];
-
-    let y = 3;
-    let x = 7;
-    leds[(y * 16) + x] = RGB8::new(0, 255, 0);
-    
-    display.apply(&leds);
-    let delay = time::Duration::from_millis(100);
-
-    let mut ranges: [f64; 6] = [
-        127.0, 256.0,
-        0.0, 127.0,
-        0.0, 127.0
-    ];
-
-    fn randomise_range(arr: &mut [f64; 6], rng: &mut ThreadRng){
-        arr[0] = rng.gen_range(0.0, 250.0);
-        arr[1] = rng.gen_range(arr[0], 256.0);
-        arr[2] = rng.gen_range(0.0, 250.0);
-        arr[3] = rng.gen_range(arr[2], 256.0);
-        arr[4] = rng.gen_range(0.0, 250.0);
-        arr[5] = rng.gen_range(arr[4], 256.0);
+    //let mut leds: [RGB8; 256] =  [BLACK; 256];
+    let mut pixels: Vec<Pixel> = Vec::new();
+    for i in 0..256 {
+        pixels.push(Pixel::new(&mut rng));
     }
 
-    //for event in rx {
+    let delay = time::Duration::from_millis(20);
+
     loop {
         let received = rx.try_recv();
         
         received.map(|event| {
             if keys_to_watch.contains(&event.code) {
                 println!("===> {:?}", event);
-                randomise_range(&mut ranges, &mut rng);
+                for i in 0..256 {
+                    pixels[i].randomise(&mut rng);
+                }
             }
         });
 
-        let id = rng.gen_range(0, 256);
-        let bright = rng.gen::<f64>();
-        let bright = bright * bright * bright;
-        let r = (rng.gen_range(ranges[0], ranges[1]) * bright) as u8;
-        let g = (rng.gen_range(ranges[2], ranges[3]) * bright) as u8;
-        let b = (rng.gen_range(ranges[4], ranges[5]) * bright) as u8;
-        leds[id] = rgb::RGB8::new(r, g, b);
-        display.apply(&leds);
+        let rendered: Vec<RGB8> = 
+            pixels.iter_mut().map(|pix| pix.evolve_and_get()).collect();
+        display.apply(&rendered);
         thread::sleep(delay);
     }
 }
