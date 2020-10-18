@@ -19,7 +19,7 @@ impl Display {
         spi.configure(&options).expect("SPI config error");
 
         let mut display = Display{spi};
-        // display.reset();
+        display.reset();
         display
     }
 
@@ -36,7 +36,7 @@ impl Display {
         arr
     }
 
-    fn reset(&mut self) {
+    pub fn reset(&mut self) {
         let leds: [RGB8; 256] =  [BLACK; 256];
         self.apply(&leds);
     }

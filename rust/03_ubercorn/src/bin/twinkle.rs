@@ -4,18 +4,12 @@ use ubercorn::display::*;
 use ubercorn::input_device;
 
 use rand::prelude::ThreadRng;
-use spidev::{SpiModeFlags, Spidev, SpidevOptions};
 use rgb::*;
-use std::{collections::HashSet, io::prelude::*};
-use std::{thread, time};
-use rand::Rng;
+use std::{thread, time, collections::HashSet};
 use std::sync::mpsc;
 use std::sync::mpsc::Sender;
+use rand::Rng;
 use libc::input_event;
-use std::time::Duration;
-
-
-const KEY_DOWN: i32 = 1;
 
 pub fn main() {
     let input_filename = "/dev/input/event0".to_string();
@@ -30,10 +24,11 @@ pub fn main() {
         .map(|k| keys.get(k).unwrap())
         .collect();
 
-    fn go_loop(tx: Sender<input_event>, input_filename: &str) -> Result<(), Error> {
+    fn grab_keyboard(tx: Sender<input_event>, input_filename: &str) -> Result<(), Error> {
         let mut input_device = input_device::InputDevice::open(input_filename).unwrap();
         input_device.grab()?;
-    
+        const KEY_DOWN: i32 = 1;
+
         loop {
             let event = input_device.read_event().unwrap();
             if event.value == KEY_DOWN {
@@ -44,36 +39,36 @@ pub fn main() {
 
     let (tx, rx) = mpsc::channel();
     thread::spawn(move || {
-        let ret = go_loop(tx, &input_filename);
+        let ret = grab_keyboard(tx, &input_filename);
         if let Err(e) = ret {
             println!("mapping for {} ended due to error: {}", input_filename, e);
         }
     });
-
-
 
     let mut display = Display::build();
     let mut rng = rand::thread_rng();
 
     //let mut leds: [RGB8; 256] =  [BLACK; 256];
     let mut pixels: Vec<Pixel> = Vec::new();
-    for i in 0..256 {
+    for _ in 0..256 {
         pixels.push(Pixel::new(&mut rng));
     }
 
     let delay = time::Duration::from_millis(40);
 
+    fn random_colour(rng: &mut ThreadRng) -> RGB8 {
+        RGB8::new(
+            rng.gen_range(0, 255),
+            rng.gen_range(0, 255),
+            rng.gen_range(0, 255)
+        )
+    }
+
     loop {
-        let received = rx.try_recv();
-        
-        received.map(|event| {
+        rx.try_recv().into_iter().for_each(|event| {
             if keys_to_watch.contains(&event.code) {
-                println!("===> {:?}", event);
-                let base_colour = RGB8::new(
-                    rng.gen_range(0, 255),
-                    rng.gen_range(0, 255),
-                    rng.gen_range(0, 255)
-                );
+
+                let base_colour = random_colour(&mut rng);
                 for i in 0..256 {
                     let variant_colour = RGB8::new(
                         (base_colour.r as i16 + rng.gen_range(-50, 50)).max(0).min(255) as u8,
@@ -86,8 +81,9 @@ pub fn main() {
         });
 
         let rendered: Vec<RGB8> = 
-            pixels.iter_mut().map(|pix| pix.evolve_and_get()).collect();
+            pixels.iter_mut().map(|px| px.evolve_and_get()).collect();
         display.apply(&rendered);
+
         thread::sleep(delay);
     }
 }

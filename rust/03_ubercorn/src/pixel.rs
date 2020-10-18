@@ -50,9 +50,9 @@ pub struct Pixel {
             step_towards(&mut self.current_colour.b, &self.target_colour.b, self.adjust_step);
     
             rgb::RGB8::new(
-                ((self.current_colour.r as f64 * self.position) as u8),
-                ((self.current_colour.g as f64 * self.position) as u8), 
-                ((self.current_colour.b as f64 * self.position) as u8) 
+                (self.current_colour.r as f64 * self.position) as u8,
+                (self.current_colour.g as f64 * self.position) as u8, 
+                (self.current_colour.b as f64 * self.position) as u8 
             )
         }
     
