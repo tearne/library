@@ -100,7 +100,7 @@ pub fn main() {
         pixels.push(Pixel::new(&mut rng));
     }
 
-    let delay = time::Duration::from_millis(20);
+    let delay = time::Duration::from_millis(40);
 
     loop {
         let received = rx.try_recv();
@@ -108,8 +108,18 @@ pub fn main() {
         received.map(|event| {
             if keys_to_watch.contains(&event.code) {
                 println!("===> {:?}", event);
+                let base_colour = RGB8::new(
+                    rng.gen_range(0, 255),
+                    rng.gen_range(0, 255),
+                    rng.gen_range(0, 255)
+                );
                 for i in 0..256 {
-                    pixels[i].randomise(&mut rng);
+                    let variant_colour = RGB8::new(
+                        (base_colour.r as i16 + rng.gen_range(-50, 50)).max(0).min(255) as u8,
+                        (base_colour.g as i16 + rng.gen_range(-50, 50)).max(0).min(255) as u8,
+                        (base_colour.b as i16 + rng.gen_range(-50, 50)).max(0).min(255) as u8,
+                    );
+                    pixels[i].randomise(&mut rng, variant_colour);
                 }
             }
         });

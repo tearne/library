@@ -32,8 +32,8 @@ pub struct Pixel {
             if self.position > 1.0 {
                 self.position = 1.0;
                 self.going_up = false;
-            } else if self.position < 0.0 {
-                self.position = 0.0;
+            } else if self.position < 0.05 {
+                self.position = 0.05;
                 self.going_up = true;
             }
 
@@ -50,19 +50,15 @@ pub struct Pixel {
             step_towards(&mut self.current_colour.b, &self.target_colour.b, self.adjust_step);
     
             rgb::RGB8::new(
-                ((self.current_colour.r as f64 * self.position) as u8).max(5),
-                ((self.current_colour.g as f64 * self.position) as u8).max(5), 
-                ((self.current_colour.b as f64 * self.position) as u8).max(5) 
+                ((self.current_colour.r as f64 * self.position) as u8),
+                ((self.current_colour.g as f64 * self.position) as u8), 
+                ((self.current_colour.b as f64 * self.position) as u8) 
             )
         }
     
-        pub fn randomise(&mut self, rng: &mut ThreadRng) {
+        pub fn randomise(&mut self, rng: &mut ThreadRng, target_colour: RGB8) {
             self.step_size = rng.gen::<f64>() * 0.03;
-            self.target_colour = RGB8::new(
-                rng.gen_range(0, 255),
-                rng.gen_range(0, 255),
-                rng.gen_range(0, 255)
-            );
+            self.target_colour = target_colour;
             self.adjust_step = rng.gen_range(1, 10);
         }
     }
