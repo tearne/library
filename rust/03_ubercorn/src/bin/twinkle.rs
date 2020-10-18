@@ -1,8 +1,8 @@
-mod input_device;
-mod error;
-mod pixel;
+use ubercorn::pixel::*;
+use ubercorn::error::*;
+use ubercorn::display::*;
+use ubercorn::input_device;
 
-use crate::pixel::Pixel;
 use rand::prelude::ThreadRng;
 use spidev::{SpiModeFlags, Spidev, SpidevOptions};
 use rgb::*;
@@ -12,47 +12,8 @@ use rand::Rng;
 use std::sync::mpsc;
 use std::sync::mpsc::Sender;
 use libc::input_event;
-use crate::error::Error;
+use std::time::Duration;
 
-const BLACK: RGB8 = RGB8 { r: 0, g: 0, b: 0 };
-
-struct Display {
-    spi: Spidev,
-}
-
-impl Display {
-    pub fn build() -> Self {
-        let mut spi = Spidev::open("/dev/spidev0.0").unwrap();
-        let options = SpidevOptions::new()
-            .bits_per_word(8)
-            .max_speed_hz(9_000_000)
-            .mode(SpiModeFlags::SPI_MODE_0)
-            .build();
-        spi.configure(&options).expect("SPI config error");
-
-        Display{spi}
-    }
-
-    pub fn apply(&mut self, leds: &[RGB8]) {
-        self.spi.write(&[0x72]).expect("SPI write error");
-        let data = Self::as_u8(&leds);
-        self.spi.write(&data).expect("SPI write error");
-    }
-
-    fn as_u8(leds: &[rgb::RGB8]) -> Vec<u8> {
-        let mut arr: Vec<u8> = vec![];
-        // use ComponentSlice;
-        arr.extend_from_slice(leds.as_slice());
-        arr
-    }
-}
-
-impl Drop for Display {
-    fn drop(&mut self) {
-        let leds: [RGB8; 256] =  [BLACK; 256];
-        self.apply(&leds);
-    }
-}
 
 const KEY_DOWN: i32 = 1;
 
