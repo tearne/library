@@ -1,18 +1,11 @@
-use ubercorn::pixel::*;
-use ubercorn::error::*;
-use ubercorn::display::*;
-use ubercorn::input_device;
+use ubercorn::{monitor, pixel::*,display::*, input_device};
 
 use rand::prelude::ThreadRng;
 use rgb::*;
 use std::{thread, time, collections::HashSet};
-use std::sync::mpsc;
-use std::sync::mpsc::Sender;
 use rand::Rng;
-use libc::input_event;
 
 pub fn main() {
-    let input_filename = "/dev/input/event0".to_string();
     let keys = input_device::key_map();
 
     let keys_wanted = [
@@ -24,26 +17,28 @@ pub fn main() {
         .map(|k| keys.get(k).unwrap())
         .collect();
 
-    fn grab_keyboard(tx: Sender<input_event>, input_filename: &str) -> Result<(), Error> {
-        let mut input_device = input_device::InputDevice::open(input_filename).unwrap();
-        input_device.grab()?;
-        const KEY_DOWN: i32 = 1;
+    // fn grab_keyboard(tx: Sender<input_event>, input_filename: &str) -> Result<(), Error> {
+    //     let mut input_device = input_device::InputDevice::open(input_filename).unwrap();
+    //     input_device.grab()?;
+    //     const KEY_DOWN: i32 = 1;
 
-        loop {
-            let event = input_device.read_event().unwrap();
-            if event.value == KEY_DOWN {
-                tx.send(event)?
-            }
-        }
-    }
+    //     loop {
+    //         let event = input_device.read_event().unwrap();
+    //         if event.value == KEY_DOWN {
+    //             tx.send(event)?
+    //         }
+    //     }
+    // }
 
-    let (tx, rx) = mpsc::channel();
-    thread::spawn(move || {
-        let ret = grab_keyboard(tx, &input_filename);
-        if let Err(e) = ret {
-            println!("mapping for {} ended due to error: {}", input_filename, e);
-        }
-    });
+    // let (tx, rx) = mpsc::channel();
+    // thread::spawn(move || {
+    //     let ret = grab_keyboard(tx, &input_filename);
+    //     if let Err(e) = ret {
+    //         println!("mapping for {} ended due to error: {}", input_filename, e);
+    //     }
+    // });
+
+    let rx = monitor::go();
 
     let mut display = Display::build();
     let mut rng = rand::thread_rng();
