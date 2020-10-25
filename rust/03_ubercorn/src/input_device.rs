@@ -56,7 +56,7 @@ impl Drop for InputDevice {
 }
 
 
-pub fn key_map() -> HashMap<&'static str, u16> {
+pub fn key_map() -> HashMap<u16, &'static str> {
     [
         // generated like:
         // grep -o 'KEY_[^ :;]*' ~/.cargo/registry/src/github.com-1ecc6299db9ec823/uinput-sys-0.1.3/src/codes | sed 's/^KEY_//' | awk '{print "(\""$1"\", KEY_"$1"),"}'
@@ -227,7 +227,7 @@ pub fn key_map() -> HashMap<&'static str, u16> {
         ("P0", KEY_KP0),
         ("PDOT", KEY_KPDOT),
         ("PENT", KEY_KPENTER),
-    ].iter().cloned().map(|(m, v)| (m, v as u16)).collect()
+    ].iter().cloned().map(|(m, v)| (v as u16, m)).collect()
 }
 
 pub const KEY_RESERVED:   c_int = 0;

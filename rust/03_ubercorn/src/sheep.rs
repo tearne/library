@@ -1,15 +1,13 @@
 use rgb::RGB8;
-use std::{collections::HashSet, thread, time::Duration};
+use std::collections::HashSet;
 
-use ubercorn::{display::Display};
-
-fn main() {
+pub fn get() -> Vec<RGB8> {
     const BLACK: RGB8 = RGB8 { r: 0, g: 0, b: 0 };
     let mut pixels = vec![BLACK; 256];
 
     fn add_pixels_with_colour(colour: RGB8, to_add: HashSet<(usize, usize)>, pixels: &mut Vec<RGB8>) {
         to_add.iter().for_each(|(x,y)| {
-            pixels[to_idx(*x,*y)] = colour;
+            pixels[crate::to_idx(*x,*y)] = colour;
         });
     }
 
@@ -33,14 +31,7 @@ fn main() {
     let grey = RGB8::new(180,180,180);
     add_pixels_with_colour(grey, sheep_body_px(), &mut pixels);
 
-    let mut display = Display::build();
-    display.apply(&pixels);
-
-    thread::sleep(Duration::from_millis(1000000));
-}
-
-fn to_idx(x: usize, y: usize) -> usize {
-    (x - 1) * 16 + y - 1
+    pixels
 }
 
 fn sky_px() -> HashSet<(usize, usize)> {
