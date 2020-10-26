@@ -1,0 +1,11 @@
+[Unit]
+Description=Ubercorn service
+After=multi-user.target
+
+[Service]
+Type=exec
+Restart=on-failure
+ExecStart=/usr/local/bin/ubercorn
+
+[Install]
+WantedBy=multi-user.target

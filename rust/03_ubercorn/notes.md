@@ -20,3 +20,14 @@ scp target/arm-unknown-linux-gnueabihf/debug/ubercorn pi@piot:ubercorn-binary
 ## sources
 * https://disconnected.systems/blog/rust-powered-rover/#setting-up-rust-for-cross-compiling
 * https://github.com/japaric/rust-cross/issues/42
+
+
+
+# Installation as a service on Pi Zero
+Install cargo-deb
+
+    cargo install cargo-deb
+
+https://gill.net.in/posts/creating-web-server-deb-binary-with-rust/
+
+    cargo build --target=arm-unknown-linux-gnueabihf

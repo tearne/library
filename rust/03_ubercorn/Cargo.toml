@@ -1,10 +1,10 @@
 [package]
 name = "ubercorn"
+description = "Flash lights on ubercorn on Raspberry Pi Zero"
+license = "Unlicense"
 version = "0.1.0"
-authors = ["pi"]
+authors = ["tearne"]
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 rgb = "0.8.25"
@@ -13,3 +13,14 @@ rand = "0.7.3"
 libc = "0.2.79"
 nix = "0.17.0"
 inotify = { version = "0.8.3", default-features = false, features = [] }
+
+[package.metadata.deb]
+depends = "$auto, systemd"
+conf-files = []
+section = "admin"
+priority = "optional"
+assets = [
+    ["target/arm-unknown-linux-gnueabihf/release/ubercorn", "/usr/local/bin/", "755"],
+    ["assets/ubercorn.service", "/etc/systemd/system/", "644"],
+]
+systemd-units = { enable = true, start = true }

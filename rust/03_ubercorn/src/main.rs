@@ -33,7 +33,6 @@ impl KeyBuffer {
             if self.key_buffer.len() > self.max_length {
                 self.key_buffer.remove(self.key_buffer.len() - self.max_length - 1);
             }
-            println!("Key buffer: {:?}", self.key_buffer);
         });
     }
 
@@ -47,14 +46,10 @@ impl KeyBuffer {
             println!("{} - {}", buf_length, str_length);
 
             let section = self.key_buffer[(buf_length - str_length)..].join("");
-            println!("section: {}", section);
             section == str
         }
     }
 }
-
-
-        
 
 
 pub fn main() {
@@ -119,11 +114,9 @@ pub fn main() {
                     pixels[i].randomise(rng, variant_colour);
                 }
                 if key_buffer.contains("ROWAN") {
-                    println!(" --> ROWAN!");
                     break Mode::ZOMBIE
                 }
                 if key_buffer.contains("ANNA") {
-                    println!(" --> ANNA!");
                     break Mode::SHEEP
                 }
             }
