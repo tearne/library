@@ -36,7 +36,7 @@ pub fn go() -> mpsc::Receiver<input_event> {
     thread::spawn(move || {
         let ret = grab_keyboard(tx.clone(), &KEYBOARD_DEVICE_PATH);
         if let Err(e) = ret {
-            println!("Lost keyboard: {}", e);
+            println!("No keyboard: {}", e);
             
             let mut inotify = Inotify::init()
                 .expect("Failed to initialize inotify");

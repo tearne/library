@@ -1,6 +1,7 @@
 use libc::input_event;
-use std::{collections::HashMap, sync::mpsc::Receiver};
+use std::{collections::HashMap, sync::mpsc::Receiver, process::Stdio};
 use ubercorn::{error::Error, display::*, input_device, monitor, pixel::*, sheep, zombie};
+use std::process::Command;
 
 use rand::prelude::ThreadRng;
 use rgb::*;
@@ -10,7 +11,6 @@ use rand::Rng;
 enum Mode {
     TWINKLE, ZOMBIE, SHEEP
 }
-
 
 struct KeyBuffer {
     key_buffer: Vec<&'static str>,
@@ -52,8 +52,60 @@ impl KeyBuffer {
 }
 
 
-pub fn main() {
+pub fn main() -> Result<(), Error>{
+
+    fn file_system_status() -> Result<String, Error> {
+        let mut mount = Command::new("mount")
+        .stdout(Stdio::piped())
+        .spawn()?;
+
+        if let Some(mount_out) = mount.stdout.take() {
+            let sed = Command::new("sed")
+                .arg("-n")
+                .arg("-e").arg(r#"s/^\/dev\/.* on \/ .*(\(r[w|o]\).*/\1/p"#)
+                .stdin(mount_out)
+                .stdout(Stdio::piped())
+                .spawn()?;
+
+            let out = sed.wait_with_output()?;
+            let _ = mount.wait()?;
+
+            Ok(String::from_utf8(out.stdout).unwrap())
+        } else {
+            Result::Err(Error::NotFound) //TODO better error
+        }
+    }
+    
+    //TODO somethign with filesystem status
+
+
     let mut display = Display::build();
+
+    let mut leds: Vec<RGB8> = Vec::new();
+    let delay = time::Duration::from_millis(2000);
+    for _ in 0..256 {
+        leds.push(RGB8::new(25,0,0));
+    }
+    display.apply(&leds);
+    thread::sleep(delay);
+    
+    leds.clear();
+    for _ in 0..256 {
+        leds.push(RGB8::new(0,25,0));
+    }
+    display.apply(&leds);
+    thread::sleep(delay);
+
+    leds.clear();
+    for _ in 0..256 {
+        leds.push(RGB8::new(0,0,25));
+    }
+    display.apply(&leds);
+    thread::sleep(delay);
+
+
+
+
     let mut rng = rand::thread_rng();
     let mut key_buffer = KeyBuffer::new(6);
 
