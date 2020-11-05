@@ -3,16 +3,10 @@ use std::error;
 use std::ffi;
 use std::io;
 
-// #[cfg(target_os = "linux")]
 use std::sync::mpsc;
-
-// #[cfg(target_os = "linux")]
 use nix;
-
-// #[cfg(target_os = "linux")]
 use libc;
 
-/// UInput error.
 #[derive(Debug)]
 pub enum Error {
 	/// System errors.
@@ -33,7 +27,10 @@ pub enum Error {
 
 	/// try recieve
 	TryReceive(mpsc::TryRecvError),
-	TryRecieveTimeout(mpsc::RecvTimeoutError)
+	TryRecieveTimeout(mpsc::RecvTimeoutError),
+
+	/// String parsing
+	Internal(String),
 }
 
 impl From<ffi::NulError> for Error {
@@ -72,6 +69,12 @@ impl From<mpsc::RecvTimeoutError> for Error {
 	}
 }
 
+impl From<std::string::FromUtf8Error> for Error {
+	fn from(value: std::string::FromUtf8Error) -> Self {
+		Error::Internal(format!("{:?}",value))
+	}
+}
+
 impl fmt::Display for Error {
 	fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
 		match self {
@@ -89,6 +92,8 @@ impl fmt::Display for Error {
 
 			&Error::TryReceive(ref err) => err.fmt(f),
 			&Error::TryRecieveTimeout(ref err) => err.fmt(f),
+			
+			&Error::Internal(ref msg) => f.write_str(msg),
 		}
 	}
 }
