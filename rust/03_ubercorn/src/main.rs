@@ -54,25 +54,25 @@ pub fn main() -> Result<(), Error>{
     let mut display = Display::build(FSStatus::init_polling());
     let delay = time::Duration::from_millis(3000);
 
-    let mut leds: Vec<RGB8> = Vec::new();
+    let mut leds: Vec<RGB8> = vec![RGB::new(0,0,0); 256];
     for _ in 0..256 {
         leds.push(RGB8::new(50,0,0));
     }
-    display.apply(vec!(leds));
+    display.apply(vec![&leds]);
     thread::sleep(delay);
 
-    leds = Vec::new();
-    for _ in 0..256 {
-        leds.push(RGB8::new(0,25,0));
+    // leds = Vec::new();
+    for i in 0..256 {
+        leds[i] = RGB8::new(0,25,0);
     }
-    display.apply(vec!(leds));
+    display.apply(vec![&leds]);
     thread::sleep(delay);
 
-    leds = Vec::new();
-    for _ in 0..256 {
-        leds.push(RGB8::new(0,0,25));
+    // leds = Vec::new();
+    for i in 0..256 {
+        leds[i] = RGB8::new(0,0,25);
     }
-    display.apply(vec!(leds));
+    display.apply(vec![&leds]);
     thread::sleep(delay);
 
     let mut rng = rand::thread_rng();
@@ -99,7 +99,8 @@ fn random_colour(rng: &mut ThreadRng) -> RGB8 {
 }
 
 fn do_zombie(display: &mut Display, rx: &Receiver<input_event>, key_buffer: &mut KeyBuffer) -> Mode {
-    display.apply(vec!(zombie::get()));
+    let z = zombie::get();
+    display.apply(vec!(&z));
     let delay = time::Duration::from_millis(60000);
     let response: Result<input_event, Error> = rx.recv_timeout(delay).map_err(|e|e.into());
     key_buffer.log_event(&response);
@@ -107,7 +108,8 @@ fn do_zombie(display: &mut Display, rx: &Receiver<input_event>, key_buffer: &mut
 }
 
 fn do_sheep(display: &mut Display, rx: &Receiver<input_event>, key_buffer: &mut KeyBuffer) -> Mode {
-    display.apply(vec!(sheep::get()));
+    let s = sheep::get();
+    display.apply(vec!(&s));
     let delay = time::Duration::from_millis(60000);
     let response: Result<input_event, Error> = rx.recv_timeout(delay).map_err(|e|e.into());
     key_buffer.log_event(&response);
@@ -148,7 +150,7 @@ fn do_twinkle(display: &mut Display,rx: &Receiver<input_event>, rng: &mut Thread
             .map(|px| px.evolve_and_get())
             .collect();
         
-        display.apply(vec!(rendered));
+        display.apply(vec!(&rendered));
 
         thread::sleep(delay);
     }

@@ -19,7 +19,6 @@ impl FSStatus {
             let delay = std::time::Duration::from_secs(5);
             loop {
                 std::thread::sleep(delay);
-                println!("Check...");
                 let mut data = data.lock().unwrap();
                 *data = FSStatus::get().unwrap_or(FSStatus::ReadWrite);
             }

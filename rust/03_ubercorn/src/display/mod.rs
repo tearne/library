@@ -8,6 +8,7 @@ use std::{io::Write, sync::{Arc, Mutex}};
 use crate::filesystem::FSStatus;
 
 const BLACK: RGB8 = RGB8 { r: 0, g: 0, b: 0 };
+const ALL_BLACK: &[RGB8] = &[BLACK; 256];
 
 pub struct Display {
     spi: Spidev,
@@ -48,9 +49,9 @@ impl Display {
         display
     }
 
-    pub fn apply(&mut self, mut led_layers: Vec<Vec<RGB8>>) {
+    pub fn apply<'a>(&'a mut self, mut led_layers: Vec<&'a [RGB8]>) {
         if self.get_fs_status() == FSStatus::ReadWrite {
-            led_layers.push(self.red_overlay.to_vec());
+            led_layers.push(&self.red_overlay);
         };
 
         let flattened = Self::flatten(led_layers);
@@ -60,12 +61,12 @@ impl Display {
         self.spi.write(&data).expect("SPI write error");
     }
 
-    fn flatten(layers: Vec<Vec<RGB8>>) -> Vec<RGB8> {
+    fn flatten(layers: Vec<&[RGB8]>) -> Vec<RGB8> {
         fn add_u8(a: u8, b: u8) -> u8 {
             min(u8::MAX as u16, a as u16 + b as u16) as u8
         }
     
-        fn add_RGB8(a: RGB8, b: RGB8) -> RGB8 {
+        fn add_rgb8(a: RGB8, b: RGB8) -> RGB8 {
             RGB8::new(
                 add_u8(a.r, b.r),
                 add_u8(a.g, b.g),
@@ -77,7 +78,7 @@ impl Display {
         for i in 0..256 {
             let mut dot_acc = BLACK;
             for layer in layers.iter() {
-                dot_acc = add_RGB8(dot_acc, layer[i]);
+                dot_acc = add_rgb8(dot_acc, layer[i]);
             }
             result[i] = dot_acc;
         }
@@ -87,13 +88,12 @@ impl Display {
 
     fn as_u8(leds: &[rgb::RGB8]) -> Vec<u8> {
         let mut arr: Vec<u8> = vec![];
-        // use ComponentSlice;
         arr.extend_from_slice(leds.as_slice());
         arr
     }
 
     pub fn reset(&mut self) {
-        self.apply(vec![vec![BLACK; 256]]);
+        self.apply(vec![ALL_BLACK]);
     }
 }
 
