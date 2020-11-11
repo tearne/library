@@ -1,3 +1,5 @@
+use std::cell::RefCell;
+
 use rand::rngs::ThreadRng;
 use rand::Rng;
 use rgb::RGB8;
@@ -12,7 +14,9 @@ pub struct Pixel {
 }
     
 impl Pixel {
-    pub fn new(rng: &mut ThreadRng) -> Self {
+    pub fn new(rng: &RefCell<ThreadRng>) -> Self {
+        let mut rng = rng.borrow_mut();
+
         Pixel{
             position: rng.gen(),
             step_size: rng.gen::<f64>() * 0.03,
@@ -57,7 +61,9 @@ impl Pixel {
         )
     }
 
-    pub fn randomise(&mut self, rng: &mut ThreadRng, target_colour: RGB8) {
+    pub fn randomise(&mut self, rng: &RefCell<ThreadRng>, target_colour: RGB8) {
+        let mut rng = rng.borrow_mut();
+        
         self.step_size = rng.gen::<f64>() * 0.03;
         self.target_colour = target_colour;
         self.adjust_step = rng.gen_range(1, 10);
