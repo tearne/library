@@ -14,7 +14,6 @@ fn main() {
         bytes[2 * idx] = bytes_arr[0];
         bytes[2 * idx + 1] = bytes_arr[1];
     }
-    // let mut buf = [1u8, 2u8, 3u8, 4u8, 5u8];
     let length = (numbers.len() as u16).to_be_bytes();
     println!("Transmit length {} as {:?}", numbers.len(), length);
     stream.write_all(&length).unwrap();
