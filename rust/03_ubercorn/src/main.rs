@@ -41,27 +41,28 @@ pub fn main() -> Result<(), Error>{
 
     let mut display = Display::build(FSStatus::init_polling());
     let delay = time::Duration::from_millis(3000);
+    thread::sleep(time::Duration::from_millis(100));
 
     //Test sequence
     let mut leds: Vec<RGB8> = vec![RGB::new(0,0,0); 256];
     for i in 0..256 {
         leds[i] = RGB8::new(50,0,0);
     }
-    display.apply(vec![&leds]);
+    display.apply_single_layer(&leds);
     thread::sleep(delay);
+
     for i in 0..256 {
         leds[i] = RGB8::new(0,25,0);
     }
-    display.apply(vec![&leds]);
+    display.apply_single_layer(&leds);
     thread::sleep(delay);
+    
     for i in 0..256 {
         leds[i] = RGB8::new(0,0,25);
     }
-    display.apply(vec![&leds]);
+    display.apply_single_layer(&leds);
     thread::sleep(delay);
 
-    //TODO put in dependencies
-    // let mut rng = rand::thread_rng();
     let mut key_buffer = KeyBuffer::new(6);
 
     let key_rx = monitor::start();
@@ -88,7 +89,7 @@ fn random_colour(rng: &RefCell<ThreadRng>) -> RGB8 {
 
 fn do_zombie(display: &mut Display, rx: &Receiver<input_event>, key_buffer: &mut KeyBuffer) -> Mode {
     let z = zombie::get();
-    display.apply(vec!(&z));
+    display.apply_single_layer(&z);
     let delay = time::Duration::from_millis(60000);
     let response: Result<input_event, Error> = rx.recv_timeout(delay).map_err(|e|e.into());
     key_buffer.log_event(&response);
@@ -97,7 +98,7 @@ fn do_zombie(display: &mut Display, rx: &Receiver<input_event>, key_buffer: &mut
 
 fn do_sheep(display: &mut Display, rx: &Receiver<input_event>, key_buffer: &mut KeyBuffer) -> Mode {
     let s = sheep::get();
-    display.apply(vec!(&s));
+    display.apply_single_layer(&s);
     let delay = time::Duration::from_millis(60000);
     let response: Result<input_event, Error> = rx.recv_timeout(delay).map_err(|e|e.into());
     key_buffer.log_event(&response);
@@ -111,8 +112,6 @@ fn do_twinkle(display: &mut Display,rx: &Receiver<input_event>, key_buffer: &mut
     for _ in 0..256 {
         pixels.push(Pixel::new(&deps.random_ref_cell));
     }
-
-    
 
     loop {
         let response: Result<input_event, Error> = rx.try_recv().map_err(|e|e.into());
@@ -141,7 +140,7 @@ fn do_twinkle(display: &mut Display,rx: &Receiver<input_event>, key_buffer: &mut
             .map(|px| px.evolve_and_get())
             .collect();
         
-        display.apply(vec!(&rendered));
+        display.apply_single_layer(&rendered);
 
         thread::sleep(delay);
     }

@@ -12,7 +12,7 @@ const ALL_BLACK: &[RGB8] = &[BLACK; 256];
 
 pub struct Display {
     spi: Spidev,
-    file_sys_status: Arc<Mutex<FSStatus>>,
+    file_sys_status: Arc<Mutex<FSStatus>>,  // Allows overlay if FS in RW mode
     red_overlay: [RGB8; 256],
 }
 
@@ -49,7 +49,12 @@ impl Display {
         display
     }
 
-    pub fn apply<'a>(&'a mut self, mut led_layers: Vec<&'a [RGB8]>) {
+    pub fn apply_single_layer(&mut self, led_layers: &[RGB8]) {
+        self.apply_layers(vec![&led_layers]);
+    }
+
+    // TODO understand explicit lifetime annotation
+    pub fn apply_layers<'a>(&'a mut self, mut led_layers: Vec<&'a [RGB8]>) {
         if self.get_fs_status() == FSStatus::ReadWrite {
             led_layers.push(&self.red_overlay);
         };
@@ -93,7 +98,7 @@ impl Display {
     }
 
     pub fn reset(&mut self) {
-        self.apply(vec![ALL_BLACK]);
+        self.apply_single_layer(ALL_BLACK);
     }
 }
 

@@ -24,7 +24,6 @@ pub fn start() -> mpsc::Receiver<input_event> {
 
         if let Err(error) = do_loop() {
             let _thing = input_device.release();
-            // Result::Err(err)
             Result::Err(error)
         } else {
             Result::Ok(())
