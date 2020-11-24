@@ -34,6 +34,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4bb454f0228b18c7f4c3b0ebbee346ed9c52e7443b0999cd543ff3571205701d"
 
 [[package]]
+name = "ferrous-egs"
+version = "0.1.0"
+dependencies = [
+ "mockall",
+ "predicates",
+]
+
+[[package]]
 name = "float-cmp"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -176,14 +184,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-xid",
-]
-
-[[package]]
-name = "testing"
-version = "0.1.0"
-dependencies = [
- "mockall",
- "predicates",
 ]
 
 [[package]]

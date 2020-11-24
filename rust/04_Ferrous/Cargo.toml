@@ -1,5 +1,5 @@
 [package]
-name = "testing"
+name = "ferrous-egs"
 version = "0.1.0"
 authors = ["tearne <tearne@gmail.com>"]
 edition = "2018"
