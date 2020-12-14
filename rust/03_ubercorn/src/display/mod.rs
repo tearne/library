@@ -1,19 +1,72 @@
 pub mod pixel;
 
-use std::cmp::min;
-use rgb::*;
+use std::{cmp::min, collections::HashMap, fs::File, io::BufReader, path::Path};
 use spidev::*;
 use std::{io::Write, sync::{Arc, Mutex}};
+use serde::Deserialize;
 
 use crate::filesystem::FSStatus;
 
-const BLACK: RGB8 = RGB8 { r: 0, g: 0, b: 0 };
-const ALL_BLACK: &[RGB8] = &[BLACK; 256];
+const BLACK: RGB = RGB { r: 0, g: 0, b: 0 };
+const ALL_BLACK: &[RGB] = &[BLACK; 256];
+
+// Convert x & y to pixel number
+pub fn to_idx(x: usize, y: usize) -> usize {
+    (16 - x) * 16 + (16 - y)
+}
+#[derive(Deserialize, Debug, Clone, Copy)]
+pub struct RGB {
+    pub r: u8,
+    pub g: u8,
+    pub b: u8,
+}
+impl RGB {
+    pub fn new(r:u8, g:u8, b:u8) -> Self {
+        RGB{r,g,b}
+    }
+}
+
+#[derive(Deserialize, Debug)]
+struct Layer {
+    colour: String,
+    points: Vec<(usize, usize)>,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct Graphic {
+    name: String,
+    colours: HashMap<String, RGB>,
+    groups: Vec<Layer>,
+}
+impl Graphic {
+    pub fn load(path: &Path) -> Self {
+        // let file = File::open("resources/zombie.json").unwrap();
+        let reader = BufReader::new(File::open(path).unwrap());
+
+        // let s = fs::read_to_string(path);
+    
+        serde_json::from_reader(reader).unwrap()
+    }
+
+    pub fn as_pixels(&self) -> Vec<RGB> {
+        let black = RGB { r: 0, g: 0, b: 0 };
+        let mut pixels = vec![black; 256];
+
+        self.groups.iter().for_each(|layer|{
+            let colour = self.colours.get(&(layer.colour)).unwrap();
+            for (x,y) in layer.points.iter() {
+                pixels[to_idx(*x,*y)] = colour.clone();
+            }
+        });
+
+        pixels
+    }
+}
 
 pub struct Display {
     spi: Spidev,
     file_sys_status: Arc<Mutex<FSStatus>>,  // Allows overlay if FS in RW mode
-    red_overlay: [RGB8; 256],
+    red_overlay: [RGB; 256],
 }
 
 impl Display {
@@ -31,7 +84,7 @@ impl Display {
         spi.configure(&options).expect("SPI config error");
 
         let mut red_overlay = [BLACK; 256];
-        let red = RGB8::new(200,0,0);
+        let red = RGB::new(200,0,0);
         red_overlay[0] = red;
         red_overlay[1] = red;
         red_overlay[14] = red;
@@ -49,12 +102,12 @@ impl Display {
         display
     }
 
-    pub fn apply_single_layer(&mut self, led_layers: &[RGB8]) {
+    pub fn apply_single_layer(&mut self, led_layers: &[RGB]) {
         self.apply_layers(vec![&led_layers]);
     }
 
     // TODO understand explicit lifetime annotation
-    pub fn apply_layers<'a>(&'a mut self, mut led_layers: Vec<&'a [RGB8]>) {
+    pub fn apply_layers<'a>(&'a mut self, mut led_layers: Vec<&'a [RGB]>) {
         if self.get_fs_status() == FSStatus::ReadWrite {
             led_layers.push(&self.red_overlay);
         };
@@ -62,17 +115,17 @@ impl Display {
         let flattened = Self::flatten(led_layers);
 
         self.spi.write(&[0x72]).expect("SPI write error");
-        let data = Self::as_u8(&flattened);
+        let data = Self::squash(&flattened);
         self.spi.write(&data).expect("SPI write error");
     }
 
-    fn flatten(layers: Vec<&[RGB8]>) -> Vec<RGB8> {
+    fn flatten(layers: Vec<&[RGB]>) -> Vec<RGB> {
         fn add_u8(a: u8, b: u8) -> u8 {
             min(u8::MAX as u16, a as u16 + b as u16) as u8
         }
     
-        fn add_rgb8(a: RGB8, b: RGB8) -> RGB8 {
-            RGB8::new(
+        fn add_rgb8(a: RGB, b: RGB) -> RGB {
+            RGB::new(
                 add_u8(a.r, b.r),
                 add_u8(a.g, b.g),
                 add_u8(a.b, b.b)
@@ -91,10 +144,11 @@ impl Display {
         result
     }
 
-    fn as_u8(leds: &[rgb::RGB8]) -> Vec<u8> {
-        let mut arr: Vec<u8> = vec![];
-        arr.extend_from_slice(leds.as_slice());
-        arr
+    fn squash(leds: &[RGB]) -> Vec<u8> {
+        leds
+            .iter()
+            .flat_map(|pix| vec![pix.r, pix.g, pix.b])
+            .collect()
     }
 
     pub fn reset(&mut self) {
