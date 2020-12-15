@@ -31,7 +31,7 @@ impl Dependencies {
 
         let mut art = HashMap::new();
         art.insert(Mode::ZOMBIE, Graphic::load(Path::new("resources/zombie.json")).as_pixels());
-        art.insert(Mode::ZOMBIE, Graphic::load(Path::new("resources/sheep.json")).as_pixels());
+        art.insert(Mode::SHEEP, Graphic::load(Path::new("resources/sheep.json")).as_pixels());
         
         Dependencies{
             mode_keys,
@@ -124,12 +124,12 @@ fn do_twinkle(display: &mut Display,rx: &Receiver<input_event>, key_buffer: &mut
         key_buffer.log_event(&response);
         if response.is_ok() {
             let base_colour = random_colour(&deps.random_ref_cell);
-            let rnd = || deps.random_ref_cell.borrow_mut();
+            let rnd = |low, high| deps.random_ref_cell.borrow_mut().gen_range(low, high);
             for i in 0..256 {
                 let variant_colour = RGB::new(
-                    (base_colour.r as i16 + rnd().gen_range(-50, 50)).max(0).min(255) as u8,
-                    (base_colour.g as i16 + rnd().gen_range(-50, 50)).max(0).min(255) as u8,
-                    (base_colour.b as i16 + rnd().gen_range(-50, 50)).max(0).min(255) as u8,
+                    (base_colour.r as i16 + rnd(-50, 50)).max(0).min(255) as u8,
+                    (base_colour.g as i16 + rnd(-50, 50)).max(0).min(255) as u8,
+                    (base_colour.b as i16 + rnd(-50, 50)).max(0).min(255) as u8,
                 ); 
                 pixels[i].randomise(&deps.random_ref_cell, variant_colour);
             }

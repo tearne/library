@@ -1,7 +1,6 @@
 use std::{collections::HashMap, mem};
 use std::fs::File;
 use std::io::Read;
-use std::os::unix::io::AsRawFd;
 use libc::{input_event, c_int};
 use nix::ioctl_write_ptr;
 

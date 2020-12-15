@@ -38,8 +38,6 @@ impl KeyBuffer {
         if buf_length < seq_length {
             false
         } else {
-            println!("{} - {}", buf_length, seq_length);
-
             let section: &[&str] = &self.key_buffer[(buf_length - seq_length)..];
             section == sequence
         }

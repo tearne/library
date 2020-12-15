@@ -40,11 +40,7 @@ pub struct Graphic {
 }
 impl Graphic {
     pub fn load(path: &Path) -> Self {
-        // let file = File::open("resources/zombie.json").unwrap();
         let reader = BufReader::new(File::open(path).unwrap());
-
-        // let s = fs::read_to_string(path);
-    
         serde_json::from_reader(reader).unwrap()
     }
 
@@ -89,6 +85,11 @@ impl Display {
         red_overlay[1] = red;
         red_overlay[14] = red;
         red_overlay[15] = red;
+        red_overlay[16] = red;
+        red_overlay[31] = red;
+        
+        red_overlay[224] = red;
+        red_overlay[239] = red;
         red_overlay[240] = red;
         red_overlay[241] = red;
         red_overlay[254] = red;
@@ -106,7 +107,6 @@ impl Display {
         self.apply_layers(vec![&led_layers]);
     }
 
-    // TODO understand explicit lifetime annotation
     pub fn apply_layers<'a>(&'a mut self, mut led_layers: Vec<&'a [RGB]>) {
         if self.get_fs_status() == FSStatus::ReadWrite {
             led_layers.push(&self.red_overlay);
