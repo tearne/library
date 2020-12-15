@@ -3,6 +3,7 @@ use std::fs::File;
 use std::io::Read;
 use libc::{input_event, c_int};
 use nix::ioctl_write_ptr;
+use std::os::unix::io::AsRawFd;
 
 use crate::error::Error;
 

@@ -23,5 +23,6 @@ priority = "optional"
 assets = [
     ["target/arm-unknown-linux-gnueabihf/release/ubercorn", "/usr/local/bin/", "755"],
     ["assets/ubercorn.service", "/etc/systemd/system/", "644"],
+    ["resources", "/usr/local/ubercorn", "644"]
 ]
 systemd-units = { enable = true, start = true }

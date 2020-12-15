@@ -30,4 +30,4 @@ Install cargo-deb
 
 https://gill.net.in/posts/creating-web-server-deb-binary-with-rust/
 
-    cargo build --target=arm-unknown-linux-gnueabihf
+    cargo deb --target=arm-unknown-linux-gnueabihf
