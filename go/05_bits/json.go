@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -45,10 +44,10 @@ func main() {
 	var outer Outer
 	err := json.Unmarshal([]byte(json_str), &outer)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		panic(err)
 	}
 	fmt.Printf("Whole document: %+v\n", outer)
+	// > Whole document: {Meta:map[] Particle:{S:[10 20 30] W:0.12345 P:{alpha:0 beta:0}}}
 
 	// OR
 
@@ -56,7 +55,7 @@ func main() {
 	var temp interface{}
 	err = json.Unmarshal([]byte(json_str), &temp)
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 	var particle Particle
 	cfg := &mapstructure.DecoderConfig{
@@ -68,4 +67,5 @@ func main() {
 	sub_section := temp.(map[string]interface{})["particle"]
 	decoder.Decode(sub_section)
 	fmt.Printf("Subesection: %+v\n", particle)
+	// > Subesection: {S:[10 20 30] W:0.12345 P:{alpha:0 beta:0}}
 }
