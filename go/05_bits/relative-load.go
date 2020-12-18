@@ -20,17 +20,17 @@ func main() {
 	// Working dir
 	pwd, err := os.Getwd()
 	if err != nil {
-        panic(err)
-    }
+		panic(err)
+	}
 	fmt.Printf("Your working dir is:\n  %v\n", pwd)
 
 	// Executable dir
 	ex, err := os.Executable()
-    if err != nil {
-        panic(err)
-    }
-    exPath := filepath.Dir(ex)
-    fmt.Printf("The executable is located at:\n  %v\n",exPath)
+	if err != nil {
+		panic(err)
+	}
+	exPath := filepath.Dir(ex)
+	fmt.Printf("The executable is located at:\n  %v\n",exPath)
 
 	// Load file from ralative path, assuming working dir is project root
 	file_path := path.Join(pwd, "config", "data.txt")
