@@ -59,10 +59,10 @@ func main() {
 	}
 	var particle Particle
 	cfg := &mapstructure.DecoderConfig{
-        Metadata: nil,
-        Result:   &particle,
-        TagName:  "json",
-    }
+		Metadata: nil,
+		Result:   &particle,
+		TagName:  "json",
+	}
 	decoder, _ := mapstructure.NewDecoder(cfg)
 	sub_section := temp.(map[string]interface{})["particle"]
 	decoder.Decode(sub_section)
