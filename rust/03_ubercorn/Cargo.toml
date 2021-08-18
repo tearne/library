@@ -14,7 +14,9 @@ rand = "0.7.3"
 libc = "0.2.79"
 nix = "0.17.0"
 inotify = { version = "0.8.3", default-features = false, features = [] }
-rppal = "0.12.0"
+# rppal = "0.12.0"
+gpio-cdev = "0.4.0"
+# tokio = { version = "1", features = ["full"] }
 
 [package.metadata.deb]
 depends = "$auto, systemd"
