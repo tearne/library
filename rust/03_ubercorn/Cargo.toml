@@ -15,8 +15,9 @@ libc = "0.2.79"
 nix = "0.17.0"
 inotify = { version = "0.8.3", default-features = false, features = [] }
 # rppal = "0.12.0"
-gpio-cdev = "0.4.0"
-# tokio = { version = "1", features = ["full"] }
+gpio-cdev = { version = "0.4.0", features = ["async-tokio"] }
+tokio = { version = "1.10.0", features = ["full"] }
+futures = "0.3.16"
 
 [package.metadata.deb]
 depends = "$auto, systemd"

@@ -1,4 +1,4 @@
-use gpio_cdev::{Chip, EventRequestFlags, Line, LineHandle, LineRequestFlags, Lines};
+use gpio_cdev::{AsyncLineEventHandle, Chip, EventRequestFlags, Line, LineHandle, LineRequestFlags, Lines};
 // use rppal::gpio::{Gpio, InputPin, OutputPin, Trigger};
 use spidev::{SpiModeFlags, Spidev, SpidevOptions};
 use std::{io::Write, ops::Range};
@@ -131,8 +131,8 @@ impl UnicornMini {
     }
 }
 
-
-fn main() {
+#[tokio::main]
+async fn main() {
     let mut um = UnicornMini::new();
 
     // for i in 0..1000usize {
@@ -159,13 +159,26 @@ fn main() {
     um.flush();
 
 
-    for event in um.buttons[0].events(
-        LineRequestFlags::INPUT,
+    let mut events = um.buttons[0].async_events(
+        LineRequestFlags::INPUT, 
         EventRequestFlags::BOTH_EDGES,
-        "button-a-events",
-    ).unwrap(){
-        println!("Event: {:?}", event)
+        "button-a-events").unwrap();
+
+    // let events = t.await;
+
+    use futures::stream::StreamExt;
+    while let Some(event) = events.next().await {
+        let event = event.unwrap();
+        println!("GPIO Event: {:?}", event);
     }
+
+    // for event in um.buttons[0].events(
+    //     LineRequestFlags::INPUT,
+    //     EventRequestFlags::BOTH_EDGES,
+    //     "button-a-events",
+    // ).unwrap(){
+    //     println!("Event: {:?}", event)
+    // }
 
     // for i in 0..4 {
     //     println!("Value: {:?}", um.buttons[i].get_value().unwrap());
