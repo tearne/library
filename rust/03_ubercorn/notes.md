@@ -1,19 +1,31 @@
 Cross compiling
 
 ? Not sure if this is needed
-# apt install gcc-arm-linux-gnueabihf libc6-armhf-cross libc6-dev-armhf-cross
+`apt install gcc-arm-linux-gnueabihf libc6-armhf-cross libc6-dev-armhf-cross`
+or
+`apt install gcc-arm-linux-gnueabi`
 
-rustup target add arm-unknown-linux-gnueabihf
+`rustup target add arm-unknown-linux-gnueabihf`
+or
+`rustup target add arm-unknown-linux-gnueabi`
 
-Get the rpi tools:
-git clone https://github.com/raspberrypi/tools $HOME/rpi_tools
+On OSX, get the rpi tools:
+`git clone https://github.com/raspberrypi/tools $HOME/rpi_tools`
 
 Then in .cargo/config in project
-
+```
+[target.arm-unknown-linux-gnueabi]
+linker = "arm-linux-gnueabi-gcc"
+```
+or
+```
 [target.arm-unknown-linux-gnueabihf]
-linker = "/home/user/rpi_tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc"
+linker = "~/rpi_tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc"
+```
 
-cargo build --target=arm-unknown-linux-gnueabihf
+`cargo build --release --target=arm-unknown-linux-gnueabihf`
+or
+`cargo build --release --target=arm-unknown-linux-gnueabi`
 
 scp target/arm-unknown-linux-gnueabihf/debug/ubercorn pi@piot:ubercorn-binary
 
