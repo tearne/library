@@ -107,9 +107,6 @@ impl UnicornHatMini {
                 .max_speed_hz(600_000)
                 .bits_per_word(8)
                 .mode(SpiModeFlags::SPI_MODE_0)
-                // .mode(SpiModeFlags::SPI_LSB_FIRST)
-                // .mode(SpiModeFlags::SPI_NO_CS)
-                // .mode(SpiModeFlags::SPI_READY)
                 .build();
             spi.configure(&options).expect("SPI config error");
             spi
@@ -125,16 +122,20 @@ impl UnicornHatMini {
             button_join_handle,
         };
 
-        um.write_prefix(&CMD_SOFT_RESET, &[]);
-        um.write_prefix(&CMD_GLOBAL_BRIGHTNESS, &[]);
-        um.write_prefix(&CMD_SCROLL_CTRL, &[]);
-        um.write_prefix(&CMD_SYSTEM_CTRL_OFF, &[]);
-        um.write_prefix(&CMD_WRITE_DISPLAY, &um.data_buf.clone());//TODO without clone
-        um.write_prefix(&CMD_COM_PIN_CTRL, &[]);
-        um.write_prefix(&CMD_ROW_PIN_CTRL, &[]);
-        um.write_prefix(&CMD_SYSTEM_CTRL_ON, &[]);
+        um.reset();
 
         um
+    }
+
+    pub fn reset(&mut self){
+        self.write_prefix(&CMD_SOFT_RESET, Some(&[]));
+        self.write_prefix(&CMD_GLOBAL_BRIGHTNESS, Some(&[]));
+        self.write_prefix(&CMD_SCROLL_CTRL, Some(&[]));
+        self.write_prefix(&CMD_SYSTEM_CTRL_OFF, Some(&[]));
+        self.write_prefix(&CMD_WRITE_DISPLAY, None);//TODO without clone
+        self.write_prefix(&CMD_COM_PIN_CTRL, Some(&[]));
+        self.write_prefix(&CMD_ROW_PIN_CTRL, Some(&[]));
+        self.write_prefix(&CMD_SYSTEM_CTRL_ON, Some(&[]));
     }
 
     pub fn button_subscribe(&self) -> Receiver<Option<Button>> {
@@ -160,22 +161,24 @@ impl UnicornHatMini {
         self.data_buf[ib] = b;
     }
     pub fn flush(&mut self){
-        self.write(&self.data_buf.clone());//TODO without clone
+        self.write(None);
     }
 
     fn buf_offset(buffer_idx: usize) -> Range<usize> {
         buffer_idx * BUF_SIZE .. (buffer_idx + 1) * BUF_SIZE
     }
 
-    fn write(&mut self, data: &[u8]){
+    fn write(&mut self, data: Option<&[u8]>){
         self.write_prefix(&CMD_WRITE_DISPLAY, data)
     }
-    fn write_prefix(&mut self, prefix: &[u8], data: &[u8]){
+    fn write_prefix(&mut self, prefix: &[u8], data: Option<&[u8]>){
         fn concat(a: &[u8], b: &[u8]) -> Vec<u8> {
             let mut d = a.to_owned();
             d.extend(b);
             d
         }
+
+        let data = data.unwrap_or(&self.data_buf);
 
         // Send data to both chips
         for i in 0..2 {
@@ -187,5 +190,11 @@ impl UnicornHatMini {
                 spi.write(&prefix).expect("SPI write error");
             }
         }
+    }
+}
+
+impl Drop for UnicornHatMini {
+    fn drop(&mut self) {
+        self.reset();
     }
 }
