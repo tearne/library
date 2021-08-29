@@ -1,11 +1,9 @@
-use futures::{FutureExt};
-use gpio_cdev::{Chip, EventRequestFlags, Line, LineHandle, LineRequestFlags, Lines};
-use rppal::gpio::{Gpio, InputPin, Trigger};
-use spidev::{SpiModeFlags, Spidev, SpidevOptions};
-use tokio::{sync::{broadcast::{self, Receiver, channel}, watch}, task::JoinHandle};
-use core::time;
-use std::{borrow::{Borrow, BorrowMut, Cow}, io::Write, ops::Range};
+use std::time::{Duration, SystemTime};
 
+use rppal::gpio::{Gpio, InputPin, Trigger};
+use tokio::{sync::watch::{self, Receiver}, task::JoinHandle};
+
+#[derive(Debug)]
 enum Button {
     A,B,X,Y
 }
@@ -21,18 +19,18 @@ impl Button {
 }
 
 struct UnicornMini {
-    join_handle: JoinHandle<()>,
+    rx: Receiver<Option<Button>>,
+    #[allow(dead_code)]
+    button_join_handle: JoinHandle<()>,
 }
 impl UnicornMini {
-    
-
-    pub fn new(mut handler: Box<dyn FnMut(String) + Send>) -> Self {
+    pub fn new() -> Self {
         let mut gpio = Gpio::new().unwrap();
 
         fn get_pin(gpio: &mut Gpio, id: u8)  -> InputPin {
             println!("-- {}", id);
             let mut pin = gpio.get(id).unwrap().into_input();
-            pin.set_interrupt(Trigger::FallingEdge);
+            pin.set_interrupt(Trigger::FallingEdge).unwrap();
             pin
         }
 
@@ -43,7 +41,9 @@ impl UnicornMini {
             get_pin(&mut gpio, Button::Y.pin()),
         ];
 
-        let join_handle: JoinHandle<()> = tokio::task::spawn_blocking(move || {
+        let (tx, rx) = watch::channel(Option::<Button>::None);
+
+        let button_join_handle: JoinHandle<()> = tokio::task::spawn_blocking(move || {
             let p: [&InputPin; 4] = [
                 &pins[0],
                 &pins[1],
@@ -51,38 +51,50 @@ impl UnicornMini {
                 &pins[3],
             ];
             
+            let mut prev_time = SystemTime::now();
+
             loop {
                 let result = gpio.poll_interrupts(
                     &p,
                     true,
                     None
                 );
-                
-                let result = result.unwrap();
-                let (pressed_pin,v) = result.as_ref().unwrap();
 
-                if *pressed_pin == p[0] {
-                    handler("A".into());
-                } else if *pressed_pin == p[1] {
-                    handler("B".into());
-                } else if *pressed_pin == p[2] {
-                    handler("X".into());
-                } else if *pressed_pin == p[3] {
-                    handler("Y".into());
+                let elapsed = prev_time.elapsed().unwrap_or_default();
+                
+                if elapsed > Duration::new(0, 100000000) {
+                    prev_time = SystemTime::now();
+                    let result = result.unwrap();
+                    let (pressed_pin,_) = result.as_ref().unwrap();
+
+                    if *pressed_pin == p[0]      { tx.send(Button::A.into()).unwrap(); } 
+                    else if *pressed_pin == p[1] { tx.send(Button::B.into()).unwrap(); } 
+                    else if *pressed_pin == p[2] { tx.send(Button::X.into()).unwrap(); } 
+                    else if *pressed_pin == p[3] { tx.send(Button::Y.into()).unwrap(); }
                 }
             };
         });
 
         UnicornMini{
-            join_handle,
+            button_join_handle,
+            rx,
         }
+    }
+
+    pub fn subscribe(&self) -> Receiver<Option<Button>> {
+        self.rx.clone()
     }
 }
 
 #[tokio::main]
 async fn main() {
-    let handler = |msg| println!("{}", msg);
-    let um = UnicornMini::new(Box::new(handler));
+    let um = UnicornMini::new();
 
-    um.join_handle.await;
+    let mut h = um.subscribe();
+    loop {
+        h.changed().await.unwrap();
+        let b_opt = h.borrow_and_update();
+        let t = b_opt.as_ref().unwrap();
+        println!("==> {:?}", t);
+    }
 }
