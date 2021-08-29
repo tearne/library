@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 use libc::input_event;
 use std::{collections::HashMap, sync::mpsc::Receiver};
-use ubercorn::{filesystem::*, display::*, error::Error, keyboard::*, display::pixel::*};
+use unicorn::{filesystem::*, display::*, error::Error, keyboard::*, display::pixel::*};
 use rand::prelude::ThreadRng;
 use std::{thread, time, path::Path};
 use rand::Rng;
@@ -86,9 +86,9 @@ fn random_colour(rng: &RefCell<ThreadRng>) -> RGB {
     let mut rng = rng.borrow_mut();
     
     RGB::new(
-        rng.gen_range(0, 255),
-        rng.gen_range(0, 255),
-        rng.gen_range(0, 255)
+        rng.gen_range(0..255),
+        rng.gen_range(0..255),
+        rng.gen_range(0..255)
     )
 }
 
@@ -124,7 +124,7 @@ fn do_twinkle(display: &mut Display,rx: &Receiver<input_event>, key_buffer: &mut
         key_buffer.log_event(&response);
         if response.is_ok() {
             let base_colour = random_colour(&deps.random_ref_cell);
-            let rnd = |low, high| deps.random_ref_cell.borrow_mut().gen_range(low, high);
+            let rnd = |low, high| deps.random_ref_cell.borrow_mut().gen_range(low..high);
             for i in 0..256 {
                 let variant_colour = RGB::new(
                     (base_colour.r as i16 + rnd(-50, 50)).max(0).min(255) as u8,

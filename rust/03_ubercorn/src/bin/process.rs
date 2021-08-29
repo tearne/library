@@ -1,5 +1,5 @@
 use std::process::{Command, Stdio};
-use ubercorn::error::Error;
+use unicorn::error::Error;
 
 fn main() -> Result<(), Error> {
 

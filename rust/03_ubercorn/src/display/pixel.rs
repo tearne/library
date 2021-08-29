@@ -67,6 +67,6 @@ impl Pixel {
         
         self.step_size = rng.gen::<f64>() * 0.03;
         self.target_colour = target_colour;
-        self.adjust_step = rng.gen_range(1, 10);
+        self.adjust_step = rng.gen_range(1..10);
     }
 }
