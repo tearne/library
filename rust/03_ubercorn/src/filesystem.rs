@@ -1,18 +1,19 @@
 use crate::error::Error;
-use std::{process::{Command, Stdio}, str::FromStr, sync::{Arc, Mutex}};
+use std::{
+    process::{Command, Stdio},
+    str::FromStr,
+    sync::{Arc, Mutex},
+};
 
 #[derive(PartialEq, Copy, Clone, Debug)]
 pub enum FSStatus {
-    ReadOnly, ReadWrite
+    ReadOnly,
+    ReadWrite,
 }
 
 impl FSStatus {
     pub fn init_polling() -> Arc<Mutex<FSStatus>> {
-        let result = Arc::new(
-            Mutex::new(
-                FSStatus::get().unwrap_or(FSStatus::ReadWrite)
-            )
-        );
+        let result = Arc::new(Mutex::new(FSStatus::get().unwrap_or(FSStatus::ReadWrite)));
 
         let data = result.clone();
         std::thread::spawn(move || {
@@ -28,14 +29,13 @@ impl FSStatus {
     }
 
     pub fn get() -> Result<FSStatus, Error> {
-        let mut mount = Command::new("mount")
-        .stdout(Stdio::piped())
-        .spawn()?;
+        let mut mount = Command::new("mount").stdout(Stdio::piped()).spawn()?;
 
         if let Some(mount_out) = mount.stdout.take() {
             let sed = Command::new("sed")
                 .arg("-n")
-                .arg("-e").arg(r#"s/^\/dev\/.* on \/ .*(\(r[w|o]\).*/\1/p"#)
+                .arg("-e")
+                .arg(r#"s/^\/dev\/.* on \/ .*(\(r[w|o]\).*/\1/p"#)
                 .stdin(mount_out)
                 .stdout(Stdio::piped())
                 .spawn()?;
@@ -46,7 +46,9 @@ impl FSStatus {
             let str = String::from_utf8(out.stdout)?;
             FSStatus::from_str(&str)
         } else {
-            Result::Err(Error::Internal("Failed to get file system status".to_string()))
+            Result::Err(Error::Internal(
+                "Failed to get file system status".to_string(),
+            ))
         }
     }
 }
