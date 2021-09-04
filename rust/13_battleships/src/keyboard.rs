@@ -1,17 +1,18 @@
 use std::{
     ffi::OsStr,
     fs::File,
+    io::Read,
     io::{BufRead, BufReader},
     mem,
+    os::unix::io::AsRawFd,
 };
 
-use crate::error::Error;
 use inotify::{Event, EventMask, Inotify, WatchMask};
 use libc::{c_int, input_event};
 use nix::ioctl_write_ptr;
-use std::io::Read;
-use std::os::unix::io::AsRawFd;
 use tokio::sync::mpsc::{Receiver, Sender};
+
+use crate::error::{AppError, BoxedError};
 
 // Based on https://github.com/moparisthebest/rusty-keys
 
@@ -35,7 +36,7 @@ pub fn grab_all_keyboards() -> Receiver<input_event> {
         loop {
             if let Ok(events) = inotify.read_events_blocking(&mut buffer) {
                 for event in events {
-                    if let Some(device) = keyboard_device(event) {
+                    if let Some(device) = represents_kbd(event) {
                         tokio::spawn(grab_keyboard(tx.clone(), device.to_owned()));
                     }
                 }
@@ -46,7 +47,7 @@ pub fn grab_all_keyboards() -> Receiver<input_event> {
     rx
 }
 
-fn keyboard_device(event: Event<&OsStr>) -> Option<&str> {
+fn represents_kbd(event: Event<&OsStr>) -> Option<&str> {
     if !event.mask.contains(EventMask::ISDIR) {
         if let Some(file_name) = event.name.and_then(|name| name.to_str()) {
             let device_files = all_keyboard_device_filenames();
@@ -96,7 +97,7 @@ struct InputDevice {
 }
 
 impl InputDevice {
-    pub fn open(device_file: &str) -> Result<Self, Error> {
+    pub fn open(device_file: &str) -> Result<Self, BoxedError> {
         let device_file = File::open(device_file)?;
         Ok(InputDevice {
             device_file: device_file,
@@ -104,23 +105,23 @@ impl InputDevice {
         })
     }
 
-    pub fn read_event(&mut self) -> Result<input_event, Error> {
+    pub fn read_event(&mut self) -> Result<input_event, BoxedError> {
         let num_bytes = self.device_file.read(&mut self.buf)?;
         if num_bytes != SIZE_OF_INPUT_EVENT {
-            return Err(Error::ShortRead);
+            return Err(AppError::boxed("ShortRead".into()));
         }
         let event: input_event = unsafe { mem::transmute(self.buf) };
         Ok(event)
     }
 
-    pub fn grab(&mut self) -> Result<(), Error> {
+    pub fn grab(&mut self) -> Result<(), BoxedError> {
         unsafe {
             eviocgrab(self.device_file.as_raw_fd(), 1 as *const c_int)?;
         }
         Ok(())
     }
 
-    pub fn release(&mut self) -> Result<(), Error> {
+    pub fn release(&mut self) -> Result<(), BoxedError> {
         unsafe {
             eviocgrab(self.device_file.as_raw_fd(), 0 as *const c_int)?;
         }
@@ -130,7 +131,7 @@ impl InputDevice {
 
 impl Drop for InputDevice {
     fn drop(&mut self) {
-        self.release().ok(); // ignore any errors here, what could we do anyhow?
+        self.release().ok();
     }
 }
 
@@ -139,7 +140,7 @@ async fn grab_keyboard(tx: Sender<input_event>, device_file: String) {
         println!("Lost device {} with error: {}", device_file, e)
     };
 
-    async fn inner(tx: Sender<input_event>, device_file: &String) -> Result<(), Error> {
+    async fn inner(tx: Sender<input_event>, device_file: &String) -> Result<(), BoxedError> {
         println!("Grabbing {}", device_file);
         const KEY_DOWN: i32 = 1;
 
