@@ -11,12 +11,8 @@ name = "battleships"
 version = "0.1.0"
 dependencies = [
  "futures",
- "inotify",
- "libc",
- "nix 0.17.0",
- "rand",
- "spidev",
  "tokio",
+ "unicorn",
 ]
 
 [[package]]
@@ -191,6 +187,12 @@ checksum = "bee0328b1209d157ef001c94dd85b4f8f64139adb0eac2659f4b08382b2f474d"
 dependencies = [
  "cfg-if 1.0.0",
 ]
+
+[[package]]
+name = "lazy_static"
+version = "1.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
@@ -418,6 +420,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "rppal"
+version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eb26758c881b4837b2f4aef569e4251f75388e36b37204e1804ef429c220121c"
+dependencies = [
+ "lazy_static",
+ "libc",
+]
+
+[[package]]
 name = "scopeguard"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -502,6 +514,21 @@ name = "unicode-xid"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ccb82d61f80a663efe1f787a51b16b5a51e3314d6ac365b08639f52387b33f3"
+
+[[package]]
+name = "unicorn"
+version = "0.1.0"
+source = "git+https://github.com/tearne/unicorn?branch=main#837be2e6239611a6ce8b7a2c64db88c4ed57da62"
+dependencies = [
+ "futures",
+ "inotify",
+ "libc",
+ "nix 0.17.0",
+ "rand",
+ "rppal",
+ "spidev",
+ "tokio",
+]
 
 [[package]]
 name = "void"

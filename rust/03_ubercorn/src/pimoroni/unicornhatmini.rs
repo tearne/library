@@ -185,8 +185,8 @@ impl UnicornHatMini {
         let mut gpio = Gpio::new().unwrap();
 
         fn get_pin(gpio: &mut Gpio, id: u8) -> InputPin {
-            let mut pin = gpio.get(id).unwrap().into_input();
-            pin.set_interrupt(Trigger::FallingEdge).unwrap();
+            let mut pin = gpio.get(id).unwrap().into_input_pullup();
+            pin.set_interrupt(Trigger::Both).unwrap();
             pin
         }
 
