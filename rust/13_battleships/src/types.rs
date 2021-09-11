@@ -1,4 +1,4 @@
-use unicorn::pimoroni::RGB;
+use unicorn::RGB;
 
 pub struct World {
     players: Vec<Player>,
@@ -11,25 +11,30 @@ pub struct Player {
 pub struct Boat {
     pub orientation: Orientation,
     pub position: Position,
-    pub size: u8,
+    pub size: usize,
 }
 impl Boat {
-    pub fn set_orientation(&mut self, o: Orientation){
+    pub fn set_orientation(&mut self, o: Orientation) {
         self.orientation = o;
     }
 
     pub fn render_pixels(&self) -> Vec<Pixel> {
-        let halfish = ((self.size as f32) / 2.0) as u8;
-        let offsets: Vec<i16> = (0..self.size as i16).into_iter().map(|i| i - halfish as i16).collect();
+        let halfish = ((self.size as f32) / 2.0) as usize;
+        let offsets: Vec<isize> = (0..self.size as isize)
+            .into_iter()
+            .map(|i| i - halfish as isize)
+            .collect();
 
         let colour = RGB::new(100, 200, 250);
 
-        let px_bldr = |plotter: fn(&Position, i16) -> Position| -> Vec<Pixel> {            
-            offsets.into_iter().map(|offset| Pixel{
-                colour,
-                position: plotter(&self.position, offset)
-            })
-            .collect::<Vec<Pixel>>()
+        let px_bldr = |plotter: fn(&Position, isize) -> Position| -> Vec<Pixel> {
+            offsets
+                .into_iter()
+                .map(|offset| Pixel {
+                    colour,
+                    position: plotter(&self.position, offset),
+                })
+                .collect::<Vec<Pixel>>()
         };
 
         let vec = match self.orientation {
@@ -43,54 +48,56 @@ impl Boat {
     }
 }
 
-pub enum Orientation{
-    UP, 
-    DOWN, 
-    LEFT, 
+pub enum Orientation {
+    UP,
+    DOWN,
+    LEFT,
     RIGHT,
 }
 
+#[derive(Copy, Clone, Debug)]
 pub struct Position {
-    pub x: u8,
-    pub y: u8,
+    pub x: usize,
+    pub y: usize,
 }
-impl Position{
-    pub fn new(x: u8, y: u8) -> Self {
-        Position{x,y}
+impl Position {
+    pub fn new(x: usize, y: usize) -> Self {
+        Position { x, y }
     }
 
-    fn add(a: u8, b:i16) -> u8 {
-        let updated_i16 = a as i16 + b;
-        let updated_u8 = updated_i16 as u8;
-        assert!(updated_u8 as i16 == updated_i16);
-        updated_u8
+    fn add(a: usize, b: isize) -> usize {
+        let updated_isize = a as isize + b;
+        let updated_usize = updated_isize as usize;
+        assert!(updated_usize as isize == updated_isize);
+        updated_usize
     }
 
-    pub fn x_plus(&self, other: i16) -> Position {
-        Position{
+    pub fn x_plus(&self, other: isize) -> Position {
+        Position {
             x: Self::add(self.x, other),
-            y: self.y
+            y: self.y,
         }
     }
 
-    pub fn y_plus(&self, other: i16) -> Position {
-        Position{
+    pub fn y_plus(&self, other: isize) -> Position {
+        Position {
             x: self.x,
-            y: Self::add(self.y, other)
+            y: Self::add(self.y, other),
         }
     }
 }
 
+#[derive(Copy, Clone, Debug)]
 pub struct Pixel {
-    pub position: Position, 
+    pub position: Position,
     pub colour: RGB,
 }
 impl Pixel {
-    pub fn x(&self) -> u8 {
+    pub fn x(&self) -> usize {
         self.position.x
     }
 
-    pub fn y(&self) -> u8 {
+    pub fn y(&self) -> usize {
         self.position.y
     }
 }
