@@ -1,5 +1,5 @@
 [package]
-name = "battleships"
+name = "towerdefense"
 version = "0.1.0"
 authors = ["tearne <tearne@gmail.com>"]
 edition = "2018"
@@ -10,3 +10,4 @@ edition = "2018"
 tokio = { version = "1.10.0", features = ["full"] }
 futures = "0.3.16"
 unicorn = { git = "https://github.com/tearne/unicorn", branch = "main"}
+rgb = "0.8"
