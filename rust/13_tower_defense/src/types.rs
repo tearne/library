@@ -7,8 +7,25 @@ impl Grid {
     pub fn new() -> Self {
         Self([[RGBA8::default(); 16]; 16])
     }
-    pub fn layer_on_top(&mut self, other: &Grid) {
-        todo!();
+    pub fn add_layer_on_top(&mut self, other: &Grid) {
+        for x in 0..16 {
+            for y in 0..16 {
+                let s = self.0[x][y];
+                let o = other.0[x][y];
+
+                let a_1: f32 = o.a as f32 + s.a as f32 * (255.0 - o.a as f32);
+
+                let comp = |o:u8, oa: u8, s:u8, sa: u8| (o as f32 * oa as f32 / 255.0) + s as f32 * sa as f32 * (255.0 - oa as f32) / a_1;
+
+                let r_1: f32 = comp(o.r, o.a, s.r, s.a);
+                let g_1: f32 = comp(o.g, o.a, s.g, s.a);
+                let b_1: f32 = comp(o.b, o.a, s.b, s.a);
+                
+                let res = RGBA8::new(r_1 as u8, g_1 as u8, b_1 as u8, a_1 as u8);
+
+                self.0[x][y] = res;
+            }
+        }
     }
 
     pub fn send_to_display(&self, display: &mut Unicorn) {
@@ -52,7 +69,7 @@ impl Renderable for Game {
         let mut background = self.world.render_layer();
         let selector_layer = self.selector.render_layer();
 
-        background.layer_on_top(&selector_layer);
+        background.add_layer_on_top(&selector_layer);
         *grid = background;
     }
 }
@@ -63,20 +80,21 @@ pub struct Selector {
 }
 impl Renderable for Selector {
     fn render_onto(&self, grid: &mut Grid) {
-        let colour = ;
-        
-        fn alpha(dist: usize) -> u8 {
-            
+        fn alpha(dist: isize) -> u8 {
+            let d: usize = dist.try_into().unwrap();
+            (255 - 255.min(d.min(5) * 50)).try_into().unwrap()
         }
 
         for x in 0..16 {
             if x != self.position.x {
-                grid.0[x][self.position.y] = RGBA8::new(0,0,10, alpha)
+                let dist = (x as isize - self.position.x as isize).abs();
+                grid.0[x][self.position.y] = RGBA8::new(0,0,150, alpha(dist));
             }
         }
         for y in 0..16 {
             if y != self.position.y {
-                grid.0[self.position.x][y] = colour
+                let dist = (y as isize - self.position.y as isize).abs();
+                grid.0[self.position.x][y] = RGBA8::new(0,0,150, alpha(dist));
             }
         }
     }
@@ -154,8 +172,6 @@ impl Position {
     }
 
     pub fn interpolate(&self, other: &Self) -> Vec<Position> {
-        println!("Between {:?} and {:?}", self, other);
-
         fn abs_diff(a: usize, b: usize) -> isize {
             let a = TryInto::<isize>::try_into(a).unwrap();
             let b = TryInto::<isize>::try_into(b).unwrap();
@@ -176,8 +192,6 @@ impl Position {
         } else { //y_diff < 0
             (0..y_diff).map(|p|self.y_plus(p)).collect()
         };
-
-        println!(" ---> {:?}", res);
 
         res
     }
