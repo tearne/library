@@ -1,41 +1,7 @@
-use rgb::{RGBA8};
-use unicorn::pimoroni::unicorn::Unicorn;
+use rgb::RGBA8;
 use std::convert::TryInto;
 
-pub struct Grid([[RGBA8; 16]; 16]);
-impl Grid {
-    pub fn new() -> Self {
-        Self([[RGBA8::default(); 16]; 16])
-    }
-    pub fn add_layer_on_top(&mut self, other: &Grid) {
-        for x in 0..16 {
-            for y in 0..16 {
-                let s = self.0[x][y];
-                let o = other.0[x][y];
-
-                let a_1: f32 = o.a as f32 + s.a as f32 * (255.0 - o.a as f32);
-
-                let comp = |o:u8, oa: u8, s:u8, sa: u8| (o as f32 * oa as f32 / 255.0) + s as f32 * sa as f32 * (255.0 - oa as f32) / a_1;
-
-                let r_1: f32 = comp(o.r, o.a, s.r, s.a);
-                let g_1: f32 = comp(o.g, o.a, s.g, s.a);
-                let b_1: f32 = comp(o.b, o.a, s.b, s.a);
-                
-                let res = RGBA8::new(r_1 as u8, g_1 as u8, b_1 as u8, a_1 as u8);
-
-                self.0[x][y] = res;
-            }
-        }
-    }
-
-    pub fn send_to_display(&self, display: &mut Unicorn) {
-        for x in 0..16usize {
-            for y in 0..16usize {
-                display.set_xy(x, y, &self.0[x][y].rgb());
-            }
-        }
-    }
-}
+use crate::{InteractionMode, Standby, grid::Grid};
 
 pub trait Renderable {
     fn render_layer(&self) -> Grid {
@@ -53,56 +19,36 @@ impl<T: Renderable> Renderable for Option<T> {
 }
 
 pub struct Game {
-    pub world: World,
-    pub selector: Option<Selector>
+    interaction_mode: InteractionMode,
+    world: World,
 }
 impl Game {
     pub fn new(world: World) -> Self {
         Self {
             world,
-            selector: None,
+            interaction_mode: InteractionMode::S(Standby{}),
+        }
+    }
+
+    pub fn handle_key(&mut self, key: u16) {
+        if let Some(replacement) = self.interaction_mode.handle_key(key, &mut self.world) {
+            self.interaction_mode = replacement;
         }
     }
 }
 impl Renderable for Game {
     fn render_onto(&self, grid: &mut Grid) {
         let mut background = self.world.render_layer();
-        let selector_layer = self.selector.render_layer();
+        let mut selector_layer = self.interaction_mode.render_layer();
 
         background.add_layer_on_top(&selector_layer);
         *grid = background;
     }
 }
 
-pub struct Selector {
-    pub holding: Option<Tower>,
-    pub position: Position,
-}
-impl Renderable for Selector {
-    fn render_onto(&self, grid: &mut Grid) {
-        fn alpha(dist: isize) -> u8 {
-            let d: usize = dist.try_into().unwrap();
-            (255 - 255.min(d.min(5) * 50)).try_into().unwrap()
-        }
-
-        for x in 0..16 {
-            if x != self.position.x {
-                let dist = (x as isize - self.position.x as isize).abs();
-                grid.0[x][self.position.y] = RGBA8::new(0,0,150, alpha(dist));
-            }
-        }
-        for y in 0..16 {
-            if y != self.position.y {
-                let dist = (y as isize - self.position.y as isize).abs();
-                grid.0[self.position.x][y] = RGBA8::new(0,0,150, alpha(dist));
-            }
-        }
-    }
-}
-
 pub struct World {
     pub path: Path,
-    pub towers: Vec<Tower>
+    pub towers: [Tower; 8]
 }
 impl Renderable for World {
     fn render_onto(&self, grid: &mut Grid) {
@@ -145,14 +91,27 @@ pub struct Tower {
     charge_status: u8,
     charge_speed: u8,
     hit_points: u8,
+    colour: RGBA8,
 }
 impl Tower {
+    const COLOURS: [RGBA8; 8] = [
+        RGBA8::new(100,0,0,255),
+        RGBA8::new(0,100,0,255),
+        RGBA8::new(0,0,100,255),
+        RGBA8::new(100,100,0,255),
+        RGBA8::new(100,0,100,255),
+        RGBA8::new(0,100,100,255),
+        RGBA8::new(100,100,100,255),
+        RGBA8::new(50,150,50,255),
+    ];
+
     pub fn new(start_pos: usize) -> Self {
         Self {
             position: Position::new(start_pos, 15),
             charge_status: 0,
             charge_speed: 0,
             hit_points: 0,
+            colour: Self::COLOURS[start_pos]
         }
     }
 }
