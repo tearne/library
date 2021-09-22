@@ -1,4 +1,4 @@
-use grid::Grid;
+use grid::Grid16Square;
 use rgb::RGBA8;
 use types::Position;
 use unicorn::{keyboard, pimoroni::unicorn::Unicorn};
@@ -42,7 +42,7 @@ impl InteractionMode {
     }
 }
 impl Renderable for InteractionMode {
-    fn render_onto(&self, grid: &mut Grid) {
+    fn render_onto(&self, grid: &mut Grid16Square) {
         match self {
             Self::S(_) => (),
             Self::P(p) => p.render_onto(grid),
@@ -68,44 +68,61 @@ impl Standby {
 }
 
 pub struct Placing{
-    pub tower_id: u8,
+    pub tower_id: usize,
     pub position: Position,
 }
 impl Placing {
-    pub fn new(tower_id: u8) -> Self {
+    pub fn new(tower_id: usize) -> Self {
         Placing{
             tower_id,
             position: Position::new(3,5)
         }
     }
 
+    fn move_x(&self, change: isize, width: usize) -> Option<InteractionMode> {
+        if (change > 0 && self.position.x < width - 1) || (change < 0 && self.position.x > 0) {
+            let position = self.position.x_plus(change);
+            Some(InteractionMode::P(Placing{position, ..*self}))
+        } else {
+            None
+        }
+    }
+    fn move_y(&self, change: isize, height: usize) -> Option<InteractionMode> {
+        if (change > 0 && self.position.y < height - 2) || (change < 0 && self.position.y > 0) {
+            let position = self.position.y_plus(change);
+            Some(InteractionMode::P(Placing{position, ..*self}))
+        } else {
+            None
+        }
+    }
+
     fn handle_key(&self, key: u16, world: &mut World) -> Option<InteractionMode> {
         match key {
-            KEY_UP => Some(InteractionMode::P(Placing{position: self.position.y_plus(-1), ..*self})),
-            KEY_DOWN => Some(InteractionMode::P(Placing{position: self.position.y_plus(1), ..*self})),
-            KEY_LEFT => Some(InteractionMode::P(Placing{position: self.position.x_plus(-1), ..*self})),
-            KEY_RIGHT => Some(InteractionMode::P(Placing{position: self.position.x_plus(1), ..*self})),
+            KEY_UP => self.move_y(-1, 16),
+            KEY_DOWN => self.move_y(1, 16),
+            KEY_LEFT => self.move_x(-1, 16),
+            KEY_RIGHT => self.move_x(1, 16),
             _ => None
         }
     }
 }
 impl Renderable for Placing {
-    fn render_onto(&self, grid: &mut Grid) {
+    fn render_onto(&self, grid: &mut Grid16Square) {
         fn alpha(dist: isize) -> u8 {
             let d: usize = dist.try_into().unwrap();
             (255 - 255.min(d.min(5) * 50)).try_into().unwrap()
         }
 
-        for x in 0..16 {
+        for x in 0..grid.width() {
             if x != self.position.x {
                 let dist = (x as isize - self.position.x as isize).abs();
-                grid.0[x][self.position.y] = RGBA8::new(0,0,150, alpha(dist));
+                grid.data[x][self.position.y] = RGBA8::new(0,0,150, alpha(dist));
             }
         }
-        for y in 0..16 {
+        for y in 0..grid.height() {
             if y != self.position.y {
                 let dist = (y as isize - self.position.y as isize).abs();
-                grid.0[self.position.x][y] = RGBA8::new(0,0,150, alpha(dist));
+                grid.data[self.position.x][y] = RGBA8::new(0,0,150, alpha(dist));
             }
         }
     }

@@ -1,19 +1,19 @@
 use rgb::RGBA8;
 use std::convert::TryInto;
 
-use crate::{InteractionMode, Standby, grid::Grid};
+use crate::{InteractionMode, Standby, grid::Grid16Square};
 
 pub trait Renderable {
-    fn render_layer(&self) -> Grid {
-        let mut g = Grid::new();
+    fn render_layer(&self) -> Grid16Square {
+        let mut g = Grid16Square::new();
         self.render_onto(&mut g);
         g
     }
-    fn render_onto(&self, grid: &mut Grid);
+    fn render_onto(&self, grid: &mut Grid16Square);
 }
 
 impl<T: Renderable> Renderable for Option<T> {
-    fn render_onto(&self, grid: &mut Grid) {
+    fn render_onto(&self, grid: &mut Grid16Square) {
         self.iter().for_each(|s|s.render_onto(grid));
     }
 }
@@ -37,9 +37,17 @@ impl Game {
     }
 }
 impl Renderable for Game {
-    fn render_onto(&self, grid: &mut Grid) {
+    fn render_onto(&self, grid: &mut Grid16Square) {
         let mut background = self.world.render_layer();
         let mut selector_layer = self.interaction_mode.render_layer();
+
+        //The dot of the tower in the middle of the selector
+        if let InteractionMode::P(placing) = &self.interaction_mode {
+            let tower_id = placing.tower_id;
+            let tower_colour = self.world.towers[tower_id].colour;
+            let position = &placing.position;
+            selector_layer.data[position.x][position.y] = tower_colour;
+        }
 
         background.add_layer_on_top(&selector_layer);
         *grid = background;
@@ -51,11 +59,11 @@ pub struct World {
     pub towers: [Tower; 8]
 }
 impl Renderable for World {
-    fn render_onto(&self, grid: &mut Grid) {
+    fn render_onto(&self, grid: &mut Grid16Square) {
         self.path.render_onto(grid);
 
         self.towers.iter().for_each(|t|{
-            grid.0[t.position.x][t.position.y] = RGBA8::new(200,20,50, 255);
+            grid.data[t.position.x][t.position.y] = t.colour;
         });
     }
 }
@@ -78,9 +86,9 @@ impl Path {
     }
 }
 impl Renderable for Path {
-    fn render_onto(&self, grid: &mut Grid) {
+    fn render_onto(&self, grid: &mut Grid16Square) {
         self.points.iter().for_each(|p| {
-            grid.0[p.x][p.y] = RGBA8::new(20,10,10, 255);
+            grid.data[p.x][p.y] = RGBA8::new(20,10,10, 255);
         });
     }
 }
@@ -105,13 +113,13 @@ impl Tower {
         RGBA8::new(50,150,50,255),
     ];
 
-    pub fn new(start_pos: usize) -> Self {
+    pub fn new(idx: usize) -> Self {
         Self {
-            position: Position::new(start_pos, 15),
+            position: Position::new(idx, 15),
             charge_status: 0,
             charge_speed: 0,
             hit_points: 0,
-            colour: Self::COLOURS[start_pos]
+            colour: Self::COLOURS[idx]
         }
     }
 }

@@ -1,16 +1,24 @@
 use rgb::RGBA8;
 use unicorn::pimoroni::unicorn::Unicorn;
 
-pub struct Grid(pub [[RGBA8; 16]; 16]);
-impl Grid {
+pub type Grid16Square = Grid<16, 16>;
+
+pub struct Grid<const W: usize, const H: usize>{
+    pub data: [[RGBA8; H]; W]
+}
+impl<const W: usize, const H: usize> Grid<W, H> {
     pub fn new() -> Self {
-        Self([[RGBA8::default(); 16]; 16])
+        Grid{ data: [[RGBA8::default(); H]; W] }
     }
-    pub fn add_layer_on_top(&mut self, other: &Grid) {
-        for x in 0..16 {
-            for y in 0..16 {
-                let s = self.0[x][y];
-                let o = other.0[x][y];
+
+    pub fn width(&self) -> usize { W }
+    pub fn height(&self) -> usize { H }
+
+    pub fn add_layer_on_top(&mut self, other: &Grid<W,H>) {
+        for x in 0..W {
+            for y in 0..H {
+                let s = self.data[x][y];
+                let o = other.data[x][y];
 
                 let a_1: f32 = o.a as f32 + s.a as f32 * (255.0 - o.a as f32);
 
@@ -22,15 +30,15 @@ impl Grid {
                 
                 let res = RGBA8::new(r_1 as u8, g_1 as u8, b_1 as u8, a_1 as u8);
 
-                self.0[x][y] = res;
+                self.data[x][y] = res;
             }
         }
     }
 
     pub fn send_to_display(&self, display: &mut Unicorn) {
-        for x in 0..16usize {
-            for y in 0..16usize {
-                display.set_xy(x, y, &self.0[x][y].rgb());
+        for x in 0..W {
+            for y in 0..H {
+                display.set_xy(x, y, &self.data[x][y].rgb());
             }
         }
     }
