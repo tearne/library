@@ -31,7 +31,7 @@ impl Game {
     }
 
     pub fn handle_key(&mut self, key: u16) {
-        if let Some(replacement) = self.interaction_mode.handle_key(key, &mut self.world) {
+        if let Some(replacement) = self.interaction_mode.handle_key(key) {
             self.interaction_mode = replacement;
         }
     }
@@ -194,16 +194,16 @@ pub struct Pixel {
     pub position: Position,
     pub colour: RGBA8,
 }
-impl Pixel {
-    pub fn new(position: Position, colour: RGBA8) -> Self {
-        Pixel{position, colour}
-    }
+// impl Pixel {
+//     pub fn new(position: Position, colour: RGBA8) -> Self {
+//         Pixel{position, colour}
+//     }
 
-    pub fn x(&self) -> usize {
-        self.position.x
-    }
+//     pub fn x(&self) -> usize {
+//         self.position.x
+//     }
 
-    pub fn y(&self) -> usize {
-        self.position.y
-    }
-}
+//     pub fn y(&self) -> usize {
+//         self.position.y
+//     }
+// }

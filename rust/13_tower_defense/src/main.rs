@@ -7,37 +7,19 @@ use std::convert::TryInto;
 
 use crate::types::{Path, Tower, World};
 
-const KEY_ESC: u16 = 1;
-const KEY_1: u16 = 2;
-const KEY_2: u16 = 3;
-const KEY_3: u16 = 4;
-const KEY_4: u16 = 5;
-const KEY_5: u16 = 6;
-const KEY_6: u16 = 7;
-const KEY_7: u16 = 8;
-const KEY_8: u16 = 9;
-const KEY_UP: u16 = 103;
-const KEY_DOWN: u16 = 108;
-const KEY_LEFT: u16 = 105;
-const KEY_RIGHT: u16 = 106;
-const KEY_W: u16 = 17;
-const KEY_A: u16 = 30;
-const KEY_S: u16 = 31;
-const KEY_D: u16 = 32;
-const KEY_ENTER: u16 = 28;
-
 mod types;
 mod grid;
+mod keys;
 
 pub enum InteractionMode {
     S(Standby),
     P(Placing),
 }
 impl InteractionMode {
-    pub fn handle_key(&self, key: u16, world: &mut World) -> Option<Self> {
+    pub fn handle_key(&self, key: u16) -> Option<Self> {
         match self {
-            InteractionMode::S(ref s) => s.handle_key(key, world),
-            InteractionMode::P(ref p) => p.handle_key(key, world),
+            InteractionMode::S(ref s) => s.handle_key(key),
+            InteractionMode::P(ref p) => p.handle_key(key),
         }
     }
 }
@@ -52,16 +34,16 @@ impl Renderable for InteractionMode {
 
 pub struct Standby{}
 impl Standby {
-    fn handle_key(&self, key: u16, world: &mut World) -> Option<InteractionMode> {
+    fn handle_key(&self, key: u16) -> Option<InteractionMode> {
         match key {
-            KEY_1 => Some(InteractionMode::P(Placing::new(1))),
-            KEY_2 => Some(InteractionMode::P(Placing::new(2))),
-            KEY_3 => Some(InteractionMode::P(Placing::new(3))),
-            KEY_4 => Some(InteractionMode::P(Placing::new(4))),
-            KEY_5 => Some(InteractionMode::P(Placing::new(5))),
-            KEY_6 => Some(InteractionMode::P(Placing::new(6))),
-            KEY_7 => Some(InteractionMode::P(Placing::new(7))),
-            KEY_8 => Some(InteractionMode::P(Placing::new(8))),
+            keys::KEY_1 => Some(InteractionMode::P(Placing::new(1))),
+            keys::KEY_2 => Some(InteractionMode::P(Placing::new(2))),
+            keys::KEY_3 => Some(InteractionMode::P(Placing::new(3))),
+            keys::KEY_4 => Some(InteractionMode::P(Placing::new(4))),
+            keys::KEY_5 => Some(InteractionMode::P(Placing::new(5))),
+            keys::KEY_6 => Some(InteractionMode::P(Placing::new(6))),
+            keys::KEY_7 => Some(InteractionMode::P(Placing::new(7))),
+            keys::KEY_8 => Some(InteractionMode::P(Placing::new(8))),
             _ => None
         }
     }
@@ -96,12 +78,12 @@ impl Placing {
         }
     }
 
-    fn handle_key(&self, key: u16, world: &mut World) -> Option<InteractionMode> {
+    fn handle_key(&self, key: u16) -> Option<InteractionMode> {
         match key {
-            KEY_UP => self.move_y(-1, 16),
-            KEY_DOWN => self.move_y(1, 16),
-            KEY_LEFT => self.move_x(-1, 16),
-            KEY_RIGHT => self.move_x(1, 16),
+            keys::KEY_UP => self.move_y(-1, 16),
+            keys::KEY_DOWN => self.move_y(1, 16),
+            keys::KEY_LEFT => self.move_x(-1, 16),
+            keys::KEY_RIGHT => self.move_x(1, 16),
             _ => None
         }
     }
@@ -134,7 +116,7 @@ async fn main() {
     let mut rx = keyboard::grab_all_keyboards();
     let mut display = Unicorn::new();
     
-    let mut world = World {
+    let world = World {
         path: Path::build(
             vec![
                 Position::new(0, 2),
