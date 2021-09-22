@@ -8,6 +8,7 @@ pub const KEY_5: u16 = 6;
 pub const KEY_6: u16 = 7;
 pub const KEY_7: u16 = 8;
 pub const KEY_8: u16 = 9;
+pub const KEY_9: u16 = 10;
 pub const KEY_UP: u16 = 103;
 pub const KEY_DOWN: u16 = 108;
 pub const KEY_LEFT: u16 = 105;

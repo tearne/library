@@ -31,7 +31,7 @@ impl Game {
     }
 
     pub fn handle_key(&mut self, key: u16) {
-        if let Some(replacement) = self.interaction_mode.handle_key(key) {
+        if let Some(replacement) = self.interaction_mode.handle_key(key, &mut self.world) {
             self.interaction_mode = replacement;
         }
     }
@@ -56,14 +56,17 @@ impl Renderable for Game {
 
 pub struct World {
     pub path: Path,
-    pub towers: [Tower; 8]
+    pub towers: [Tower; 9]
 }
 impl Renderable for World {
     fn render_onto(&self, grid: &mut Grid16Square) {
         self.path.render_onto(grid);
 
-        self.towers.iter().for_each(|t|{
-            grid.data[t.position.x][t.position.y] = t.colour;
+        self.towers.iter().enumerate().for_each(|(idx, t)|{
+            t.position.iter().for_each(|pos|
+                grid.data[pos.x][pos.y] = t.colour
+            );
+            grid.data[Tower::POSITIONS[idx]][grid.height()-1] = t.colour;
         });
     }
 }
@@ -95,14 +98,14 @@ impl Renderable for Path {
 
 
 pub struct Tower {
-    pub position: Position,
+    pub position: Option<Position>,
     charge_status: u8,
     charge_speed: u8,
     hit_points: u8,
     colour: RGBA8,
 }
 impl Tower {
-    const COLOURS: [RGBA8; 8] = [
+    const COLOURS: [RGBA8; 9] = [
         RGBA8::new(100,0,0,255),
         RGBA8::new(0,100,0,255),
         RGBA8::new(0,0,100,255),
@@ -111,11 +114,16 @@ impl Tower {
         RGBA8::new(0,100,100,255),
         RGBA8::new(100,100,100,255),
         RGBA8::new(50,150,50,255),
+        RGBA8::new(50,50,150,255),
+    ];
+
+    const POSITIONS: [usize; 9] = [
+        2,3,4,6,7,8,10,11,12
     ];
 
     pub fn new(idx: usize) -> Self {
         Self {
-            position: Position::new(idx, 15),
+            position: None,
             charge_status: 0,
             charge_speed: 0,
             hit_points: 0,

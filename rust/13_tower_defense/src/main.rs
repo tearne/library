@@ -16,10 +16,10 @@ pub enum InteractionMode {
     P(Placing),
 }
 impl InteractionMode {
-    pub fn handle_key(&self, key: u16) -> Option<Self> {
+    pub fn handle_key(&self, key: u16, world: &mut World) -> Option<Self> {
         match self {
             InteractionMode::S(ref s) => s.handle_key(key),
-            InteractionMode::P(ref p) => p.handle_key(key),
+            InteractionMode::P(ref p) => p.handle_key(key, world),
         }
     }
 }
@@ -36,14 +36,15 @@ pub struct Standby{}
 impl Standby {
     fn handle_key(&self, key: u16) -> Option<InteractionMode> {
         match key {
-            keys::KEY_1 => Some(InteractionMode::P(Placing::new(1))),
-            keys::KEY_2 => Some(InteractionMode::P(Placing::new(2))),
-            keys::KEY_3 => Some(InteractionMode::P(Placing::new(3))),
-            keys::KEY_4 => Some(InteractionMode::P(Placing::new(4))),
-            keys::KEY_5 => Some(InteractionMode::P(Placing::new(5))),
-            keys::KEY_6 => Some(InteractionMode::P(Placing::new(6))),
-            keys::KEY_7 => Some(InteractionMode::P(Placing::new(7))),
-            keys::KEY_8 => Some(InteractionMode::P(Placing::new(8))),
+            keys::KEY_1 => Some(InteractionMode::P(Placing::new(0))),
+            keys::KEY_2 => Some(InteractionMode::P(Placing::new(1))),
+            keys::KEY_3 => Some(InteractionMode::P(Placing::new(2))),
+            keys::KEY_4 => Some(InteractionMode::P(Placing::new(3))),
+            keys::KEY_5 => Some(InteractionMode::P(Placing::new(4))),
+            keys::KEY_6 => Some(InteractionMode::P(Placing::new(5))),
+            keys::KEY_7 => Some(InteractionMode::P(Placing::new(6))),
+            keys::KEY_8 => Some(InteractionMode::P(Placing::new(7))),
+            keys::KEY_9 => Some(InteractionMode::P(Placing::new(8))),
             _ => None
         }
     }
@@ -78,12 +79,16 @@ impl Placing {
         }
     }
 
-    fn handle_key(&self, key: u16) -> Option<InteractionMode> {
+    fn handle_key(&self, key: u16, world: &mut World) -> Option<InteractionMode> {
         match key {
             keys::KEY_UP => self.move_y(-1, 16),
             keys::KEY_DOWN => self.move_y(1, 16),
             keys::KEY_LEFT => self.move_x(-1, 16),
             keys::KEY_RIGHT => self.move_x(1, 16),
+            keys::KEY_ENTER => {
+                world.towers[self.tower_id].position = Some(self.position);
+                Some(InteractionMode::S(Standby{}))
+            }
             _ => None
         }
     }
@@ -136,7 +141,8 @@ async fn main() {
             Tower::new(4), 
             Tower::new(5),
             Tower::new(6), 
-            Tower::new(7)
+            Tower::new(7),
+            Tower::new(8)
         ],
     };
     let mut game = Game::new(world);
