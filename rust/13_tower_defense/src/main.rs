@@ -2,7 +2,7 @@ use grid::Grid16Square;
 use rgb::RGBA8;
 use types::Position;
 use unicorn::{keyboard, pimoroni::unicorn::Unicorn};
-use crate::types::{Game, Renderable};
+use crate::types::{Game, Renderable, Zombie};
 use std::convert::TryInto;
 
 use crate::types::{Path, Tower, World};
@@ -24,10 +24,10 @@ impl InteractionMode {
     }
 }
 impl Renderable for InteractionMode {
-    fn render_onto(&self, grid: &mut Grid16Square) {
+    fn render_onto(&self, time: f32, grid: &mut Grid16Square) {
         match self {
             Self::S(_) => (),
-            Self::P(p) => p.render_onto(grid),
+            Self::P(p) => p.render_onto(time, grid),
         }
     }
 }
@@ -35,6 +35,10 @@ impl Renderable for InteractionMode {
 pub struct Standby{}
 impl Standby {
     fn handle_key(&self, key: u16) -> Option<InteractionMode> {
+        Self::number_keys(key)
+    }
+
+    pub fn number_keys(key:u16) -> Option<InteractionMode> {
         match key {
             keys::KEY_1 => Some(InteractionMode::P(Placing::new(0))),
             keys::KEY_2 => Some(InteractionMode::P(Placing::new(1))),
@@ -80,21 +84,25 @@ impl Placing {
     }
 
     fn handle_key(&self, key: u16, world: &mut World) -> Option<InteractionMode> {
-        match key {
-            keys::KEY_UP => self.move_y(-1, 16),
-            keys::KEY_DOWN => self.move_y(1, 16),
-            keys::KEY_LEFT => self.move_x(-1, 16),
-            keys::KEY_RIGHT => self.move_x(1, 16),
-            keys::KEY_ENTER => {
-                world.towers[self.tower_id].position = Some(self.position);
-                Some(InteractionMode::S(Standby{}))
-            }
-            _ => None
-        }
+        Standby::number_keys(key)
+            .or_else(|| match key {
+                keys::KEY_UP => self.move_y(-1, 16),
+                keys::KEY_DOWN => self.move_y(1, 16),
+                keys::KEY_LEFT => self.move_x(-1, 16),
+                keys::KEY_RIGHT => self.move_x(1, 16),
+                keys::KEY_ENTER => {
+                    if !world.path.points.contains(&self.position) 
+                            && !world.towers.iter().any(|t|t.position == Some(self.position)) {
+                        world.towers[self.tower_id].position = Some(self.position);
+                        Some(InteractionMode::S(Standby{}))
+                    } else { None }
+                }
+                _ => None
+            })
     }
 }
 impl Renderable for Placing {
-    fn render_onto(&self, grid: &mut Grid16Square) {
+    fn render_onto(&self, time: f32, grid: &mut Grid16Square) {
         fn alpha(dist: isize) -> u8 {
             let d: usize = dist.try_into().unwrap();
             (255 - 255.min(d.min(5) * 50)).try_into().unwrap()
@@ -144,40 +152,32 @@ async fn main() {
             Tower::new(7),
             Tower::new(8)
         ],
+        zombies: vec![
+            Zombie::new(1.0),
+            Zombie::new(3.4),
+            Zombie::new(5.8),
+            Zombie::new(10.0),
+        ],
     };
     let mut game = Game::new(world);
-
-    
-    game.render_layer().send_to_display(&mut display);
+    let start = std::time::SystemTime::now();
+    let time_now = || start.elapsed().unwrap().as_millis() as f32 / 1000.0;
+    game.render_layer(time_now()).send_to_display(&mut display);
     display.flush();
 
+    loop {
+        // println!(" - {}", time_now());
+        game.render_layer(time_now()).send_to_display(&mut display);
+        display.flush();
+    };
 
-    while let Some(e) = rx.recv().await {
-        if e.value == 1 {
-            println!("--> {:?}", e);
-            game.handle_key(e.code);
+    // while let Some(e) = rx.recv().await {
+    //     if e.value == 1 {
+    //         println!("--> {:?}", e);
+    //         game.handle_key(e.code);
 
-            // match e.code {
-            //     // 2 => grid[1][6] = c1,
-            //     // 3 => grid[2][5] = c2,
-            //     // 4 => grid[3][4] = c2,
-            //     // 5 => grid[4][3] = c1,
-            //     // 6 => grid[5][2] = c2,
-            //     // 7 => grid[6][1] = c1,
-            //     KEY_UP => 
-            //         game.
-            //         game.selector.as_mut().unwrap().position.y_shift(-1),
-            //     KEY_DOWN => 
-            //         game.selector.as_mut().unwrap().position.y_shift(1),
-            //     KEY_LEFT => 
-            //         game.selector.as_mut().unwrap().position.x_shift(-1),
-            //     KEY_RIGHT => 
-            //         game.selector.as_mut().unwrap().position.x_shift(1),
-            //     _ => (),
-            // }
-
-            game.render_layer().send_to_display(&mut display);
-            display.flush();
-        }
-    }
+    //         game.render_layer(time_now()).send_to_display(&mut display);
+    //         display.flush();
+    //     }
+    // }
 }

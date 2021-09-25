@@ -4,17 +4,17 @@ use std::convert::TryInto;
 use crate::{InteractionMode, Standby, grid::Grid16Square};
 
 pub trait Renderable {
-    fn render_layer(&self) -> Grid16Square {
+    fn render_layer(&self, time: f32) -> Grid16Square {
         let mut g = Grid16Square::new();
-        self.render_onto(&mut g);
+        self.render_onto(time, &mut g);
         g
     }
-    fn render_onto(&self, grid: &mut Grid16Square);
+    fn render_onto(&self, time: f32, grid: &mut Grid16Square);
 }
 
 impl<T: Renderable> Renderable for Option<T> {
-    fn render_onto(&self, grid: &mut Grid16Square) {
-        self.iter().for_each(|s|s.render_onto(grid));
+    fn render_onto(&self, time: f32, grid: &mut Grid16Square) {
+        self.iter().for_each(|s|s.render_onto(time, grid));
     }
 }
 
@@ -37,9 +37,9 @@ impl Game {
     }
 }
 impl Renderable for Game {
-    fn render_onto(&self, grid: &mut Grid16Square) {
-        let mut background = self.world.render_layer();
-        let mut selector_layer = self.interaction_mode.render_layer();
+    fn render_onto(&self, time: f32, grid: &mut Grid16Square) {
+        let mut background = self.world.render_layer(time);
+        let mut selector_layer = self.interaction_mode.render_layer(time);
 
         //The dot of the tower in the middle of the selector
         if let InteractionMode::P(placing) = &self.interaction_mode {
@@ -56,18 +56,42 @@ impl Renderable for Game {
 
 pub struct World {
     pub path: Path,
-    pub towers: [Tower; 9]
+    pub towers: [Tower; 9],
+    pub zombies: Vec<Zombie>,
 }
 impl Renderable for World {
-    fn render_onto(&self, grid: &mut Grid16Square) {
-        self.path.render_onto(grid);
+    fn render_onto(&self, time: f32, grid: &mut Grid16Square) {
+        self.path.render_onto(time, grid);
 
+        let legend_y = grid.height()-1;
         self.towers.iter().enumerate().for_each(|(idx, t)|{
             t.position.iter().for_each(|pos|
                 grid.data[pos.x][pos.y] = t.colour
             );
-            grid.data[Tower::POSITIONS[idx]][grid.height()-1] = t.colour;
+            grid.data[Tower::POSITIONS[idx]][legend_y] = t.colour;
         });
+
+        let mut z_grid = Grid16Square::new();
+        self.zombies.iter().for_each(|z|{
+            let diff = time - z.start_time;
+            let pos = diff.max(0.0);
+            let idx = pos as usize;
+            
+            if idx < self.path.points.len() {
+                let frac = pos - idx as f32;
+                let frac = frac.powf(4.0);
+
+                let p = self.path.points[idx];
+                z_grid.place(Pixel::new(z.colour(), p), 1.0 - frac);
+                
+                if idx + 1 < self.path.points.len() {
+                    let p = self.path.points[idx+1];
+                    z_grid.place(Pixel::new(z.colour(), p), frac);
+                }
+            }
+        });
+
+        grid.add_layer_on_top(&z_grid);
     }
 }
 
@@ -89,7 +113,7 @@ impl Path {
     }
 }
 impl Renderable for Path {
-    fn render_onto(&self, grid: &mut Grid16Square) {
+    fn render_onto(&self, time: f32, grid: &mut Grid16Square) {
         self.points.iter().for_each(|p| {
             grid.data[p.x][p.y] = RGBA8::new(20,10,10, 255);
         });
@@ -132,7 +156,7 @@ impl Tower {
     }
 }
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Position {
     pub x: usize,
     pub y: usize,
@@ -202,16 +226,21 @@ pub struct Pixel {
     pub position: Position,
     pub colour: RGBA8,
 }
-// impl Pixel {
-//     pub fn new(position: Position, colour: RGBA8) -> Self {
-//         Pixel{position, colour}
-//     }
+impl Pixel {
+    pub fn new(colour: RGBA8, position: Position) -> Self {
+        Pixel{ colour, position }
+    }
+}
 
-//     pub fn x(&self) -> usize {
-//         self.position.x
-//     }
+pub struct Zombie {
+    start_time: f32
+}
+impl Zombie {
+    pub fn new(start_time: f32) -> Self {
+        Zombie{ start_time }
+    }
 
-//     pub fn y(&self) -> usize {
-//         self.position.y
-//     }
-// }
+    pub fn colour(&self) -> RGBA8 {
+        RGBA8::new(200,100,50, 255)
+    }
+}
