@@ -158,6 +158,7 @@ async fn main() {
             Zombie::new(5.8),
             Zombie::new(10.0),
         ],
+        shots: vec![],
     };
     let mut game = Game::new(world);
     let start = std::time::SystemTime::now();

@@ -35,6 +35,10 @@ impl Game {
             self.interaction_mode = replacement;
         }
     }
+
+    pub fn tick(&mut self) {
+        self.world.tick();
+    }
 }
 impl Renderable for Game {
     fn render_onto(&self, time: f32, grid: &mut Grid16Square) {
@@ -58,7 +62,41 @@ pub struct World {
     pub path: Path,
     pub towers: [Tower; 9],
     pub zombies: Vec<Zombie>,
+    pub shots: Vec<Shot>,
 }
+impl World {
+    pub fn tick(&mut self, time: f32) {
+        // Get rid of any zombies that walked off the end
+        self.zombies = self.zombies
+            .into_iter()
+            .filter(|z|z.has_exited(time, &self.path))
+            .collect();
+
+        // Get rid of any shots that have landed
+        self.shots = self.shots
+            .into_iter()
+            .filter(|s| s.expired(time))
+            .collect();
+
+        // Create new shots for zombies that are next to charged towers
+        for t in self.towers.iter_mut() {
+            if let Some(ref t_pos) = t.position {
+                if t.ready_to_shoot(time) {
+                    if let Some(zombie) = self.zombies.iter()
+                        .min_by_key(|z|z.distance_from(t_pos, time, &self.path) as u64) {
+                            self.shots.push(t.shoot_at(zombie));
+                        }
+                }
+            }
+        }
+        
+
+        //TODO Damage any zombies that were hit by shots
+
+
+    }
+}
+
 impl Renderable for World {
     fn render_onto(&self, time: f32, grid: &mut Grid16Square) {
         self.path.render_onto(time, grid);
@@ -73,20 +111,9 @@ impl Renderable for World {
 
         let mut z_grid = Grid16Square::new();
         self.zombies.iter().for_each(|z|{
-            let diff = time - z.start_time;
-            let pos = diff.max(0.0);
-            let idx = pos as usize;
-            
-            if idx < self.path.points.len() {
-                let frac = pos - idx as f32;
-                let frac = frac.powf(4.0);
-
-                let p = self.path.points[idx];
-                z_grid.place(Pixel::new(z.colour(), p), 1.0 - frac);
-                
-                if idx + 1 < self.path.points.len() {
-                    let p = self.path.points[idx+1];
-                    z_grid.place(Pixel::new(z.colour(), p), frac);
+            if let Some(pixels) = z.pixels(time, self.path) {
+                for p in pixels {
+                    z_grid.data[p.position.x][p.position.y] = p.colour
                 }
             }
         });
@@ -123,9 +150,7 @@ impl Renderable for Path {
 
 pub struct Tower {
     pub position: Option<Position>,
-    charge_status: u8,
-    charge_speed: u8,
-    hit_points: u8,
+    pub last_shot_time: f32,
     colour: RGBA8,
 }
 impl Tower {
@@ -148,9 +173,7 @@ impl Tower {
     pub fn new(idx: usize) -> Self {
         Self {
             position: None,
-            charge_status: 0,
-            charge_speed: 0,
-            hit_points: 0,
+            last_shot_time: 0,
             colour: Self::COLOURS[idx]
         }
     }
@@ -240,7 +263,66 @@ impl Zombie {
         Zombie{ start_time }
     }
 
-    pub fn colour(&self) -> RGBA8 {
-        RGBA8::new(200,100,50, 255)
+    // pub fn colour(&self) -> RGBA8 {
+    //     RGBA8::new(200,100,50, 255)
+    // }
+
+    pub fn has_exited(&self, time: f32, path: &Path) -> bool {
+        todo!();
+    }
+
+    pub fn distance_from(&self, position: &Position, time: f32, path: &Path) -> f32 {
+        todo!();
+    }
+
+    pub fn pixels(&self, time: f32, path: Path) -> Option<Vec<Pixel>> {
+        let diff = time - self.start_time;
+
+        if diff < 0.0 || diff > path.points.len() as f32 { None }
+        else {
+            let idx = diff as usize;
+            let frac = diff - idx as f32;
+            let frac = frac.powf(4.0);
+
+            let result = Vec::<Pixel>::with_capacity(2);
+            let p = path.points[idx];
+            let colour: RGBA8 = RGBA8::new(200,100,50, (255.0 * (1.0 - frac)).try_into().unwrap());
+            result.push(Pixel::new(colour, p));
+
+            if idx + 1 < path.points.len() {
+                let p = path.points[idx+1];
+                let colour: RGBA8 = RGBA8::new(200,100,50, (255.0 * frac).try_into().unwrap());
+                result.push(Pixel::new(colour, p));
+            }
+
+            Some(result)
+        }
+    }
+}
+
+pub struct Shot {
+    pub start_time: f32,
+    pub start_position: Position,
+    pub colour: RGBA8,
+    pub target: Zombie,
+}
+impl Shot {
+    pub fn expired(&self, time: f32) -> bool {
+        self.start_time + 1.0 < time
+    }
+
+    pub fn render_onto(&self, target_pos: Position, time: f32, grid: &mut Grid16Square) {
+        let elapsed = time - self.start_time;
+        if elapsed < 0.5 {
+            grid.place(
+                Pixel::new(self.colour, self.start_position),  
+                (elapsed * 500.0).try_into().unwrap()
+            )
+        } else if elapsed < 1.0 {
+            grid.place(
+                Pixel::new(self.colour, target_pos),  
+                255.0.try_into().unwrap()
+            )
+        }
     }
 }
