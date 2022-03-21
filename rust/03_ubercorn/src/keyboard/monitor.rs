@@ -1,33 +1,13 @@
+use crate::error::Error;
 use inotify::{EventMask, Inotify, WatchMask};
 use libc::input_event;
 use std::{sync::mpsc, thread};
-use crate::keyboard::device::InputDevice;
-use crate::error::Error;
 
 const KEYBOARD_DEVICE_PATH: &str = "/dev/input/event0";
 
 pub fn start() -> mpsc::Receiver<input_event> {
-    
     fn grab_keyboard(tx: mpsc::Sender<input_event>, input_filename: &str) -> Result<(), Error> {
-        const KEY_DOWN: i32 = 1;
-        let mut input_device = InputDevice::open(input_filename)?;
-        input_device.grab()?;
-
-        let mut do_loop = || -> Result<(), Error>{
-            loop {
-                let event = input_device.read_event()?;
-                if event.value == KEY_DOWN {
-                    tx.send(event)?
-                }
-            }
-        };
-
-        if let Err(error) = do_loop() {
-            let _thing = input_device.release();
-            Result::Err(error)
-        } else {
-            Result::Ok(())
-        }
+        todo!()
     }
 
     let (tx, rx) = mpsc::channel();
@@ -35,20 +15,24 @@ pub fn start() -> mpsc::Receiver<input_event> {
         let ret = grab_keyboard(tx.clone(), &KEYBOARD_DEVICE_PATH);
         if let Err(e) = ret {
             println!("No keyboard: {}", e);
-            
-            let mut inotify = Inotify::init()
-                .expect("Failed to initialize inotify");
-            inotify.add_watch("/dev/input/", WatchMask::CREATE)
+
+            let mut inotify = Inotify::init().expect("Failed to initialize inotify");
+            inotify
+                .add_watch("/dev/input/", WatchMask::CREATE)
                 .expect("Failed to add inotify watch on /dev/input");
 
             let mut buffer = [0u8; 4096];
             loop {
                 let events = inotify.read_events_blocking(&mut buffer);
                 if let Ok(events) = events {
-                    events.into_iter()
+                    events
+                        .into_iter()
                         .filter(|event| !event.mask.contains(EventMask::ISDIR))
-                        .map(|event| event.name.and_then(|name| name.to_str()))
-                        .filter(|name| name.map(|name|name == "event0").unwrap_or(false))
+                        .map(|event| {
+                            println!("Events: \n{:#?}", event);
+                            event.name.and_then(|name| name.to_str())
+                        })
+                        .filter(|name| name.map(|name| name == "event0").unwrap_or(false))
                         .for_each(|_| {
                             let delay = std::time::Duration::from_millis(1000);
                             std::thread::sleep(delay);
@@ -59,7 +43,6 @@ pub fn start() -> mpsc::Receiver<input_event> {
                         })
                 }
             }
-
         }
     });
 

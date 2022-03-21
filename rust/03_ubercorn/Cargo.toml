@@ -1,6 +1,6 @@
 [package]
-name = "ubercorn"
-description = "Flash lights on ubercorn on Raspberry Pi Zero"
+name = "unicorn"
+description = "Light up unicorn hats"
 license = "Unlicense"
 version = "0.1.0"
 authors = ["tearne"]
@@ -10,10 +10,13 @@ edition = "2018"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 spidev = "0.4.0"
-rand = "0.7.3"
+rand = "0.8.4"
 libc = "0.2.79"
 nix = "0.17.0"
 inotify = { version = "0.8.3", default-features = false, features = [] }
+rppal = "0.12.0"
+tokio = { version = "1.10.0", features = ["full"] }
+futures = "0.3.16"
 
 [package.metadata.deb]
 depends = "$auto, systemd"

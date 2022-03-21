@@ -1,9 +1,12 @@
 pub mod pixel;
 
-use std::{cmp::min, collections::HashMap, fs::File, io::BufReader, path::Path};
-use spidev::*;
-use std::{io::Write, sync::{Arc, Mutex}};
 use serde::Deserialize;
+use spidev::*;
+use std::{cmp::min, collections::HashMap, fs::File, io::BufReader, path::Path};
+use std::{
+    io::Write,
+    sync::{Arc, Mutex},
+};
 
 use crate::filesystem::FSStatus;
 
@@ -21,8 +24,8 @@ pub struct RGB {
     pub b: u8,
 }
 impl RGB {
-    pub fn new(r:u8, g:u8, b:u8) -> Self {
-        RGB{r,g,b}
+    pub fn new(r: u8, g: u8, b: u8) -> Self {
+        RGB { r, g, b }
     }
 }
 
@@ -48,10 +51,10 @@ impl Graphic {
         let black = RGB { r: 0, g: 0, b: 0 };
         let mut pixels = vec![black; 256];
 
-        self.groups.iter().for_each(|layer|{
+        self.groups.iter().for_each(|layer| {
             let colour = self.colours.get(&(layer.colour)).unwrap();
-            for (x,y) in layer.points.iter() {
-                pixels[to_idx(*x,*y)] = colour.clone();
+            for (x, y) in layer.points.iter() {
+                pixels[to_idx(*x, *y)] = colour.clone();
             }
         });
 
@@ -61,7 +64,7 @@ impl Graphic {
 
 pub struct Display {
     spi: Spidev,
-    file_sys_status: Arc<Mutex<FSStatus>>,  // Allows overlay if FS in RW mode
+    file_sys_status: Arc<Mutex<FSStatus>>, // Allows overlay if FS in RW mode
     red_overlay: [RGB; 256],
 }
 
@@ -80,21 +83,21 @@ impl Display {
         spi.configure(&options).expect("SPI config error");
 
         let mut red_overlay = [BLACK; 256];
-        let red = RGB::new(200,0,0);
+        let red = RGB::new(200, 0, 0);
         red_overlay[0] = red;
         red_overlay[1] = red;
         red_overlay[14] = red;
         red_overlay[15] = red;
         red_overlay[16] = red;
         red_overlay[31] = red;
-        
+
         red_overlay[224] = red;
         red_overlay[239] = red;
         red_overlay[240] = red;
         red_overlay[241] = red;
         red_overlay[254] = red;
         red_overlay[255] = red;
-        let mut display = Display{
+        let mut display = Display {
             spi,
             file_sys_status,
             red_overlay,
@@ -123,15 +126,11 @@ impl Display {
         fn add_u8(a: u8, b: u8) -> u8 {
             min(u8::MAX as u16, a as u16 + b as u16) as u8
         }
-    
+
         fn add_rgb8(a: RGB, b: RGB) -> RGB {
-            RGB::new(
-                add_u8(a.r, b.r),
-                add_u8(a.g, b.g),
-                add_u8(a.b, b.b)
-            )
+            RGB::new(add_u8(a.r, b.r), add_u8(a.g, b.g), add_u8(a.b, b.b))
         }
-    
+
         let mut result = vec![BLACK; 256];
         for i in 0..256 {
             let mut dot_acc = BLACK;
@@ -140,13 +139,12 @@ impl Display {
             }
             result[i] = dot_acc;
         }
-    
+
         result
     }
 
     fn squash(leds: &[RGB]) -> Vec<u8> {
-        leds
-            .iter()
+        leds.iter()
             .flat_map(|pix| vec![pix.r, pix.g, pix.b])
             .collect()
     }
