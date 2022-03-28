@@ -117,9 +117,9 @@ impl Display {
 
         let flattened = Self::flatten(led_layers);
 
-        self.spi.write(&[0x72]).expect("SPI write error");
+        self.spi.write_all(&[0x72]).expect("SPI write error");
         let data = Self::squash(&flattened);
-        self.spi.write(&data).expect("SPI write error");
+        self.spi.write_all(&data).expect("SPI write error");
     }
 
     fn flatten(layers: Vec<&[RGB]>) -> Vec<RGB> {

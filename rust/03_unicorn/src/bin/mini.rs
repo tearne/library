@@ -10,6 +10,20 @@ async fn main() {
     let mut rng = rand::thread_rng();
 
     let mut h = um.button_subscribe();
+
+    fn fill_with_random_colour(um: &mut UnicornHatMini, rng: &mut impl Rng){
+        let r = rng.gen();
+        let g = rng.gen();
+        let b = rng.gen();
+        for i in 0..17usize {
+            for j in 0..7usize {
+               um.set_xy(i, j, r, g, b);
+            }
+        }
+        um.flush();
+    }
+
+
     loop {
         h.changed().await.unwrap();
         let b_opt = h.borrow_and_update();
@@ -17,20 +31,10 @@ async fn main() {
         println!("==> {:?}", t);
 
         match *t {
-            Button::A | Button::B => {
-                for i in 0..17usize {
-                    um.set_xy(i, 3, rng.gen(), rng.gen(), rng.gen());
-                    um.flush();
-                    std::thread::sleep(Duration::new(0, 10000000));
-                }
-            }
-            Button::X | Button::Y => {
-                for i in 0..7usize {
-                    um.set_xy(7, i, rng.gen(), rng.gen(), rng.gen());
-                    um.flush();
-                    std::thread::sleep(Duration::new(0, 10000000));
-                }
+            Button::A | Button::B | Button::X | Button::Y => {
+                fill_with_random_colour(&mut um, &mut rng);
             }
         }
+        std::thread::sleep(Duration::from_millis(500));
     }
 }
