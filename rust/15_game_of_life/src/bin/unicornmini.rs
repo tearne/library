@@ -13,13 +13,12 @@ static RED: RGB8 = RGB8::new(40,0,0);
 
 fn intersect(layers: &[Layer], dim: &Dimensions) -> Vec<usize> {
     (0usize..dim.num_pixels() as usize)
-        .filter_map(|idx| {
+        .filter(|&idx| {
             let num_alive = layers.iter().fold(0,|acc,layer|{
                 if layer.current().get(idx) { acc + 1 }
                 else { acc }
             });
-            if num_alive > 0 { Some(idx) }
-            else { None }
+            num_alive > 1
         })
         .collect()
 }
@@ -59,12 +58,11 @@ fn main() {
 
         display.flush();
 
-        // for idx in intersect(&layers) {
-        //     println!("-{}", &idx);
-        //     for layer in layers.iter_mut() {
-        //         layer.purge(idx)
-        //     }
-        // }
+        for idx in intersect(&layers, &dim) {
+            for layer in layers.iter_mut() {
+                layer.purge(idx);
+            }
+        }
 
         std::thread::sleep(Duration::from_millis(500));
     }
