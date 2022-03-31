@@ -7,7 +7,7 @@ use tokio::runtime::Runtime;
 use unicorn::pimoroni::unicornmini::UnicornMini;
 
 static BLACK: RGB8 = RGB8::new(0,0,0);
-static GREEN: RGB8 = RGB8::new(0, 20, 0);
+static GREEN: RGB8 = RGB8::new(0, 15, 0);
 static BLUE: RGB8 = RGB8::new(0, 0, 40);
 static RED: RGB8 = RGB8::new(40,0,0);
 
@@ -15,7 +15,7 @@ fn intersect(layers: &[Layer], dim: &Dimensions) -> Vec<usize> {
     (0usize..dim.num_pixels() as usize)
         .filter_map(|idx| {
             let num_alive = layers.iter().fold(0,|acc,layer|{
-                if layer.current().px[idx] { acc + 1 }
+                if layer.current().get(idx) { acc + 1 }
                 else { acc }
             });
             if num_alive > 0 { Some(idx) }
@@ -40,7 +40,7 @@ fn main() {
         let mut pxls = vec![BLACK; dim.num_pixels() as usize];
 
         for layer in layers.iter_mut() {
-            for (id, &alive) in layer.current().px.iter().enumerate() {
+            for (id, &alive) in layer.current().iter().enumerate() {
                 if alive { pxls[id] += layer.colour; }
             }
             

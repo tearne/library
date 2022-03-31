@@ -40,6 +40,6 @@ impl Layer {
     }
 
     pub fn purge(&mut self, idx: usize) {
-        self.grids.front_mut().unwrap().px[idx] = false;
+        self.grids.front_mut().unwrap().set(idx, false);
     }
 }
