@@ -5,6 +5,11 @@ use rand::Rng;
 #[derive(Default, PartialEq)]
 pub struct Grid(Vec<bool>);
 impl Grid {
+    pub fn blank(dim: &Dimensions) -> Self {
+        let px = vec![false; dim.num_pixels()];
+        Grid(px)
+    }
+
     pub fn random(dim: &Dimensions) -> Self {
         let mut rng = rand::thread_rng();
         let px: Vec<_> = (0..dim.width * dim.height).map(|_|{ rng.gen_range(0..8) < 1 }).collect();

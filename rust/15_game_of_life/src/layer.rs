@@ -11,7 +11,7 @@ pub struct Layer {
 impl Layer {
     pub fn new(colour: RGB8, dim: &Dimensions) -> Self {
         let mut grids = VecDeque::<Grid>::new();
-        grids.push_front(Grid::random(dim));
+        grids.push_front(Grid::blank(dim));
         grids.push_front(Grid::random(dim));
 
         Layer {
@@ -22,7 +22,7 @@ impl Layer {
 
     pub fn reset(&mut self, dim: &Dimensions) {
         self.grids = VecDeque::<Grid>::new();
-        self.grids.push_front(Grid::random(dim));
+        self.grids.push_front(Grid::blank(dim));
         self.grids.push_front(Grid::random(dim));
     }
 
