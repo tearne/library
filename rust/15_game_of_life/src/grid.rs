@@ -35,7 +35,10 @@ impl Grid {
         };
 
         let count = dim.offsets.iter().map(|(a,b)|{
-            let nbr = ((xy.0 + a)%dim.width, (xy.1 + b)%dim.height);
+            let nbr = (
+                (xy.0 + a)%dim.width as u8, 
+                (xy.1 + b)%dim.height as u8
+            );
             is_alive_at(nbr)
         }).fold(0,|acc,next_is_alive|{
             if !next_is_alive {acc}

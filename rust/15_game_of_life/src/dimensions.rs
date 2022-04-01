@@ -1,11 +1,11 @@
 #[derive(Debug)]
 pub struct Dimensions {
-    pub width: u8,
-    pub height: u8,
+    pub width: usize,
+    pub height: usize,
     pub offsets: Vec<(u8,u8)>,
 }
 impl Dimensions {
-    pub fn new(width: u8, height: u8) -> Self {
+    pub fn new(width: usize, height: usize) -> Self {
         let offsets = {
             vec![
                 (-1i16,-1i16), (0,-1), (1,-1), (-1,0), 
@@ -24,7 +24,7 @@ impl Dimensions {
         }
     }
 
-    pub fn num_pixels(&self) -> u8 {
+    pub fn num_pixels(&self) -> usize {
         self.width * self.height
     }
 
