@@ -24,7 +24,6 @@ fn intersect(layers: &[Layer], dim: &Dimensions) -> Vec<usize> {
 }
 
 fn main() {
-    let rt = Runtime::new().unwrap();
     let mut display = Unicorn::new();
 
     let dim = Dimensions::new(16,16);
