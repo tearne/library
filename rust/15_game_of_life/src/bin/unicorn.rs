@@ -10,7 +10,6 @@ static BLACK: RGB8 = RGB8::new(0,0,0);
 static GREEN: RGB8 = RGB8::new(0, 220, 0);
 static BLUE: RGB8 = RGB8::new(0, 0, 250);
 static RED: RGB8 = RGB8::new(190,0,0);
-static PURPLE: RGB8 = RGB8::new(100,0,100);
 
 fn intersect(layers: &[Layer], dim: &Dimensions) -> Vec<usize> {
     (0usize..dim.num_pixels() as usize)
@@ -33,25 +32,22 @@ fn main() {
     let mut layers = vec![
         Layer::new(GREEN, &dim), 
         Layer::new(RED, &dim), 
-        Layer::new(BLUE, &dim),
-        // Layer::new(PURPLE, &dim)
+        Layer::new(BLUE, &dim)
     ];
 
-    let start = chrono::offset::Utc::now();
-    
-    // for i in 0..dim.num_pixels() {
-    //     display.set_idx(i as usize, &RED);
-    //     display.flush();
-    // }
-    // for i in 0..dim.num_pixels() {
-    //     display.set_idx(i as usize, &GREEN);
-    //     display.flush();
-    // }
-    // for i in 0..dim.num_pixels() {
-    //     display.set_idx(i as usize, &BLUE);
-    //     display.flush();
-    // }
-    // std::thread::sleep(Duration::from_millis(1000));
+    for i in 0..dim.num_pixels() {
+        display.set_idx(i as usize, &RED);
+        display.flush();
+    }
+    for i in 0..dim.num_pixels() {
+        display.set_idx(i as usize, &GREEN);
+        display.flush();
+    }
+    for i in 0..dim.num_pixels() {
+        display.set_idx(i as usize, &BLUE);
+        display.flush();
+    }
+    std::thread::sleep(Duration::from_millis(1000));
 
 
     let interval_ms = 3000;
