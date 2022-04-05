@@ -36,7 +36,6 @@ pub enum Rotation{
                 let x = (idx % 16) as i32;
                 let y = (idx / 16) as i32;
                 let rot = self.mat.dot( &arr1(&[x,y]) ) + &self.offset;
-                println!(" --> {:#?},    {}  {}",rot, rot[0], rot[1]);
                 let new_idx = (rot[0] + rot[1] * 16) as usize; 
                 (new_idx, *value)
             });
