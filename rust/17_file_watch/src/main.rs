@@ -1,62 +1,30 @@
-use std::time::Duration;
+mod watcher;
 
-use notify::{RecommendedWatcher, Watcher, RecursiveMode};
-use anyhow::Result;
+use std::{path::Path, fs::write};
+use watcher::WatchJob;
 
-enum State{
-    Init, Order, Pending, Complete
-}
-impl State {
-    pub fn expected_next(&self) -> Self {
-        match self {
-            State::Init => State::Order,
-            State::Order => State::Pending,
-            State::Pending => State::Complete,
-            State::Complete => State::Init,
-        }
-    }
+fn main() -> anyhow::Result<()> {
+    let watch_dir = Path::new("/dev/shm/watch_dir");
 
-    pub fn filename(&self) -> &str {
-        match self {
-            State::Init => "0_INIT.marker",
-            State::Order => "1_ORDER.marker",
-            State::Pending => "2_PENDING.marker",
-            State::Complete => "3_COMPLETE.marker",
-        }
-    }
-}
+    let mut watcher = WatchJob::new(watch_dir)?;
 
-fn main() -> Result<()> {
-    let (tx, rx) = std::sync::mpsc::channel();
+    // Pretend payload
+    write(
+        watch_dir.join("myOrder.txt"), 
+        "Pepperoni with goats cheese.")
+    ?;
+    // Create the "order" marker and wait for the "completed signal"
+    watcher.request_and_block()?;
+    println!("order completed: {}", std::fs::read_to_string(watch_dir.join("results.txt")).unwrap());
 
-    let mut watcher: RecommendedWatcher = Watcher::new(tx, Duration::from_millis(500))?;
-    watcher.watch("/home/test/notify", RecursiveMode::Recursive)?;
-
-    let mut state = State::Init;
-    loop {
-        match rx.recv() {
-            Ok(de) => match de {
-                notify::DebouncedEvent::NoticeWrite(path) if path.file_name() == state.expected_next() => todo!(),
-                de => println!("Unhandled event {:?}", de),
-            },
-            Err(_) => todo!(),
-        }
-    }
-
-
-    // Dir needn't start empty, but mustn't contain ORDER.marker
-
-    // Place config to represent order - ignored by worker
-
-    // Place ORDER.marker
-
-    // Expect ACK.marker
-
-    // Later, results files will appear, but shold be ignored until...
-
-    // COMPLETE.marker appears
-
-    // Any further changes are ignored by both sides until ORDER.marker appreas
+    // Clean the folder and place another order
+    watcher.clean()?;
+    write(
+        watch_dir.join("anotherOrder.txt"), 
+        "Ice cream.")
+    ?;
+    watcher.request_and_block()?;
+    println!("order completed: {}", std::fs::read_to_string(watch_dir.join("results.txt")).unwrap());
 
     Ok(())
 }
