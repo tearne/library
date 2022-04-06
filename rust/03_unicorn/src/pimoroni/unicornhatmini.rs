@@ -303,10 +303,10 @@ impl UnicornHatMini {
             let spi = &mut self.spi[i];
             if data.len() > 0 {
                 let chunk = &data[Self::buf_offset(i)];
-                spi.write(&concat(&prefix, &chunk))
+                spi.write_all(&concat(&prefix, &chunk))
                     .expect("SPI write error");
             } else {
-                spi.write(&prefix).expect("SPI write error");
+                spi.write_all(&prefix).expect("SPI write error");
             }
         }
     }

@@ -6,7 +6,10 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-unicorn = { git = "https://github.com/tearne/unicorn", branch = "main"}
+#unicorn = { git = "https://github.com/tearne/unicorn", branch = "main"}
+unicorn = { path = "../../../unicorn" }
 rgb = "0.8"
 rand = "0.8.4"
 once_cell = "1.9.0"
+tokio = { version = "1.10.0", features = ["full"] }
+chrono = "0.4"
