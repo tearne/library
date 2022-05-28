@@ -1,0 +1,4 @@
+{
+    "python.terminal.activateEnvironment": false,
+    "python.defaultInterpreterPath": "${env:USERPROFILE}/Downloads/env_test/python.exe"
+}
