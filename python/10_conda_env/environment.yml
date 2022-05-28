@@ -1,0 +1,10 @@
+name: env_test
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - pandas >= 1.4.2
+  - numpy >= 1.22.4
+  - seaborn >= 0.11.2
+  - scipy >= 1.8.0
+  - jupyter >= 1.0.0
