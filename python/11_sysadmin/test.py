@@ -71,15 +71,3 @@ def ensure_import(package_name):
 #
 # Setup ends
 #
-
-tempfile = ensure_import("tempfile")
-
-with tempfile.TemporaryDirectory() as temp_dir:
-    print(temp_dir)
-    run("git clone https://github.com/xorbit/LiFePO4wered-Pi.git", cwd=temp_dir)
-    cwd = os.path.join(temp_dir, "LiFePO4wered-Pi")
-    run("make all", cwd=cwd)
-    sudo("sudo make user-install", password.get(), cwd=cwd)
-
-print("Installed.  Get current battery voltage:")
-sudo("lifepo4wered-cli get vbat", password.get(), 5)
