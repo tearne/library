@@ -553,6 +553,7 @@ checksum = "8ccb82d61f80a663efe1f787a51b16b5a51e3314d6ac365b08639f52387b33f3"
 [[package]]
 name = "unicorn"
 version = "0.1.0"
+source = "git+https://github.com/tearne/unicorn?branch=main#709b16923b6c45c8359cda830cc0fd86ed1ee5aa"
 dependencies = [
  "futures",
  "inotify",

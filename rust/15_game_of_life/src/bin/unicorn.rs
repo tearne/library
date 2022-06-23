@@ -78,6 +78,8 @@ fn main() {
 
         display.flush();
 
+        std::thread::sleep(Duration::from_millis(100))
+
         // for idx in intersect(&layers, &dim) {
         //     for layer in layers.iter_mut() {
         //         layer.purge(idx);
