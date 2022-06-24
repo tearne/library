@@ -1,0 +1,10 @@
+[Unit]
+Description=CPUnicorn service
+After=multi-user.target
+
+[Service]
+Type=exec
+ExecStart=/usr/bin/cpunicorn
+
+[Install]
+WantedBy=multi-user.target
