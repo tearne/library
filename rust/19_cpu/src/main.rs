@@ -5,9 +5,9 @@ use rgb::RGB8;
 use unicorn::pimoroni::unicorn::Unicorn;
 
 static BLACK: RGB8 = RGB8::new(0,0,0);
-static GREEN: RGB8 = RGB8::new(0, 220, 0);
-static BLUE: RGB8 = RGB8::new(0, 0, 250);
-static RED: RGB8 = RGB8::new(190,0,0);
+static GREEN: RGB8 = RGB8::new(0, 125, 0);
+static BLUE: RGB8 = RGB8::new(0, 0, 150);
+static RED: RGB8 = RGB8::new(100,0,0);
 
 fn main() {
     let mut display = Unicorn::new();

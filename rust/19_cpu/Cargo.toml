@@ -1,5 +1,5 @@
 [package]
-name = "cpunicorn"
+name = "cpunicornhd"
 version = "0.1.0"
 edition = "2021"
 description = "Display CPU usage on Pimoroni Unicorn Hat HD"
