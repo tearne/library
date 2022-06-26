@@ -65,6 +65,8 @@ fn main() {
             }
         }
         display.flush();
+
+        println!("{:#?}", psutil::memory::virtual_memory());
         
         std::thread::sleep(Duration::from_millis(1000));
     }
