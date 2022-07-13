@@ -34,28 +34,30 @@ fn main() {
         Layer::new(BLUE, &dim)
     ];
 
-    for i in 0..dim.num_pixels() {
-        display.set_idx(i as usize, &RED);
-        display.flush();
-    }
-    for i in 0..dim.num_pixels() {
-        display.set_idx(i as usize, &GREEN);
-        display.flush();
-    }
-    for i in 0..dim.num_pixels() {
-        display.set_idx(i as usize, &BLUE);
-        display.flush();
-    }
-    std::thread::sleep(Duration::from_millis(1000));
+    // for i in 0..dim.num_pixels() {
+    //     display.set_idx(i as usize, &RED);
+    //     display.flush();
+    // }
+    // for i in 0..dim.num_pixels() {
+    //     display.set_idx(i as usize, &GREEN);
+    //     display.flush();
+    // }
+    // for i in 0..dim.num_pixels() {
+    //     display.set_idx(i as usize, &BLUE);
+    //     display.flush();
+    // }
+    // std::thread::sleep(Duration::from_millis(1000));
 
 
-    let interval_ms = 3000;
+    let interval_ms = 800;
     let mut div = chrono::offset::Utc::now().timestamp_millis() / interval_ms;
     let mut rem = (chrono::offset::Utc::now().timestamp_millis() % interval_ms) as f64/ interval_ms as f64;
 
     loop {
         let div_new = chrono::offset::Utc::now().timestamp_millis() / interval_ms;
         rem = (chrono::offset::Utc::now().timestamp_millis() % interval_ms) as f64/ interval_ms as f64;
+        rem = rem * rem * rem;
+        
         if div_new != div {
             div = div_new;
             layers.iter_mut().for_each(|l|{
@@ -78,7 +80,7 @@ fn main() {
 
         display.flush();
 
-        std::thread::sleep(Duration::from_millis(100))
+        std::thread::sleep(Duration::from_millis(50));
 
         // for idx in intersect(&layers, &dim) {
         //     for layer in layers.iter_mut() {
