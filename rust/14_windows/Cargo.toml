@@ -9,4 +9,4 @@ edition = "2018"
 native-windows-gui = "1.0.12"
 native-windows-derive = "1.0.3"
 ssh_jumper = "0.4.0"
-tokio = { version = "1.12.0", features = ["full"] }
+tokio = { version = "1.13.1", features = ["full"] }
