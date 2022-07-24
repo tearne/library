@@ -1,0 +1,7 @@
+name: base
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+#  - jupyter
+ - ipykernel
