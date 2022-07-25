@@ -1,7 +1,6 @@
-name: base
+name: demo
 channels:
   - conda-forge
   - nodefaults
 dependencies:
-#  - jupyter
  - ipykernel
