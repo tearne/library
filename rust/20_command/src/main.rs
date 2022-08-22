@@ -3,6 +3,11 @@ use std::io::{BufRead, BufReader, Write};
 use color_eyre::Result;
 
 fn main() -> Result<()>{
+    run_sudo("ls")
+}
+
+
+fn run_sudo(command: &str) -> Result<()>{
     let mut password = rpassword::prompt_password("Your password: ").unwrap();
     password.push('\n');
 
@@ -28,6 +33,7 @@ fn main() -> Result<()>{
             match char_res {
                 Ok(ch) => {
                     acc.push(ch);
+                    println!("buffer: {}", &acc);
                     if acc.contains(password_prompt) {
                         println!("sending password");
                         stdin.write_all(password.as_bytes());
@@ -39,13 +45,6 @@ fn main() -> Result<()>{
             };
         }
     });
-
-    
-    // let mut stdin = child.stdin.take().unwrap();
-    // std::thread::spawn(move || {
-    //     println!("send pzssword");
-    //     stdin.write_all(password.as_bytes()).unwrap();
-    // });
 
     let stdout = child.stdout.take().unwrap();
     for line in BufReader::new(stdout).lines() {
