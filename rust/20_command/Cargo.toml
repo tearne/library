@@ -1,0 +1,11 @@
+[package]
+name = "command"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+color-eyre = "0.6.1"
+rpassword = "7.0.0"
+read_char = "0.1.1"

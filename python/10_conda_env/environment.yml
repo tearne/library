@@ -1,0 +1,16 @@
+name: env_test
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - pandas
+  - numpy
+  - seaborn
+  - scipy
+  - jupyter
+  - conda-pack
+  - matplotlib
+  - pyarrow
+  - pip
+  - pip:
+    - polars
