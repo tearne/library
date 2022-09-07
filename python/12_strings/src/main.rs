@@ -1,12 +1,12 @@
-#[allow(unused)]
-
-fn main() {
-    let a = "Hello, World!";
-    let b = a.into();
-
-    print_string(b);
+fn main(){
+    
 }
 
-fn print_string(s: String){
-    println!("{}", s)
-}
+
+// fn main() {
+//     say_hello("Dave");
+// }
+
+// fn say_hello(name: String){
+//     println!("Hello, {}!", name);
+// }
