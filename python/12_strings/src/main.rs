@@ -1,10 +1,11 @@
 fn main(){
-    
+
 }
 
 
 // fn main() {
-//     say_hello("Dave");
+//     let name = "Dave";
+//     say_hello(name);
 // }
 
 // fn say_hello(name: String){
