@@ -1,0 +1,17 @@
+[package]
+name = "s3"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+aws-config = "0.55.3"
+aws-sdk-athena = "0.28.0"
+aws-sdk-s3 = "0.28"
+bytes = "1.4.0"
+color-eyre = "0.6.2"
+envmnt = "0.10.4"
+futures = "0.3.28"
+serde_json = "1.0"
+tokio = {version = "1.29", features = ["full"] }
