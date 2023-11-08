@@ -48,33 +48,12 @@ mod serialise {
     }
 }
 
-mod disease {
-    use crate::output::DataPoint;
-
-    pub trait Disease{
-        fn get_disease_data_point(&self) -> DataPoint;
-    }
-    pub struct Covid{}
-    impl Disease for Covid{
-        fn get_disease_data_point(&self) -> DataPoint {
-            DataPoint("Covid data point")
-        }
-    }
-
-    pub struct Plague{}
-    impl Disease for Plague{
-        fn get_disease_data_point(&self) -> DataPoint {
-            DataPoint("Plague data point")
-        }
-    }
-}
-
 mod output {
     use std::{marker::PhantomData, mem};
 
     use crate::{serialise::Serialise, storage::Storage};
 
-    pub struct DataPoint(pub &'static str);
+    pub struct DataPoint(pub String);
 
     pub trait Output{
         fn output(&mut self, dp: DataPoint);
@@ -105,7 +84,7 @@ mod output {
     {
         fn output(&mut self, dp: DataPoint) {
             let serialised = Se::serialise(dp);
-            println!("Aggregating: {:#?}", serialised);
+            println!("Aggregating {:#?}", serialised);
             self.acc.push(serialised);
         }
         
@@ -140,6 +119,27 @@ mod output {
     }
 }
 
+mod disease {
+    use crate::output::DataPoint;
+
+    pub trait Disease{
+        fn get_disease_data_point(&self, timestamp: usize) -> DataPoint;
+    }
+    pub struct Covid{}
+    impl Disease for Covid{
+        fn get_disease_data_point(&self, timestamp: usize) -> DataPoint {
+            DataPoint(format!("Covid data point at time {}", timestamp))
+        }
+    }
+
+    pub struct Plague{}
+    impl Disease for Plague{
+        fn get_disease_data_point(&self, timestamp: usize) -> DataPoint {
+            DataPoint(format!("Plague data point at time {}", timestamp))
+        }
+    }
+}
+
 struct Program<D, O>
     where
         D: Disease,
@@ -157,9 +157,9 @@ impl<D, O> ProgramApi for Program<D, O>
         D: Disease,
         O: Output {
     fn run(&mut self) {
-        self.output.output(self.disease.get_disease_data_point());
-        self.output.output(self.disease.get_disease_data_point());
-        self.output.output(self.disease.get_disease_data_point());
+        self.output.output(self.disease.get_disease_data_point(1));
+        self.output.output(self.disease.get_disease_data_point(2));
+        self.output.output(self.disease.get_disease_data_point(3));
     }
     fn dump_output(&mut self) -> Option<Vec<String>> {
         self.output.flush()
@@ -170,8 +170,9 @@ fn main(){
     //These are loaded from a config
     // let disease_str = String::from("covid");
     let disease_str = String::from("plague");
-    // let output_str = String::from("aggregated_json"); 
-    let output_str = String::from("toml_to_db"); 
+    
+    let output_str = String::from("aggregated_json"); 
+    // let output_str = String::from("toml_to_db"); 
     // let output_str = String::from("json_to_disk"); 
 
     //Build the model
