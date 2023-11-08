@@ -7,6 +7,75 @@ use storage::DB;
 
 use crate::storage::Disk;
 
+fn main(){
+    // Disease selection
+    // let disease_str = String::from("covid");
+    let disease_str = String::from("plague");
+    
+    // Output selection
+    let output_str = String::from("aggregated_json"); 
+    // let output_str = String::from("toml_to_db"); 
+    // let output_str = String::from("json_to_disk"); 
+
+    let mut program = match disease_str.as_str() {
+        "covid" => build(Covid{}, &output_str),
+        "plague" => build(Plague{}, &output_str),
+        _ => panic!("I don't do that disease")
+    };
+
+    program.run();
+    println!("Optional flushed output: \n{:#?}", program.dump_output())
+}
+
+fn build<D>(disease: D, outputter: &str) -> Box<dyn ProgramApi> 
+    where  
+        D: Disease + 'static,
+{
+    match outputter {
+        "aggregated_json" => {
+            Box::new(Program{
+                disease,
+                output: Aggregator::<Json>::new()
+            })
+        },
+        "json_to_disk" => {
+            let outputter: output::Logger<Disk,Json> = {
+                let disk = Disk {
+                    path: PathBuf::new()
+                };
+
+                output::Logger {
+                    st: disk,
+                    se: PhantomData,
+                }
+            };
+            Box::new(Program{
+                disease,
+                output: outputter,
+            })
+        },
+        "toml_to_db" => {
+            let outputter: Logger<DB,Json> = {
+                let db = DB {
+                    address: Ipv4Addr::new(127, 0, 0, 1),
+                    user: "steve".into(),
+                    pass: "1234password".into()
+                };
+
+                Logger {
+                    st: db,
+                    se: PhantomData,
+                }
+            };
+
+            Box::new(Program{
+                disease,
+                output: outputter,
+            })
+        },
+        config => panic!("I don't know how to output in the format: {}", config)
+    }
+}
 mod storage {
     use std::{path::PathBuf, net::Ipv4Addr};
 
@@ -163,76 +232,5 @@ impl<D, O> ProgramApi for Program<D, O>
     }
     fn dump_output(&mut self) -> Option<Vec<String>> {
         self.output.flush()
-    }
-}
-
-fn main(){
-    //These are loaded from a config
-    // let disease_str = String::from("covid");
-    let disease_str = String::from("plague");
-    
-    let output_str = String::from("aggregated_json"); 
-    // let output_str = String::from("toml_to_db"); 
-    // let output_str = String::from("json_to_disk"); 
-
-    //Build the model
-    let mut program = match disease_str.as_str() {
-        "covid" => build(Covid{}, &output_str),
-        "plague" => build(Plague{}, &output_str),
-        _ => panic!("I don't do that disease")
-    };
-
-    program.run();
-
-    println!("Flushed output: \n{:#?}", program.dump_output())
-}
-
-fn build<D>(disease: D, outputter: &str) -> Box<dyn ProgramApi> 
-    where  
-        D: Disease + 'static,
-{
-    match outputter {
-        "aggregated_json" => {
-            Box::new(Program{
-                disease,
-                output: Aggregator::<Json>::new()
-            })
-        },
-        "json_to_disk" => {
-            let outputter: output::Logger<Disk,Json> = {
-                let disk = Disk {
-                    path: PathBuf::new()
-                };
-
-                output::Logger {
-                    st: disk,
-                    se: PhantomData,
-                }
-            };
-            Box::new(Program{
-                disease,
-                output: outputter,
-            })
-        },
-        "toml_to_db" => {
-            let outputter: Logger<DB,Json> = {
-                let db = DB {
-                    address: Ipv4Addr::new(127, 0, 0, 1),
-                    user: "steve".into(),
-                    pass: "1234password".into()
-                };
-
-                Logger {
-                    st: db,
-                    se: PhantomData,
-                }
-            };
-
-            Box::new(Program{
-                disease,
-                output: outputter,
-            })
-        },
-        _ => panic!("I don't know how to do that")
     }
 }
