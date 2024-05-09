@@ -45,9 +45,10 @@ enum MyTypes {
 }
 impl Validate for MyTypes {
     fn validate(&self) -> Result<()> {
+        use MyTypes::*;
         match self {
-            MyTypes::C(c) => c.validate(),
-            MyTypes::P(p) => p.validate(),
+            C(c) => c.validate(),
+            P(p) => p.validate(),
         }
     }
 }
