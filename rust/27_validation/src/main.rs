@@ -1,9 +1,8 @@
-use std::fmt::Debug;
-
 use color_eyre::{
     eyre::{bail, eyre},
     Result, Section,
 };
+use std::fmt::Debug;
 
 trait Validate: Debug {
     fn validate(&self) -> Result<()>;
@@ -15,9 +14,9 @@ struct Chocolate(u8);
 impl Validate for Chocolate {
     fn validate(&self) -> Result<()> {
         if self.0 > 10 {
-            bail!("Too much chocolate: {:?}", self.0);
+            bail!("Too much chocolate ({:?})", self.0);
         } else if self.0 < 5 {
-            bail!("Insufficient chocolate: {:?}", self.0);
+            bail!("Insufficient chocolate ({:?})", self.0);
         } else {
             Ok(())
         }
@@ -30,9 +29,9 @@ struct Probability(f32);
 impl Validate for Probability {
     fn validate(&self) -> Result<()> {
         if self.0 < 0.0 {
-            bail!("Negative probability: {:?}", self.0);
+            bail!("Negative probability ({:?})", self.0);
         } else if self.0 > 1.0 {
-            bail!("Probabilty exceeds 1.0: {:?}", self.0);
+            bail!("Probabilty exceeds 1.0 ({:?})", self.0);
         } else {
             Ok(())
         }
@@ -63,7 +62,7 @@ where
             .enumerate()
             .map(|(idx, v)| {
                 v.validate().map_err(|e| {
-                    eyre!("at index [{}] - {}", idx, e)
+                    eyre!("at index [{}]: {}", idx, e)
                 })
             })
             .collect();
@@ -77,10 +76,8 @@ where
             .filter(Result::is_err)
             .map(Result::unwrap_err)
             .fold(
-                eyre!(
-                    "Multiple validation errors in Vector"
-                ),
-                |report, b| report.note(b.to_string()),
+                eyre!("Validation errors in Vector"),
+                |acc, r| acc.note(r.to_string()),
             );
 
         Err(err)
@@ -95,9 +92,9 @@ fn main() -> Result<()> {
         P(Probability(-0.1)),
         C(Chocolate(7)),
         P(Probability(0.2)),
+        P(Probability(1.1)),
         P(Probability(0.9)),
         C(Chocolate(200)),
-        P(Probability(1.1)),
         C(Chocolate(3)),
     ]
     .validate()?;
