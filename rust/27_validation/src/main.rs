@@ -14,9 +14,9 @@ struct Chocolate(u8);
 impl Validate for Chocolate {
     fn validate(&self) -> Result<()> {
         if self.0 > 10 {
-            bail!("Too much chocolate ({:?})", self.0);
+            bail!("Too much chocolate ({})", self.0);
         } else if self.0 < 5 {
-            bail!("Insufficient chocolate ({:?})", self.0);
+            bail!("Insufficient chocolate ({})", self.0);
         } else {
             Ok(())
         }
@@ -29,9 +29,9 @@ struct Probability(f32);
 impl Validate for Probability {
     fn validate(&self) -> Result<()> {
         if self.0 < 0.0 {
-            bail!("Negative probability ({:?})", self.0);
+            bail!("Negative probability ({})", self.0);
         } else if self.0 > 1.0 {
-            bail!("Probabilty exceeds 1.0 ({:?})", self.0);
+            bail!("Probabilty exceeds 1.0 ({})", self.0);
         } else {
             Ok(())
         }
