@@ -1,0 +1,3 @@
+[submodule "git/01_submodule/abcd"]
+	path = git/01_submodule/abcd
+	url = git@github.com:/tearne/abcd
