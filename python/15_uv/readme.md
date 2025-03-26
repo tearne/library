@@ -9,3 +9,8 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 uv run script.py
 ```
+
+* Or even simpler
+```
+./script.py
+```
