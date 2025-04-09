@@ -20,23 +20,6 @@ pub fn main() {
         deps: Dependencies{},
     };
 
-    // let model_c = IntegratedModel::<u8> {
-    //     state: Default::default(),
-    //     movements: &model_b_movements,
-    //     deps: Dependencies{},
-    // };
-
-    // enum MyModelTypes<'a>{
-    //     EightBit(IntegratedModel::<'a, u8>),
-    //     Float(IntegratedModel::<'a, f64>)
-    // }
-    // let both_models = vec![
-    //     MyModelTypes::Float(model_a), 
-    //     MyModelTypes::Float(model_b), 
-    //     MyModelTypes::EightBit(model_c)
-    // ];
-
-
     let both_models = vec![model_a, model_b];
 
     let mut joint_model = LayeredModel {
