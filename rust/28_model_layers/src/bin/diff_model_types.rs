@@ -52,7 +52,6 @@ pub fn main() {
     
     impl<'a> ModelSandwich for MySandwich<'a> {
         fn step_all_models(&mut self) -> framework::RunStatus {
-            // use crate::framework::ModelLayer;
             println!("Step \"float\" model");
             let run_status_a = self.float_model.step();
             let report = self.float_model.report();
