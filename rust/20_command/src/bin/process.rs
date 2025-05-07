@@ -4,6 +4,7 @@ use chrono::{DateTime, Local};
 use clap::Parser;
 use log::LevelFilter;
 use sysinfo::{Pid, Process, ProcessRefreshKind, ProcessesToUpdate, System};
+use color_eyre::eyre::Result;
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
@@ -19,6 +20,10 @@ struct Cli {
     /// Command to run
     #[arg(last = true, required = true)]
     command: Vec<String>,
+
+    /// Output file to save data to
+    #[structopt(short, long, default_value = "out.csv")]
+    out_file: String,
 }
 
 pub fn setup_logging(level: u8) {
@@ -48,9 +53,12 @@ pub fn setup_logging(level: u8) {
 }
 
 // example command: stress --cpu 2 --timeout 10s
-fn main() {
+fn main() -> Result<()> {
     let cli = Cli::parse();
     setup_logging(cli.verbose);
+
+    let out_file = Path::new(cli.out_file);
+
 
     let wtr = {
         Arc::new(Mutex::new(csv::Writer::from_path(Path::new("out.csv"))))
@@ -86,7 +94,8 @@ fn main() {
 
                 let record = UsageRecord::new(start_time, cpu_percent);
                 log::info!("{:#?}", &record);
-                t.as_mut().unwrap().serialize(record);
+                let t = t.as_mut().unwrap();
+                t.serialize(record);
             } else {
                 log::info!("He's dead, Jim");
                 break;
