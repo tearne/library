@@ -64,15 +64,14 @@ fn main() -> Result<()> {
 
   "marks": [
     {
-      "type": "area",
+      "type": "line",
       "from": {"data": "density"},
       "encode": {
         "enter": {
           "x": {"scale": "xscale", "field": "value"},
           "y": {"scale": "yscale", "field": "density"},
-          "y2": {"scale": "yscale", "value": 0},
-          "fill": {"value": "steelblue"},
-          "fillOpacity": {"value": 0.7}
+          "stroke": {"value": "steelblue"},
+          "strokeWidth": {"value": 2}
         }
       }
     }
