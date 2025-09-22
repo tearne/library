@@ -1,9 +1,7 @@
 use std::{env, path::Path};
 use eyre::Result;
-use json_pretty_compact::PrettyCompactFormatter;
 use serde::Serialize;
-use serde_json::{json, Serializer};
-use vega::vega_plot;
+use serde_json::json;
 
 fn main() -> Result<()> {
     if env::var("RUST_LOG").is_ok() {
@@ -38,9 +36,7 @@ fn main() -> Result<()> {
         Row::new("K",29),
     ];
 
-
-
-    let my_json = json!(
+    let vega_json = json!(
 {
   "$schema": "https://vega.github.io/schema/vega/v6.json",
   "background": "#ffffff",
@@ -131,16 +127,10 @@ fn main() -> Result<()> {
 }
     );
 
-    let mut pretty_buf = Vec::new();
-    let formatter = PrettyCompactFormatter::new();
-    let mut ser = Serializer::with_formatter(&mut pretty_buf, formatter);
-    my_json.serialize(&mut ser).unwrap();
-
-    vega_plot(
-        &String::from_utf8(pretty_buf).unwrap(), 
-        Path::new("bar_chart.png")
+    vega::plot_from_value(
+        vega_json, 
+        Path::new("bar_chart.jpg")
     )?;
 
     Ok(())
-
 }
