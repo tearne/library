@@ -1,16 +1,11 @@
-use std::{env, path::Path};
+use std::path::Path;
 use eyre::Result;
 use serde::Serialize;
 use serde_json::json;
+use vega::init_logging;
 
 fn main() -> Result<()> {
-    if env::var("RUST_LOG").is_ok() {
-        println!("RUST_LOG not set, setting to 'info'");
-        unsafe {
-            env::set_var("RUST_LOG", "info");
-        }
-    }
-    simple_logger::init_with_env().unwrap();
+    init_logging();
 
     #[derive(Serialize)]
     struct Row{
@@ -22,7 +17,7 @@ fn main() -> Result<()> {
             Row{category: category.into(), amount}
         }
     }
-    let my_data = vec![
+    let data_table = vec![
         Row::new("A",28),
         Row::new("B",55),
         Row::new("C",43),
@@ -40,7 +35,6 @@ fn main() -> Result<()> {
 {
   "$schema": "https://vega.github.io/schema/vega/v6.json",
   "background": "#ffffff",
-  "description": "A basic bar chart example, with value labels shown upon pointer hover.",
   "width": 400,
   "height": 200,
   "padding": 5,
@@ -48,18 +42,7 @@ fn main() -> Result<()> {
   "data": [
     {
       "name": "table",
-      "values": my_data
-    }
-  ],
-
-  "signals": [
-    {
-      "name": "tooltip",
-      "value": {},
-      "on": [
-        {"events": "rect:pointerover", "update": "datum"},
-        {"events": "rect:pointerout",  "update": "{}"}
-      ]
+      "values": data_table
     }
   ],
 
@@ -95,31 +78,6 @@ fn main() -> Result<()> {
           "width": {"scale": "xscale", "band": 1},
           "y": {"scale": "yscale", "field": "amount"},
           "y2": {"scale": "yscale", "value": 0}
-        },
-        "update": {
-          "fill": {"value": "steelblue"}
-        },
-        "hover": {
-          "fill": {"value": "red"}
-        }
-      }
-    },
-    {
-      "type": "text",
-      "encode": {
-        "enter": {
-          "align": {"value": "center"},
-          "baseline": {"value": "bottom"},
-          "fill": {"value": "#333"}
-        },
-        "update": {
-          "x": {"scale": "xscale", "signal": "tooltip.category", "band": 0.5},
-          "y": {"scale": "yscale", "signal": "tooltip.amount", "offset": -2},
-          "text": {"signal": "tooltip.amount"},
-          "fillOpacity": [
-            {"test": "datum === tooltip", "value": 0},
-            {"value": 1}
-          ]
         }
       }
     }
@@ -129,7 +87,7 @@ fn main() -> Result<()> {
 
     vega::plot_from_value(
         vega_json, 
-        Path::new("bar_chart.jpg")
+        Path::new("bar.png")
     )?;
 
     Ok(())
