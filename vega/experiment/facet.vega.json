@@ -1,0 +1,160 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
+  "background": "#ffffff",
+  "width": 400,
+  "padding": 5,
+
+  "signals": [
+    {"name": "vPad", "value": 10},
+    {"name": "cellHeight", "value": 100},
+    {"name": "height", "update": "3 * (vPad + cellHeight)"}
+  ],
+
+  "data": [
+    {
+      "name": "source",
+      "values": [
+        {"yr": 2010, "q01": 2.6, "q05": 6.5, "q50": 7.1, "q95": 7.2, "q99": 8.2, "observation": "one"},
+        {"yr": 2015, "q01": 2.7, "q05": 7.2, "q50": 7.4, "q95": 7.6, "q99": 8.3, "observation": "one"},
+        {"yr": 2020, "q01": 2.6, "q05": 8.1, "q50": 8.6, "q95": 8.7, "q99": 9.2, "observation": "one"},
+        {"yr": 2025, "q01": 2.9, "q05": 8.2, "q50": 8.8, "q95": 8.9, "q99": 9.3, "observation": "one"},
+
+        {"yr": 2011, "q01": 2.6, "q05": 6.5, "q50": 7.1, "q95": 7.2, "q99": 8.2, "observation": "two"},
+        {"yr": 2016, "q01": 2.7, "q05": 7.2, "q50": 7.4, "q95": 7.6, "q99": 8.3, "observation": "two"},
+        {"yr": 2021, "q01": 2.6, "q05": 8.1, "q50": 8.6, "q95": 8.7, "q99": 9.2, "observation": "two"},
+        {"yr": 2026, "q01": 2.9, "q05": 8.2, "q50": 8.8, "q95": 8.9, "q99": 9.3, "observation": "two"},
+
+        {"yr": 2012, "q01": 2.6, "q05": 6.5, "q50": 7.1, "q95": 7.2, "q99": 8.2, "observation": "three"},
+        {"yr": 2017, "q01": 2.7, "q05": 7.2, "q50": 7.4, "q95": 7.6, "q99": 8.3, "observation": "three"},
+        {"yr": 2022, "q01": 2.6, "q05": 8.1, "q50": 8.6, "q95": 8.7, "q99": 9.2, "observation": "three"},
+        {"yr": 2027, "q01": 2.9, "q05": 8.2, "q50": 8.8, "q95": 8.9, "q99": 9.3, "observation": "three"}
+      ]
+    },{
+      "name": "transform_1",
+      "source": "source",
+      "transform": [
+        {
+          "type": "fold",
+          "fields": ["q01", "q05", "q50", "q95", "q99"],
+          "as": ["quantile", "value"]
+        },
+        {
+          "type": "extent",
+          "field": "value",
+          "signal": "y_range"
+        }
+      ]
+    },{
+      "name": "transform_2",
+      "source": "source",
+      "transform": [
+        {
+          "type": "extent",
+          "field": "yr",
+          "signal": "x_range"
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "group_scale",
+      "type": "band",
+      "range": [0, {"signal": "height"}],
+      "domain": {
+        "data": "source",
+        "field": "observation"
+      }
+    },
+    {
+      "name": "x_scale",
+      "type": "linear",
+      "domain": {"signal": "x_range"},
+      "range": "width"
+    }
+  ],
+
+  "axes": [
+    { "orient": "bottom", "scale": "x_scale" }
+  ],
+
+  "marks": [
+    {
+      "name": "group_facet",
+      "type": "group",
+
+      "from": {
+        "facet": {
+          "data": "source",
+          "name": "groups",
+          "groupby": "observation"
+        }
+      },
+
+      "encode": {
+        "enter": {
+          "y": {"scale": "group_scale", "field": "observation", "offset": {"value": 10}},
+          "height": {"signal": "cellHeight"},
+          "width": {"signal": "width"},
+          "stroke": {"value": "#900"}
+        }
+      },
+
+      "scales": [
+        {
+          "name": "y_scale",
+          "type": "linear",
+          "domain": {"signal": "y_range"},
+          "range": [{"signal": "cellHeight"}, 0]
+        }
+      ],
+
+      "axes": [
+        { "orient": "left", "scale": "y_scale" }
+      ],
+
+      "marks": [
+        {
+          "type": "symbol",
+          "from": { "data": "source"},
+          "encode": {
+            "enter": {
+              "x": {"scale": "x_scale", "field": "yr"},
+              "y": {"scale": "y_scale", "field": "q50"},
+              "shape": {"value": "circle"},
+              "strokeWidth": {"value": 2}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "from": {"data": "group_facet"},
+      "encode": {
+        "enter": {
+          "x": {"field": "width", "mult": 0.5},
+          "y": {"field": "y"},
+          "fontSize": {"value": 11},
+          "fontWeight": {"value": "bold"},
+          "text": {"field": "datum.observation"},
+          "align": {"value": "center"},
+          "baseline": {"value": "bottom"},
+          "fill": {"value": "#000"}
+        }
+      }
+    },
+    {
+    "type": "text",
+    "encode": {
+      "enter": {
+        "text": { "signal": "x_range" },
+        "x": { "value": 10 },
+        "y": { "value": 10 }
+      }
+    }
+  }
+
+  ]
+}

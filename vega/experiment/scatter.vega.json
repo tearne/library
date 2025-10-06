@@ -1,0 +1,67 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
+  "background": "#ffffff",
+  "width": 400,
+  "height": 200,
+  "padding": 5,
+
+  "data": [
+    {
+      "name": "source",
+      "values": [
+        {"a": 4, "b": 20, "c": 1001},
+        {"a": 8, "b": 50, "c": 1001},
+        {"a": 10, "b": 70, "c": 1002},
+        {"a": 13, "b": 90, "c": 1003},
+        {"a": 14, "b": 104, "c": 1004},
+        {"a": 15, "b": 105, "c": 1005},
+        {"a": 16, "b": 106, "c": 1006},
+        {"a": 17, "b": 107, "c": 1007},
+        {"a": 18, "b": 108, "c": 1008},
+        {"a": 19, "b": 109, "c": 1009}
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "domain": {"data": "source", "field": "a"},
+      "range": "width"
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "domain": {"data": "source", "field": "b"},
+      "range": "height"
+    },
+    {
+        "name": "size",
+        "type": "linear",
+        "domain": {"data": "source", "field": "c"},
+        "range": [10,100]
+    }
+  ],
+
+  "axes": [
+    { "orient": "bottom", "scale": "x" },
+    { "orient": "left", "scale": "y" }
+  ],
+
+  "marks": [
+    {
+      "type": "symbol",
+      "from": {"data":"source"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "x", "field": "a"},
+          "y": {"scale": "y", "field": "b"},
+          "size": {"scale": "size", "field": "c"},
+          "shape": {"value": "circle"},
+          "strokeWidth": {"value": 2}
+        }
+      }
+    }
+  ]
+}
